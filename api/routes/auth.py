@@ -1,5 +1,5 @@
 from flask import Blueprint, request, session
-from flask import render_template, redirect, jsonify
+from flask import render_template, redirect, jsonify, current_app
 from werkzeug.security import gen_salt, generate_password_hash
 from authlib.flask.oauth2 import current_token
 from authlib.specs.rfc6749 import OAuth2Error
@@ -23,14 +23,15 @@ def home():
         username = request.form.get('username')
         password = request.form.get('password')
         user = User.query.filter_by(username=username).first()
-        if not user:
+        if user:
+            if user.check_password(password):
+                session['id'] = user.id
+        elif 'ENABLE_SIGNUP' in current_app.config and current_app.config['ENABLE_SIGNUP']:
             user = User(username=username, passhash=generate_password_hash(password))
             db.session.add(user)
             db.session.commit()
             session['id'] = user.id
-        if user.check_password(password):
-            session['id'] = user.id
-        return redirect('/')
+        return redirect('/auth')
     user = current_user()
     if user:
         clients = OAuth2Client.query.filter_by(user_id=user.id).all()
