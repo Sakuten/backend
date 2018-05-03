@@ -1,7 +1,5 @@
-from flask import Flask
-app = Flask(__name__)
+from api.app import create_app
 
-
-@app.route("/")
-def root():
-    return "Hello World!"
+app = create_app({
+    'SECRET_KEY': 'secret',
+})

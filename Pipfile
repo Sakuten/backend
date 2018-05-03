@@ -5,6 +5,8 @@ name = "pypi"
 
 [packages]
 flask = "*"
+authlib = ">=0.6"
+flask-sqlalchemy = "*"
 
 [dev-packages]
 "flake8" = "*"
