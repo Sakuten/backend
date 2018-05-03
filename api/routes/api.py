@@ -4,7 +4,7 @@ from flask import Blueprint, jsonify, request
 from authlib.flask.oauth2 import current_token
 from api.oauth2 import require_oauth
 from api.models import Lottery, Classroom, User, db
-from api.schemas import classrooms_schema, classroom_schema, lotteries_schema, lottery_schema
+from api.schemas import user_schema, classrooms_schema, classroom_schema, lotteries_schema, lottery_schema
 
 bp = Blueprint(__name__, 'api')
 
@@ -72,3 +72,10 @@ def draw_lottery(idx):
         db.session.add(user)
     db.session.commit()
     return jsonify(chosen=chosen.id)
+
+@bp.route('/status', methods=['GET'])
+@require_oauth('apply')
+def get_status():
+    user = current_token.user
+    result = user_schema.dump(user)[0]
+    return jsonify(status=result)
