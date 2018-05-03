@@ -61,7 +61,7 @@ class Classroom(db.Model):
     index = db.Column(db.Integer)
 
     def __repr__(self):
-        return '<Classroom %r%r>' % self.grade % self.get_classroom_name
+        return "<Classroom %r%r>".format(self.grade, self.get_classroom_name)
 
     def get_classroom_name(self):
         names = ['A', 'B', 'C', 'D', 'E']
@@ -74,4 +74,4 @@ class Lottery(db.Model):
     index = db.Column(db.Integer)
 
     def __repr__(self):
-        return '<Lottery %r.%r>' % self.classroom % self.index
+        return "<Lottery {}.{}>".format(self.classroom, self.index)
