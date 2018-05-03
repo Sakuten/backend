@@ -1,5 +1,6 @@
 from flask import Flask
 from .routes import bp
+from .models import db
 
 
 def create_app(config=None):
@@ -11,5 +12,6 @@ def create_app(config=None):
         elif config.endswith('.py'):
             app.config.from_pyfile(config)
 
+    db.init_app(app)
     app.register_blueprint(bp, url_prefix='')
     return app
