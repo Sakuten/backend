@@ -1,7 +1,7 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from authlib.flask.oauth2 import current_token
 from api.oauth2 import require_oauth
-from api.models import Lottery, Classroom, db
+from api.models import Lottery, Classroom, User, db
 from api.schemas import classrooms_schema, classroom_schema, lotteries_schema, lottery_schema
 
 bp = Blueprint(__name__, 'api')
@@ -34,3 +34,22 @@ def list_lottery(idx):
     lottery_result = lottery_schema.dump(lottery)[0]
     classroom_result = classroom_schema.dump(lottery.classroom)[0]
     return jsonify(lottery=lottery_result, classroom=classroom_result)
+
+@bp.route('/lotteries/<int:idx>/apply', methods=['PUT', 'DELETE'])
+@require_oauth('apply')
+def apply_lottery(idx):
+    lottery = Lottery.query.get(idx)
+    if lottery is None:
+        return jsonify({"message": "Lottery could not be found."}), 400
+    user = current_token.user
+    if request.method == 'PUT':
+        user.applying_lottery_id = idx
+    else:
+        if user.applying_lottery_id == idx:
+            user.applying_lottery_id = None
+        else:
+            return jsonify({"message": "You're not applying for this lottery"}), 400
+    db.session.add(user)
+    db.session.commit()
+    return jsonify({})
+
