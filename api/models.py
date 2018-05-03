@@ -54,3 +54,24 @@ class OAuth2Token(db.Model, OAuth2TokenMixin):
     def is_refresh_token_expired(self):
         expires_at = self.issued_at + self.expires_in * 2
         return expires_at < time.time()
+
+class Classroom(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    grade = db.Column(db.Integer)
+    index = db.Column(db.Integer)
+
+    def __repr__(self):
+        return '<Classroom %r%r>' % self.grade % self.get_classroom_name
+
+    def get_classroom_name(self):
+        names = ['A', 'B', 'C', 'D', 'E']
+        return names[self.index]
+
+class Lottery(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    classroom_id = db.Column(db.Integer, db.ForeignKey('classroom.id', ondelete='CASCADE'))
+    classroom = db.relationship('Classroom')
+    index = db.Column(db.Integer)
+
+    def __repr__(self):
+        return '<Lottery %r.%r>' % self.classroom % self.index
