@@ -16,6 +16,7 @@ class User(db.Model):
     passhash = db.Column(db.String(64))
     applying_lottery_id = db.Column(db.Integer, db.ForeignKey('lottery.id', ondelete='CASCADE'))
     applying_lottery = db.relationship('Lottery')
+    application_status = db.Column(db.Boolean)
 
     def __repr__(self):
         return '<User %r>' % self.username

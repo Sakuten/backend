@@ -1,3 +1,5 @@
+import random
+
 from flask import Blueprint, jsonify, request
 from authlib.flask.oauth2 import current_token
 from api.oauth2 import require_oauth
@@ -53,3 +55,20 @@ def apply_lottery(idx):
     db.session.commit()
     return jsonify({})
 
+@bp.route('/lottery/<int:idx>/draw')
+@require_oauth('draw')
+def draw_lottery(idx):
+    lottery = Lottery.query.get(idx)
+    if lottery is None:
+        return jsonify({"message": "Lottery could not be found."}), 400
+    users_applying = User.query.filter_by(applying_lottery_id=idx).all()
+    if len(users_applying) == 0:
+        return jsonify({"message": "Nobody is applying to this lottery"}), 400
+    chosen = random.choice(users_applying)
+    chosen.application_status = True
+    db.session.add(chosen)
+    for user in users_applying:
+        user.applying_lottery_id = None
+        db.session.add(user)
+    db.session.commit()
+    return jsonify(chosen=chosen.id)
