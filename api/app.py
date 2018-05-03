@@ -1,6 +1,7 @@
 from flask import Flask
 from .routes import bp
 
+
 def create_app(config=None):
     app = Flask(__name__)
     # load app sepcified configuration
