@@ -3,11 +3,11 @@ from flask import render_template, redirect, jsonify
 from werkzeug.security import gen_salt, generate_password_hash
 from authlib.flask.oauth2 import current_token
 from authlib.specs.rfc6749 import OAuth2Error
-from .models import db, User, OAuth2Client
-from .oauth2 import authorization, require_oauth
+from api.models import db, User, OAuth2Client
+from api.oauth2 import authorization, require_oauth
 
 
-bp = Blueprint(__name__, 'home')
+bp = Blueprint(__name__, 'auth')
 
 
 def current_user():
@@ -64,7 +64,7 @@ def create_client():
     return redirect('/')
 
 
-@bp.route('/oauth/authorize', methods=['GET', 'POST'])
+@bp.route('/authorize', methods=['GET', 'POST'])
 def authorize():
     user = current_user()
     if request.method == 'GET':
@@ -83,19 +83,13 @@ def authorize():
     return authorization.create_authorization_response(grant_user=grant_user)
 
 
-@bp.route('/oauth/token', methods=['POST'])
+@bp.route('/token', methods=['POST'])
 def issue_token():
     print(request.form)
     return authorization.create_token_response()
 
 
-@bp.route('/oauth/revoke', methods=['POST'])
+@bp.route('/revoke', methods=['POST'])
 def revoke_token():
     return authorization.create_endpoint_response('revocation')
 
-
-@bp.route('/api/me')
-@require_oauth('profile')
-def api_me():
-    user = current_token.user
-    return jsonify(id=user.id, username=user.username)
