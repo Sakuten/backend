@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify
 from authlib.flask.oauth2 import current_token
 from api.oauth2 import require_oauth
 from api.models import Lottery, Classroom, db
-from api.schemas import classrooms_schema, lotteries_schema
+from api.schemas import classrooms_schema, classroom_schema, lotteries_schema, lottery_schema
 
 bp = Blueprint(__name__, 'api')
 
@@ -12,9 +12,25 @@ def list_classrooms():
     result = classrooms_schema.dump(classrooms)[0]
     return jsonify(classrooms=result)
 
+@bp.route('/classrooms/<int:idx>')
+def list_classroom(idx):
+    classroom = Classroom.query.get(idx)
+    if classroom is None:
+        return jsonify({"message": "Classroom could not be found."}), 400
+    result = classroom_schema.dump(classroom)[0]
+    return jsonify(classroom=result)
+
 @bp.route('/lotteries')
 def list_lotteries():
     lotteries = Lottery.query.all()
     result = lotteries_schema.dump(lotteries)[0]
     return jsonify(lotteries=result)
 
+@bp.route('/lotteries/<int:idx>')
+def list_lottery(idx):
+    lottery = Lottery.query.get(idx)
+    if lottery is None:
+        return jsonify({"message": "Lottery could not be found."}), 400
+    lottery_result = lottery_schema.dump(lottery)[0]
+    classroom_result = classroom_schema.dump(lottery.classroom)[0]
+    return jsonify(lottery=lottery_result, classroom=classroom_result)
