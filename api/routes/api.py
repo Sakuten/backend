@@ -18,8 +18,3 @@ def list_lotteries():
     result = lotteries_schema.dump(lotteries)[0]
     return jsonify(lotteries=result)
 
-@bp.route('/me')
-@require_oauth('profile')
-def api_me():
-    user = current_token.user
-    return jsonify(id=user.id, username=user.username)
