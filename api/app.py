@@ -1,6 +1,7 @@
 from flask import Flask
 from .routes import bp
 from .models import db
+from .oauth2 import config_oauth
 
 
 def create_app(config=None):
@@ -13,5 +14,6 @@ def create_app(config=None):
             app.config.from_pyfile(config)
 
     db.init_app(app)
+    config_oauth(app)
     app.register_blueprint(bp, url_prefix='')
     return app
