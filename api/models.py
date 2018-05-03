@@ -11,17 +11,18 @@ db = SQLAlchemy()
 
 
 class User(db.Model):
-    user = db.Column(db.String(40), primary_key=True, unique=True)
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(40), unique=True)
     passhash = db.Column(db.String(64))
 
     def __repr__(self):
-        return '<User %r>' % self.user_id
+        return '<User %r>' % self.username
 
     def get_user_id(self):
-        return self.user_id
+        return self.id
 
     def check_password(self, password):
-        return check_password_hash(self.pwdhash, password)
+        return check_password_hash(self.passhash, password)
 
 
 class OAuth2Client(db.Model, OAuth2ClientMixin):
@@ -29,7 +30,7 @@ class OAuth2Client(db.Model, OAuth2ClientMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(
-        db.Integer, db.ForeignKey('user.user_id', ondelete='CASCADE'))
+        db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
     user = db.relationship('User')
 
 
@@ -38,7 +39,7 @@ class OAuth2AuthorizationCode(db.Model, OAuth2AuthorizationCodeMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(
-        db.Integer, db.ForeignKey('user.user_id', ondelete='CASCADE'))
+        db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
     user = db.relationship('User')
 
 
@@ -47,7 +48,7 @@ class OAuth2Token(db.Model, OAuth2TokenMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(
-        db.Integer, db.ForeignKey('user.user_id', ondelete='CASCADE'))
+        db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
     user = db.relationship('User')
 
     def is_refresh_token_expired(self):
