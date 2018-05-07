@@ -1,5 +1,5 @@
 from flask import Flask
-from .routes import auth, api
+from .routes import auth, api, site
 from .models import db
 from .oauth2 import config_oauth
 
@@ -17,4 +17,5 @@ def create_app(config=None):
     config_oauth(app)
     app.register_blueprint(auth.bp, url_prefix='/auth')
     app.register_blueprint(api.bp, url_prefix='/api')
+    app.register_blueprint(site.bp, url_prefix='/')
     return app

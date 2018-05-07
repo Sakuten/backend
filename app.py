@@ -44,10 +44,11 @@ def generate():
     def make_debug_user(name):
         user = User(username=name, passhash=generate_password_hash(name))
         db.session.add(user)
+        db.session.commit()
         return user
 
     def make_client(user, scope):
-        options = {'client_name': 'client', 'client_uri': 'http://localhost:5000', 'scope': scope, 'redirect_uri': 'http://localhost:5000/auth', 'grant_type': 'authorization_code\r\npassword', 'response_type': 'code', 'token_endpoint_auth_method': 'client_secret_basic'}
+        options = {'client_name': 'client', 'client_uri': 'http://localhost:5000', 'scope': scope, 'redirect_uri': 'http://localhost:5000/', 'grant_type': 'token\r\nimplicit', 'response_type': 'token', 'token_endpoint_auth_method': 'none'}
         client = OAuth2Client(**options)
         client.user_id = user.id
         client.client_id = gen_salt(24)

@@ -17,33 +17,33 @@ def current_user():
     return None
 
 
-@bp.route('/', methods=('GET', 'POST'))
+@bp.route('/', methods=['POST'])
 def home():
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        user = User.query.filter_by(username=username).first()
-        if user:
-            if user.check_password(password):
-                session['id'] = user.id
-        elif 'ENABLE_SIGNUP' in current_app.config and current_app.config['ENABLE_SIGNUP']:
-            user = User(username=username, passhash=generate_password_hash(password))
-            db.session.add(user)
-            db.session.commit()
-            session['id'] = user.id
-        return redirect(url_for('api.routes.auth.home'))
-    user = current_user()
+    # if request.method == 'POST':
+    username = request.form.get('username')
+    password = request.form.get('password')
+    user = User.query.filter_by(username=username).first()
     if user:
-        clients = OAuth2Client.query.filter_by(user_id=user.id).all()
-    else:
-        clients = []
-    return render_template('home.html', user=user, clients=clients)
+        if user.check_password(password):
+            session['id'] = user.id
+    elif 'ENABLE_SIGNUP' in current_app.config and current_app.config['ENABLE_SIGNUP']:
+        user = User(username=username, passhash=generate_password_hash(password))
+        db.session.add(user)
+        db.session.commit()
+        session['id'] = user.id
+    return redirect(request.args.get('to', url_for('api.routes.auth.home')))
+    # user = current_user()
+    # if user:
+    #     clients = OAuth2Client.query.filter_by(user_id=user.id).all()
+    # else:
+    #     clients = []
+    # return render_template('home.html', user=user, clients=clients)
 
 
 @bp.route('/logout')
 def logout():
     del session['id']
-    return redirect(url_for('api.routes.auth.home'))
+    return redirect(request.args.get('to', url_for('api.routes.auth.home')))
 
 
 @bp.route('/create_client', methods=('GET', 'POST'))
@@ -77,14 +77,13 @@ def authorize():
     if not user and 'username' in request.form:
         username = request.form.get('username')
         user = User.query.filter_by(username=username).first()
-    if request.form['confirm']:
-        grant_user = user
-    else:
-        grant_user = None
+    # if request.form['confirm']:
+    grant_user = user
+    # else:
+    #     grant_user = None
     return authorization.create_authorization_response(grant_user=grant_user)
 
-
-@bp.route('/token', methods=['POST'])
+@bp.route('/token', methods=['GET'])
 def issue_token():
     return authorization.create_token_response()
 
