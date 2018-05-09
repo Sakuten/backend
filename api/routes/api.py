@@ -54,7 +54,7 @@ def apply_lottery(idx):
     return jsonify({})
 
 # EXTRA AUTHENICAION REQUIRED
-@bp.route('/lottery/<int:idx>/draw')
+@bp.route('/lotteries/<int:idx>/draw')
 def draw_lottery(idx):
     lottery = Lottery.query.get(idx)
     if lottery is None:
