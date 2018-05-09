@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from .routes import auth, api, site
 from .models import db
 from .oauth2 import config_oauth
@@ -7,6 +8,7 @@ from .oauth2 import config_oauth
 def create_app(config=None):
     app = Flask(__name__)
     # load app sepcified configuration
+    CORS(app, supports_credentials=True)
     if config is not None:
         if isinstance(config, dict):
             app.config.update(config)
