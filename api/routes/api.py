@@ -1,8 +1,6 @@
 import random
 
-from flask import Blueprint, jsonify, request
-from authlib.flask.oauth2 import current_token
-from api.oauth2 import require_oauth
+from flask import Blueprint, session, jsonify, request
 from api.models import Lottery, Classroom, User, db
 from api.schemas import user_schema, classrooms_schema, classroom_schema, lotteries_schema, lottery_schema
 
@@ -37,8 +35,8 @@ def list_lottery(idx):
     classroom_result = classroom_schema.dump(lottery.classroom)[0]
     return jsonify(lottery=lottery_result, classroom=classroom_result)
 
+# AUTH REQUIRED!!
 @bp.route('/lotteries/<int:idx>/apply', methods=['PUT', 'DELETE'])
-@require_oauth('apply')
 def apply_lottery(idx):
     lottery = Lottery.query.get(idx)
     if lottery is None:
@@ -55,8 +53,8 @@ def apply_lottery(idx):
     db.session.commit()
     return jsonify({})
 
+# AUTH REQUIRED!!
 @bp.route('/lottery/<int:idx>/draw')
-@require_oauth('draw')
 def draw_lottery(idx):
     lottery = Lottery.query.get(idx)
     if lottery is None:
@@ -73,9 +71,9 @@ def draw_lottery(idx):
     db.session.commit()
     return jsonify(chosen=chosen.id)
 
+# AUTH REQUIRED!!
 @bp.route('/status', methods=['GET'])
-@require_oauth('apply')
 def get_status():
-    user = current_token.user
+    user = session['user']
     result = user_schema.dump(user)[0]
     return jsonify(status=result)

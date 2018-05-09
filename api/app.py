@@ -2,7 +2,6 @@ from flask import Flask
 from flask_cors import CORS
 from .routes import auth, api, site
 from .models import db
-from .oauth2 import config_oauth
 
 
 def create_app(config=None):
@@ -16,7 +15,6 @@ def create_app(config=None):
             app.config.from_pyfile(config)
 
     db.init_app(app)
-    config_oauth(app)
     app.register_blueprint(auth.bp, url_prefix='/auth')
     app.register_blueprint(api.bp, url_prefix='/api')
     app.register_blueprint(site.bp, url_prefix='/')
