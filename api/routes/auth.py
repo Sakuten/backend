@@ -20,18 +20,17 @@ def current_user():
 @bp.route('/', methods=['POST'])
 def home():
     # if request.method == 'POST':
-    username = request.form.get('username')
-    password = request.form.get('password')
+    print(request.headers)
+    if not 'Content-Type' in request.headers or request.headers['Content-Type'] != 'application/json':
+        return jsonify(message="Only application/json supported"), 400
+    username = request.json.get('username')
+    password = request.json.get('password')
     user = User.query.filter_by(username=username).first()
     if user:
         if user.check_password(password):
             session['id'] = user.id
-    elif 'ENABLE_SIGNUP' in current_app.config and current_app.config['ENABLE_SIGNUP']:
-        user = User(username=username, passhash=generate_password_hash(password))
-        db.session.add(user)
-        db.session.commit()
-        session['id'] = user.id
-    return redirect(request.args.get('to', url_for('api.routes.auth.home')))
+            return jsonify(message="Login Successful", client_id=OAuth2Client.query.filter_by(user_id=user.id).first().client_id)
+    return jsonify(message="Login Unsuccessful"), 400
     # user = current_user()
     # if user:
     #     clients = OAuth2Client.query.filter_by(user_id=user.id).all()
@@ -39,12 +38,22 @@ def home():
     #     clients = []
     # return render_template('home.html', user=user, clients=clients)
 
+@bp.route('/me')
+def me():
+    user = current_user()
+    if user:
+        return jsonify(id=user.id)
+    else:
+        return jsonify(message="Not logged in"), 400
 
 @bp.route('/logout')
 def logout():
-    del session['id']
-    return redirect(request.args.get('to', url_for('api.routes.auth.home')))
-
+    user = current_user()
+    if user:
+        del session['id']
+        return jsonify(id=user.id)
+    else:
+        return jsonify(message="Not logged in"), 400
 
 @bp.route('/create_client', methods=('GET', 'POST'))
 def create_client():
@@ -53,7 +62,7 @@ def create_client():
         return redirect(url_for('api.routes.auth.home'))
     if request.method == 'GET':
         return render_template('create_client.html')
-    client = OAuth2Client(**request.form.to_dict(flat=True))
+    client = OAuth2Client(**request.json.to_dict(flat=True))
     client.user_id = user.id
     client.client_id = gen_salt(24)
     if client.token_endpoint_auth_method == 'none':
@@ -68,20 +77,16 @@ def create_client():
 @bp.route('/authorize', methods=['GET', 'POST'])
 def authorize():
     user = current_user()
-    if request.method == 'GET':
-        try:
-            grant = authorization.validate_consent_request(end_user=user)
-        except OAuth2Error as error:
-            return error.error
-        return render_template('authorize.html', user=user, grant=grant)
+    # if request.method == 'GET':
+    #     try:
+    #         grant = authorization.validate_consent_request(end_user=user)
+    #     except OAuth2Error as error:
+    #         return error.error
+    #     return render_template('authorize.html', user=user, grant=grant)
     if not user and 'username' in request.form:
         username = request.form.get('username')
         user = User.query.filter_by(username=username).first()
-    # if request.form['confirm']:
-    grant_user = user
-    # else:
-    #     grant_user = None
-    return authorization.create_authorization_response(grant_user=grant_user)
+    return authorization.create_authorization_response(grant_user=user)
 
 @bp.route('/token', methods=['GET'])
 def issue_token():
