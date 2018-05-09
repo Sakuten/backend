@@ -87,12 +87,3 @@ def me():
     else:
         return jsonify(message="Not logged in"), 400
 
-@bp.route('/logout')
-def logout():
-    user = current_user()
-    if user:
-        del session['id']
-        return jsonify(id=user.id)
-    else:
-        return jsonify(message="Not logged in"), 400
-
