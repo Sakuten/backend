@@ -1,10 +1,8 @@
 import random
-
-from flask import Blueprint, jsonify, request
-from authlib.flask.oauth2 import current_token
-from api.oauth2 import require_oauth
+from flask import Blueprint, session, jsonify, request, g
 from api.models import Lottery, Classroom, User, db
 from api.schemas import user_schema, classrooms_schema, classroom_schema, lotteries_schema, lottery_schema
+from api.auth import login_required
 
 bp = Blueprint(__name__, 'api')
 
@@ -38,12 +36,12 @@ def list_lottery(idx):
     return jsonify(lottery=lottery_result, classroom=classroom_result)
 
 @bp.route('/lotteries/<int:idx>/apply', methods=['PUT', 'DELETE'])
-@require_oauth('apply')
+@login_required()
 def apply_lottery(idx):
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 400
-    user = current_token.user
+    user = User.query.filter_by(id=g.token_data['user_id']).first()
     if request.method == 'PUT':
         user.applying_lottery_id = idx
     else:
@@ -55,8 +53,8 @@ def apply_lottery(idx):
     db.session.commit()
     return jsonify({})
 
-@bp.route('/lottery/<int:idx>/draw')
-@require_oauth('draw')
+@bp.route('/lotteries/<int:idx>/draw')
+@login_required('admin')
 def draw_lottery(idx):
     lottery = Lottery.query.get(idx)
     if lottery is None:
@@ -74,8 +72,8 @@ def draw_lottery(idx):
     return jsonify(chosen=chosen.id)
 
 @bp.route('/status', methods=['GET'])
-@require_oauth('apply')
+@login_required()
 def get_status():
-    user = current_token.user
+    user = User.query.filter_by(id=g.token_data['user_id']).first()
     result = user_schema.dump(user)[0]
     return jsonify(status=result)

@@ -1,8 +1,8 @@
 from api.app import create_app
+from cryptography.fernet import Fernet
 
 app = create_app({
-    'SECRET_KEY': 'secret',
-    'ENABLE_SIGNUP': False,
+    'SECRET_KEY': Fernet.generate_key(),
     'SQLALCHEMY_TRACK_MODIFICATIONS': False,
     'SQLALCHEMY_DATABASE_URI': 'sqlite:///db.sqlite',
 })
@@ -15,7 +15,7 @@ def initdb():
 
 @app.cli.command()
 def generate():
-    from api.models import Lottery, Classroom, User, OAuth2Client, db
+    from api.models import Lottery, Classroom, User, db
     from werkzeug.security import generate_password_hash, gen_salt
 
     total_index=4
@@ -47,22 +47,8 @@ def generate():
         db.session.commit()
         return user
 
-    def make_client(user, scope):
-        options = {'client_name': 'client', 'client_uri': 'http://localhost:5000', 'scope': scope, 'redirect_uri': 'http://localhost:5000/', 'grant_type': 'token\r\nimplicit', 'response_type': 'token', 'token_endpoint_auth_method': 'none'}
-        client = OAuth2Client(**options)
-        client.user_id = user.id
-        client.client_id = gen_salt(24)
-        if client.token_endpoint_auth_method == 'none':
-            client.client_secret = ''
-        else:
-            client.client_secret = gen_salt(48)
-        db.session.add(client)
-        return (client.client_id, client.client_secret)
-
     admin = make_debug_user('admin')
-    print(f"admin: {make_client(admin, 'draw')}")
     for i in range(5):
         example = make_debug_user(f"example{i}")
-        print(f"example{i}: {make_client(example, 'apply')}")
 
     db.session.commit()
