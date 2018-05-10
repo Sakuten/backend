@@ -36,7 +36,7 @@ def list_lottery(idx):
     return jsonify(lottery=lottery_result, classroom=classroom_result)
 
 @bp.route('/lotteries/<int:idx>/apply', methods=['PUT', 'DELETE'])
-@login_required
+@login_required()
 def apply_lottery(idx):
     lottery = Lottery.query.get(idx)
     if lottery is None:
@@ -53,8 +53,8 @@ def apply_lottery(idx):
     db.session.commit()
     return jsonify({})
 
-# EXTRA AUTHENICAION REQUIRED
 @bp.route('/lotteries/<int:idx>/draw')
+@login_required('admin')
 def draw_lottery(idx):
     lottery = Lottery.query.get(idx)
     if lottery is None:
@@ -72,7 +72,7 @@ def draw_lottery(idx):
     return jsonify(chosen=chosen.id)
 
 @bp.route('/status', methods=['GET'])
-@login_required
+@login_required()
 def get_status():
     user = User.query.filter_by(id=g.token_data['user_id']).first()
     result = user_schema.dump(user)[0]
