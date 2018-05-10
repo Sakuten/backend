@@ -26,13 +26,3 @@ def home():
             token, expiration = generate_token({'user_id': user.id})
             return jsonify(message="Login Successful", token=token.decode(), expires_in=expiration)
     return jsonify(message="Login Unsuccessful"), 400
-
-@bp.route('/me')
-@login_required
-def me():
-    user = g.token_data['user_id']
-    if user:
-        return jsonify(id=user)
-    else:
-        return jsonify(message="Not logged in"), 400
-
