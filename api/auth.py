@@ -26,33 +26,6 @@ def decrypt_token(token):
         return None
     return json.loads(decrypted.decode())
 
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        def auth_error(msg, code, headm=None):
-            resp = make_response(jsonify(message='Unauthorized'), code)
-            if headm:
-                resp.headers['WWW-Authenticate'] = 'Bearer ' + headm
-            return resp
-
-        if not 'Authorization' in request.headers:
-            return auth_error('Unauthorized', 401, 'realm="token_required"')
-        auth = request.headers['Authorization'].split()
-        if auth[0].lower() != 'bearer':
-            return auth_error('Unauthorized', 401, 'error="token_required"')
-        elif len(auth) == 1:
-            return auth_error('Invalid request', 400, 'error="invalid_request"')
-        elif len(auth) > 2:
-            return auth_error('Invalid request', 400, 'error="invalid_request"')
-        token = auth[1]
-        data = decrypt_token(token)
-        if not data:
-            return auth_error('Invalid token', 401, 'error="invalid_token"')
-        g.token_data = data['data']
-
-        return f(*args, **kwargs)
-    return decorated_function
-
 def login_required(required_name=None):
     def login_required_impl(f):
         @wraps(f)
