@@ -75,10 +75,12 @@ def draw_lottery(idx):
     if len(users_applying) == 0:
         return jsonify({"message": "Nobody is applying to this lottery"}), 400
     chosen = random.choice(users_applying)
-    chosen.application_status = True
-    db.session.add(chosen)
     for user in users_applying:
         user.applying_lottery_id = None
+        if user.id == chosen.id:
+            user.application_status = True
+        else:
+            user.application_status = None
         db.session.add(user)
     db.session.commit()
     return jsonify(chosen=chosen.id)
