@@ -1,7 +1,13 @@
 import random
 from flask import Blueprint, jsonify, request, g
 from api.models import Lottery, Classroom, User, db
-from api.schemas import user_schema, classrooms_schema, classroom_schema, lotteries_schema, lottery_schema
+from api.schemas import (
+    user_schema,
+    classrooms_schema,
+    classroom_schema,
+    lotteries_schema,
+    lottery_schema
+)
 from api.auth import login_required
 
 bp = Blueprint(__name__, 'api')
@@ -53,7 +59,7 @@ def apply_lottery(idx):
         if user.applying_lottery_id == idx:
             user.applying_lottery_id = None
         else:
-            return jsonify({"message": "You're not applying for this lottery"}), 400
+            return jsonify(message="You're not applying for this lottery"), 400
     db.session.add(user)
     db.session.commit()
     return jsonify({})

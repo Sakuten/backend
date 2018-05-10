@@ -7,7 +7,9 @@ bp = Blueprint(__name__, 'auth')
 
 @bp.route('/', methods=['POST'])
 def home():
-    if 'Content-Type' not in request.headers or request.headers['Content-Type'] == 'application/x-www-form-urlencoded':
+    if 'Content-Type' not in request.headers or \
+        request.headers['Content-Type'] == \
+            'application/x-www-form-urlencoded':
         data = request.form
     elif request.headers['Content-Type'] == 'application/json':
         data = request.json
@@ -23,5 +25,7 @@ def home():
     if user:
         if user.check_password(password):
             token, expiration = generate_token({'user_id': user.id})
-            return jsonify(message="Login Successful", token=token.decode(), expires_in=expiration)
+            return jsonify(message="Login Successful",
+                           token=token.decode(),
+                           expires_in=expiration)
     return jsonify(message="Login Unsuccessful"), 400

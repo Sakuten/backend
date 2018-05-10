@@ -25,7 +25,10 @@ class LotterySchema(Schema):
     name = fields.Method("format_name", dump_only=True)
 
     def format_name(self, lottery):
-        return f"{lottery.classroom.grade}{lottery.classroom.get_classroom_name()}.{lottery.index}"
+        grade = lottery.classroom.grade
+        name = lottery.classroom.get_classroom_name()
+        index = lottery.index
+        return f"{grade}{name}.{index}"
 
 
 user_schema = UserSchema()
