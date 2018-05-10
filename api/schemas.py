@@ -1,10 +1,12 @@
 from marshmallow import Schema, fields
 
+
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     username = fields.Str()
     applying_lottery_id = fields.Int()
     application_status = fields.Boolean()
+
 
 class ClassroomSchema(Schema):
     id = fields.Int(dump_only=True)
@@ -15,6 +17,7 @@ class ClassroomSchema(Schema):
     def classroom_name(self, classroom):
         return classroom.get_classroom_name()
 
+
 class LotterySchema(Schema):
     id = fields.Int(dump_only=True)
     classroom_id = fields.Int()
@@ -22,7 +25,8 @@ class LotterySchema(Schema):
     name = fields.Method("format_name", dump_only=True)
 
     def format_name(self, lottery):
-        return "{}{}.{}".format(lottery.classroom.grade, lottery.classroom.get_classroom_name(), lottery.index)
+        return f"{lottery.classroom.grade}{lottery.classroom.get_classroom_name()}.{lottery.index}"
+
 
 user_schema = UserSchema()
 lottery_schema = LotterySchema()

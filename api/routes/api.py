@@ -1,16 +1,18 @@
 import random
-from flask import Blueprint, session, jsonify, request, g
+from flask import Blueprint, jsonify, request, g
 from api.models import Lottery, Classroom, User, db
 from api.schemas import user_schema, classrooms_schema, classroom_schema, lotteries_schema, lottery_schema
 from api.auth import login_required
 
 bp = Blueprint(__name__, 'api')
 
+
 @bp.route('/classrooms')
 def list_classrooms():
     classrooms = Classroom.query.all()
     result = classrooms_schema.dump(classrooms)[0]
     return jsonify(classrooms=result)
+
 
 @bp.route('/classrooms/<int:idx>')
 def list_classroom(idx):
@@ -20,11 +22,13 @@ def list_classroom(idx):
     result = classroom_schema.dump(classroom)[0]
     return jsonify(classroom=result)
 
+
 @bp.route('/lotteries')
 def list_lotteries():
     lotteries = Lottery.query.all()
     result = lotteries_schema.dump(lotteries)[0]
     return jsonify(lotteries=result)
+
 
 @bp.route('/lotteries/<int:idx>')
 def list_lottery(idx):
@@ -34,6 +38,7 @@ def list_lottery(idx):
     lottery_result = lottery_schema.dump(lottery)[0]
     classroom_result = classroom_schema.dump(lottery.classroom)[0]
     return jsonify(lottery=lottery_result, classroom=classroom_result)
+
 
 @bp.route('/lotteries/<int:idx>/apply', methods=['PUT', 'DELETE'])
 @login_required()
@@ -53,6 +58,7 @@ def apply_lottery(idx):
     db.session.commit()
     return jsonify({})
 
+
 @bp.route('/lotteries/<int:idx>/draw')
 @login_required('admin')
 def draw_lottery(idx):
@@ -70,6 +76,7 @@ def draw_lottery(idx):
         db.session.add(user)
     db.session.commit()
     return jsonify(chosen=chosen.id)
+
 
 @bp.route('/status', methods=['GET'])
 @login_required()

@@ -1,6 +1,5 @@
-import time
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import check_password_hash
 
 db = SQLAlchemy()
 
@@ -9,7 +8,8 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(40), unique=True)
     passhash = db.Column(db.String(64))
-    applying_lottery_id = db.Column(db.Integer, db.ForeignKey('lottery.id', ondelete='CASCADE'))
+    applying_lottery_id = db.Column(
+        db.Integer, db.ForeignKey('lottery.id', ondelete='CASCADE'))
     applying_lottery = db.relationship('Lottery')
     application_status = db.Column(db.Boolean)
 
@@ -35,9 +35,11 @@ class Classroom(db.Model):
         names = ['A', 'B', 'C', 'D', 'E']
         return names[self.index]
 
+
 class Lottery(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    classroom_id = db.Column(db.Integer, db.ForeignKey('classroom.id', ondelete='CASCADE'))
+    classroom_id = db.Column(db.Integer, db.ForeignKey(
+        'classroom.id', ondelete='CASCADE'))
     classroom = db.relationship('Classroom')
     index = db.Column(db.Integer)
 
