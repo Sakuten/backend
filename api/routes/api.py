@@ -53,7 +53,10 @@ def apply_lottery(idx):
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 400
     user = User.query.filter_by(id=g.token_data['user_id']).first()
-    application = Application.query.filter_by(user_id=user.id, lottery_id=lottery.id).first()
+    previous = Application.query.filter_by(user_id=user.id)
+    if any([app.lottery.index == lottery.index and app.lottery.id != lottery.id for app in previous.all()]):
+        return jsonify(message="You're already applying to a lottery in this period"), 400
+    application = previous.filter_by(lottery_id=lottery.id).first()
     if request.method == 'PUT':
         if not application:
             newapplication = Application(lottery_id=lottery.id, user_id=user.id, status=None)
