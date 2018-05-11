@@ -4,8 +4,6 @@ from api.models import Lottery, Classroom, User, Application, db
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     username = fields.Str()
-    applying_lottery_id = fields.Int()
-    application_status = fields.Boolean()
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
