@@ -7,6 +7,8 @@ class UserSchema(Schema):
     applying_lottery_id = fields.Int()
     application_status = fields.Boolean()
 
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)
 
 class ClassroomSchema(Schema):
     id = fields.Int(dump_only=True)
@@ -17,6 +19,8 @@ class ClassroomSchema(Schema):
     def classroom_name(self, classroom):
         return classroom.get_classroom_name()
 
+classroom_schema = ClassroomSchema()
+classrooms_schema = ClassroomSchema(many=True)
 
 class LotterySchema(Schema):
     id = fields.Int(dump_only=True)
@@ -31,9 +35,5 @@ class LotterySchema(Schema):
         return f"{grade}{name}.{index}"
 
 
-user_schema = UserSchema()
 lottery_schema = LotterySchema()
-classroom_schema = ClassroomSchema()
-users_schema = UserSchema(many=True)
 lotteries_schema = LotterySchema(many=True)
-classrooms_schema = ClassroomSchema(many=True)
