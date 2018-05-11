@@ -73,19 +73,15 @@ def draw_lottery(idx):
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 400
-    users_applying = User.query.filter_by(applying_lottery_id=idx).all()
-    if len(users_applying) == 0:
+    applications = Application.query.filter_by(lottery_id=idx).all()
+    if len(applications) == 0:
         return jsonify({"message": "Nobody is applying to this lottery"}), 400
-    chosen = random.choice(users_applying)
-    for user in users_applying:
-        user.applying_lottery_id = None
-        if user.id == chosen.id:
-            user.application_status = True
-        else:
-            user.application_status = None
-        db.session.add(user)
+    chosen = random.choice(applications)
+    for application in applications:
+        application.status = application.id == chosen.id
+        db.session.add(application)
     db.session.commit()
-    return jsonify(chosen=chosen.id)
+    return jsonify(chosen=chosen.user.id)
 
 
 @bp.route('/status', methods=['GET'])
