@@ -1,9 +1,23 @@
 from marshmallow import Schema, fields
 from api.models import Lottery, Classroom, User, Application, db
 
+class ApplicationSchema(Schema):
+    id = fields.Int(dump_only=True)
+    lottery_id = fields.Int()
+    user_id = fields.Int()
+    status = fields.Boolean()
+
+application_schema = ApplicationSchema()
+applications_schema = ApplicationSchema(many=True)
+
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     username = fields.Str()
+    applications = fields.Method("get_applications", dump_only=True)
+
+    def get_applications(self, user):
+        lotteries = Application.query.filter_by(user_id=user.id).all()
+        return applications_schema.dump(lotteries)[0]
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
