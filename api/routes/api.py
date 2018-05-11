@@ -64,8 +64,7 @@ def apply_lottery(idx):
         else:
             return jsonify(message="You're not applying for this lottery"), 400
     db.session.commit()
-    return jsonify({})
-
+    return jsonify(id=application.id if application else newapplication.id)
 
 @bp.route('/lotteries/<int:idx>/draw')
 @login_required('admin')
