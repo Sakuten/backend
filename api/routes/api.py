@@ -75,6 +75,8 @@ def draw_lottery(idx):
     applications = Application.query.filter_by(lottery_id=idx).all()
     if len(applications) == 0:
         return jsonify({"message": "Nobody is applying to this lottery"}), 400
+    if not all([app.status is None for app in applications]):
+        return jsonify({"message": "This lottery is already done and cannot be undone"}), 400
     chosen = random.choice(applications)
     for application in applications:
         application.status = application.id == chosen.id
