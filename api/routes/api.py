@@ -1,6 +1,6 @@
 import random
 from flask import Blueprint, jsonify, request, g
-from api.models import Lottery, Classroom, User, db
+from api.models import Lottery, Classroom, User, Application, db
 from api.schemas import (
     user_schema,
     classrooms_schema,
@@ -52,18 +52,24 @@ def apply_lottery(idx):
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 400
+    if lottery.done:
+        return jsonify({"message": "This lottery has already done"}), 400
     user = User.query.filter_by(id=g.token_data['user_id']).first()
+    previous = Application.query.filter_by(user_id=user.id)
+    if any([app.lottery.index == lottery.index and app.lottery.id != lottery.id for app in previous.all()]):
+        return jsonify(message="You're already applying to a lottery in this period"), 400
+    application = previous.filter_by(lottery_id=lottery.id).first()
     if request.method == 'PUT':
-        user.applying_lottery_id = idx
+        if not application:
+            newapplication = Application(lottery_id=lottery.id, user_id=user.id, status=None)
+            db.session.add(newapplication)
     else:
-        if user.applying_lottery_id == idx:
-            user.applying_lottery_id = None
+        if application:
+            db.session.delete(application)
         else:
             return jsonify(message="You're not applying for this lottery"), 400
-    db.session.add(user)
     db.session.commit()
-    return jsonify({})
-
+    return jsonify(id=application.id if application else newapplication.id)
 
 @bp.route('/lotteries/<int:idx>/draw')
 @login_required('admin')
@@ -71,19 +77,18 @@ def draw_lottery(idx):
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 400
-    users_applying = User.query.filter_by(applying_lottery_id=idx).all()
-    if len(users_applying) == 0:
+    if lottery.done:
+        return jsonify({"message": "This lottery is already done and cannot be undone"}), 400
+    applications = Application.query.filter_by(lottery_id=idx).all()
+    if len(applications) == 0:
         return jsonify({"message": "Nobody is applying to this lottery"}), 400
-    chosen = random.choice(users_applying)
-    for user in users_applying:
-        user.applying_lottery_id = None
-        if user.id == chosen.id:
-            user.application_status = True
-        else:
-            user.application_status = None
-        db.session.add(user)
+    chosen = random.choice(applications)
+    for application in applications:
+        application.status = application.id == chosen.id
+        db.session.add(application)
+    lottery.done = True
     db.session.commit()
-    return jsonify(chosen=chosen.id)
+    return jsonify(chosen=chosen.user.id)
 
 
 @bp.route('/status', methods=['GET'])

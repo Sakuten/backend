@@ -35,7 +35,7 @@ def generate():
         room = Classroom.query.filter_by(
             grade=grade, index=class_index).first()
         for perf_index in range(total_index):
-            lottery = Lottery(classroom_id=room.id, index=perf_index)
+            lottery = Lottery(classroom_id=room.id, index=perf_index, done=False)
             db.session.add(lottery)
 
     classloop(create_classrooms)
