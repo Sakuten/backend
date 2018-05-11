@@ -38,6 +38,7 @@ class LotterySchema(Schema):
     id = fields.Int(dump_only=True)
     classroom_id = fields.Int()
     index = fields.Int()
+    done = fields.Boolean()
     name = fields.Method("format_name", dump_only=True)
 
     def format_name(self, lottery):

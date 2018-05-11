@@ -52,6 +52,8 @@ def apply_lottery(idx):
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 400
+    if lottery.done:
+        return jsonify({"message": "This lottery has already done"}), 400
     user = User.query.filter_by(id=g.token_data['user_id']).first()
     previous = Application.query.filter_by(user_id=user.id)
     if any([app.lottery.index == lottery.index and app.lottery.id != lottery.id for app in previous.all()]):
@@ -75,15 +77,16 @@ def draw_lottery(idx):
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 400
+    if lottery.done:
+        return jsonify({"message": "This lottery is already done and cannot be undone"}), 400
     applications = Application.query.filter_by(lottery_id=idx).all()
     if len(applications) == 0:
         return jsonify({"message": "Nobody is applying to this lottery"}), 400
-    if not all([app.status is None for app in applications]):
-        return jsonify({"message": "This lottery is already done and cannot be undone"}), 400
     chosen = random.choice(applications)
     for application in applications:
         application.status = application.id == chosen.id
         db.session.add(application)
+    lottery.done = True
     db.session.commit()
     return jsonify(chosen=chosen.user.id)
 

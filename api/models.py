@@ -39,6 +39,7 @@ class Lottery(db.Model):
         'classroom.id', ondelete='CASCADE'))
     classroom = db.relationship('Classroom')
     index = db.Column(db.Integer)
+    done = db.Column(db.Boolean)
 
     def __repr__(self):
 
