@@ -1,5 +1,5 @@
 from marshmallow import Schema, fields
-
+from api.models import Lottery, Classroom, User, Application, db
 
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
@@ -27,6 +27,7 @@ class LotterySchema(Schema):
     classroom_id = fields.Int()
     index = fields.Int()
     name = fields.Method("format_name", dump_only=True)
+    applicants = fields.Method("get_applicants", dump_only=True)
 
     def format_name(self, lottery):
         grade = lottery.classroom.grade
@@ -34,6 +35,9 @@ class LotterySchema(Schema):
         index = lottery.index
         return f"{grade}{name}.{index}"
 
+    def get_applicants(self, lottery):
+        apps = Application.query.filter_by(lottery_id=lottery.id).all()
+        return users_schema.dump([app.user for app in apps])[0]
 
 lottery_schema = LotterySchema()
 lotteries_schema = LotterySchema(many=True)
