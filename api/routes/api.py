@@ -1,6 +1,6 @@
 import random
 from flask import Blueprint, jsonify, request, g
-from api.models import Lottery, Classroom, User, db
+from api.models import Lottery, Classroom, User, Application, db
 from api.schemas import (
     user_schema,
     classrooms_schema,
@@ -53,14 +53,16 @@ def apply_lottery(idx):
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 400
     user = User.query.filter_by(id=g.token_data['user_id']).first()
+    application = Application.query.filter_by(user_id=user.id, lottery_id=lottery.id).first()
     if request.method == 'PUT':
-        user.applying_lottery_id = idx
+        if not application:
+            newapplication = Application(lottery_id=lottery.id, user_id=user.id, status=None)
+            db.session.add(newapplication)
     else:
-        if user.applying_lottery_id == idx:
-            user.applying_lottery_id = None
+        if application:
+            db.session.delete(application)
         else:
             return jsonify(message="You're not applying for this lottery"), 400
-    db.session.add(user)
     db.session.commit()
     return jsonify({})
 
