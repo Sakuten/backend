@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
-from .routes import auth, api, site
+from .routes import auth, api
 from .models import db
 
 
@@ -17,5 +17,4 @@ def create_app(config=None):
     db.init_app(app)
     app.register_blueprint(auth.bp, url_prefix='/auth')
     app.register_blueprint(api.bp, url_prefix='/api')
-    app.register_blueprint(site.bp, url_prefix='/')
     return app
