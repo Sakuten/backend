@@ -9,7 +9,7 @@ flask-sqlalchemy = "*"
 marshmallow = "*"
 flask-cors = "*"
 cryptography = "*"
-pymysql = "*"
+mysql-connector-python = "*"
 
 [dev-packages]
 "flake8" = "*"
