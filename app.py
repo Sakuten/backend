@@ -4,7 +4,7 @@ from cryptography.fernet import Fernet
 app = create_app({
     'SECRET_KEY': Fernet.generate_key(),
     'SQLALCHEMY_TRACK_MODIFICATIONS': False,
-    'SQLALCHEMY_DATABASE_URI': 'sqlite:///db.sqlite',
+    'SQLALCHEMY_DATABASE_URI': 'mysql+pymysql://root:password@mysql/db',
 })
 
 
