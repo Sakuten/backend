@@ -20,12 +20,19 @@ def create_app(config=None):
     app.register_blueprint(api.bp, url_prefix='/api')
 
     with app.app_context():
-        initdb()
         if app.config['ENV'] == 'development':
-            app.logger.warning('Generating test data for development (because FLASK_ENV == development)')
+            app.logger.warning('Regenerating test data for development (because FLASK_ENV == development)')
+            clear_data(db)
+            initdb()
             generate()
 
     return app
+
+def clear_data(db):
+    meta = db.metadata
+    for table in reversed(meta.sorted_tables):
+        db.session.execute(table.delete())
+        db.session.commit()
 
 def initdb():
     from api.models import db
