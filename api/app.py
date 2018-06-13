@@ -5,6 +5,11 @@ from .models import db
 
 
 def create_app(config=None):
+    """
+        create Flask app and initialize DB.
+        Args:
+            config (): # more info needed
+    """
     app = Flask(__name__)
     # load app sepcified configuration
     CORS(app, supports_credentials=True)
