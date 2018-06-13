@@ -27,6 +27,13 @@ def generate_token(obj):
 
 
 def decrypt_token(token):
+    """
+        decrypt the token.
+        Args:
+            token (string): encrypted token.
+        Return:
+            decrypted token (dictionary): decrypted token contents
+    """
     fernet = Fernet(current_app.config['SECRET_KEY'])
     expiration = current_app.config.get('TOKEN_EXPIRATION', 43200)  # 12 hours
     try:
