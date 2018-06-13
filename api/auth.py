@@ -7,6 +7,14 @@ import json
 
 
 def generate_token(obj):
+    """
+        generate token and expiration, return it.
+        Args:
+            obj (dictionary?): # more Info Needed
+        Return:
+            token (fernet.encrypt): encrypted token
+            expiration (int?): expiration of the token # more info needed
+    """
     fernet = Fernet(current_app.config['SECRET_KEY'])
     now = datetime.now().timestamp()
     expiration = current_app.config.get('TOKEN_EXPIRATION', 43200)  # 12 hours
