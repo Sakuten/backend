@@ -44,6 +44,9 @@ def decrypt_token(token):
 
 
 def login_required(required_name=None):
+    """
+        a decorder to require login
+    """
     def login_required_impl(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
@@ -61,6 +64,7 @@ def login_required(required_name=None):
                     resp.headers['WWW-Authenticate'] = 'Bearer ' + headm
                 return resp
 
+            # check form of request header
             if 'Authorization' not in request.headers:
                 return auth_error(401, 'realm="token_required"')
             auth = request.headers['Authorization'].split()
