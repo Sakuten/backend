@@ -8,7 +8,7 @@ db = SQLAlchemy()
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(40), unique=True)
-    passhash = db.Column(db.String(64))
+    passhash = db.Column(db.String(128))
 
     def __repr__(self):
         return '<User %r>' % self.username
