@@ -17,7 +17,7 @@ bp = Blueprint(__name__, 'api')
 def list_classrooms():
     classrooms = Classroom.query.all()
     result = classrooms_schema.dump(classrooms)[0]
-    return jsonify(classrooms=result)
+    return jsonify({"classrooms": result})
 
 
 @bp.route('/classrooms/<int:idx>')
@@ -26,14 +26,14 @@ def list_classroom(idx):
     if classroom is None:
         return jsonify({"message": "Classroom could not be found."}), 400
     result = classroom_schema.dump(classroom)[0]
-    return jsonify(classroom=result)
+    return jsonify({"classroom": result})
 
 
 @bp.route('/lotteries')
 def list_lotteries():
     lotteries = Lottery.query.all()
     result = lotteries_schema.dump(lotteries)[0]
-    return jsonify(lotteries=result)
+    return jsonify({"lotteries": result})
 
 
 @bp.route('/lotteries/<int:idx>')
@@ -43,7 +43,7 @@ def list_lottery(idx):
         return jsonify({"message": "Lottery could not be found."}), 400
     lottery_result = lottery_schema.dump(lottery)[0]
     classroom_result = classroom_schema.dump(lottery.classroom)[0]
-    return jsonify(lottery=lottery_result, classroom=classroom_result)
+    return jsonify({"lottery": lottery_result, "classroom": classroom_result})
 
 
 @bp.route('/lotteries/<int:idx>/apply', methods=['PUT', 'DELETE'])
@@ -60,7 +60,7 @@ def apply_lottery(idx):
             app.lottery.id != lottery.id
             for app in previous.all()):
         msg = "You're already applying to a lottery in this period"
-        return jsonify(message=msg), 400
+        return jsonify({"message": msg}), 400
     application = previous.filter_by(lottery_id=lottery.id).first()
     if request.method == 'PUT':
         if not application:
@@ -74,7 +74,8 @@ def apply_lottery(idx):
             return jsonify({"message":
                             "You're not applying for this lottery"}), 400
     db.session.commit()
-    return jsonify(id=application.id if application else newapplication.id)
+    return jsonify({"id": application.id if application
+                    else newapplication.id})
 
 
 @bp.route('/lotteries/<int:idx>/draw')
@@ -95,7 +96,7 @@ def draw_lottery(idx):
         db.session.add(application)
     lottery.done = True
     db.session.commit()
-    return jsonify(chosen=chosen.user.id)
+    return jsonify({"chosen": chosen.user.id})
 
 
 @bp.route('/status', methods=['GET'])
@@ -103,4 +104,4 @@ def draw_lottery(idx):
 def get_status():
     user = User.query.filter_by(id=g.token_data['user_id']).first()
     result = user_schema.dump(user)[0]
-    return jsonify(status=result)
+    return jsonify({"status": result})

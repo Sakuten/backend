@@ -38,7 +38,7 @@ def login_required(required_name=None):
                     message = 'Forbidden'
                 else:
                     message = 'Unknown Error'
-                resp = make_response(jsonify(message=message), code)
+                resp = make_response(jsonify({"message": message}), code)
                 if headm:
                     resp.headers['WWW-Authenticate'] = 'Bearer ' + headm
                 return resp
