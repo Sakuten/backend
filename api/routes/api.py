@@ -71,7 +71,8 @@ def apply_lottery(idx):
         if application:
             db.session.delete(application)
         else:
-            return jsonify(message="You're not applying for this lottery"), 400
+            return jsonify({"message":
+                            "You're not applying for this lottery"}), 400
     db.session.commit()
     return jsonify(id=application.id if application else newapplication.id)
 
