@@ -12,8 +12,8 @@ def generate_token(obj):
         Args:
             obj (dictionary?): # more Info Needed
         Return:
-            token (fernet.encrypt): encrypted token
-            expiration (int?): expiration of the token # more info needed
+            token (string): encrypted token
+            expiration (string): expiration of the token # more info needed
     """
     fernet = Fernet(current_app.config['SECRET_KEY'])
     now = datetime.now().timestamp()
