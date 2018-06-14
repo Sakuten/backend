@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
+from sqlalchemy.exc import ProgrammingError
 from .routes import auth, api
 from .models import db
 
@@ -22,26 +23,26 @@ def create_app(config=None):
     with app.app_context():
         if app.config['ENV'] == 'development':
             app.logger.warning('Regenerating test data for development (because FLASK_ENV == development)')
-            clear_data(db)
-            initdb()
+            try:
+                db.drop_all()
+            except ProgrammingError:
+                app.logger.warning('Good luck with this ;)')
+            try:
+                db.create_all()
+            except ProgrammingError:
+                app.logger.warning('Good luck with this ;)')
+            # initdb(app, db)
             generate()
 
     return app
 
-def clear_data(db):
-    meta = db.metadata
-    for table in reversed(meta.sorted_tables):
-        db.session.execute(table.delete())
-        db.session.commit()
-
-def initdb():
+def initdb(app, db):
     from api.models import db
     db.create_all()
 
 def generate():
-    from api.models import Lottery, Classroom, User, db
+    from .models import Lottery, Classroom, User, db
     from werkzeug.security import generate_password_hash
-
     total_index = 4
     grades = [5, 6]
 
