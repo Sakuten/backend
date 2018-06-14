@@ -7,11 +7,12 @@ app = create_app({
     'SQLALCHEMY_DATABASE_URI': 'mysql+mysqlconnector://root:password@mysql/db',
 })
 
+
 @app.cli.command("initdb")
 def initdb_():
-    initdb();
+    initdb()
+
 
 @app.cli.command("generate")
 def generate_():
-    generate();
-
+    generate()

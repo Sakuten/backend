@@ -56,12 +56,16 @@ def apply_lottery(idx):
         return jsonify({"message": "This lottery has already done"}), 400
     user = User.query.filter_by(id=g.token_data['user_id']).first()
     previous = Application.query.filter_by(user_id=user.id)
-    if any([app.lottery.index == lottery.index and app.lottery.id != lottery.id for app in previous.all()]):
-        return jsonify(message="You're already applying to a lottery in this period"), 400
+    if any(app.lottery.index == lottery.index and
+            app.lottery.id != lottery.id
+            for app in previous.all()):
+        msg = "You're already applying to a lottery in this period"
+        return jsonify(message=msg), 400
     application = previous.filter_by(lottery_id=lottery.id).first()
     if request.method == 'PUT':
         if not application:
-            newapplication = Application(lottery_id=lottery.id, user_id=user.id, status=None)
+            newapplication = Application(
+                lottery_id=lottery.id, user_id=user.id, status=None)
             db.session.add(newapplication)
     else:
         if application:
@@ -71,6 +75,7 @@ def apply_lottery(idx):
     db.session.commit()
     return jsonify(id=application.id if application else newapplication.id)
 
+
 @bp.route('/lotteries/<int:idx>/draw')
 @login_required('admin')
 def draw_lottery(idx):
@@ -78,7 +83,8 @@ def draw_lottery(idx):
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 400
     if lottery.done:
-        return jsonify({"message": "This lottery is already done and cannot be undone"}), 400
+        return jsonify({"message": "This lottery is already done "
+                        "and cannot be undone"}), 400
     applications = Application.query.filter_by(lottery_id=idx).all()
     if len(applications) == 0:
         return jsonify({"message": "Nobody is applying to this lottery"}), 400
