@@ -24,8 +24,7 @@ def home():
     user = User.query.filter_by(username=username).first()
     if user:
         if user.check_password(password):
-            token, expiration = generate_token({'user_id': user.id})
+            token = generate_token({'user_id': user.id})
             return jsonify(message="Login Successful",
-                           token=token.decode(),
-                           expires_in=expiration)
+                           token=token.decode())
     return jsonify(message="Login Unsuccessful"), 400
