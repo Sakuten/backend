@@ -45,8 +45,10 @@ class Lottery(db.Model):
 
         return "<Lottery {}.{}>".format(self.classroom, self.index)
 
+
 class Application(db.Model):
-    __table_args__ = (UniqueConstraint("lottery_id", "user_id", name="unique_idx_lottery_user"),)
+    __table_args__ = (UniqueConstraint(
+        "lottery_id", "user_id", name="unique_idx_lottery_user"),)
 
     id = db.Column(db.Integer, primary_key=True)
     lottery_id = db.Column(db.Integer, db.ForeignKey(

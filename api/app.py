@@ -22,7 +22,9 @@ def create_app(config=None):
 
     with app.app_context():
         if app.config['ENV'] == 'development':
-            app.logger.warning('Regenerating test data for development (because FLASK_ENV == development)')
+            app.logger.warning(
+                'Regenerating test data for development '
+                '(because FLASK_ENV == development)')
             try:
                 db.drop_all()
             except ProgrammingError:
@@ -36,9 +38,11 @@ def create_app(config=None):
 
     return app
 
+
 def initdb(app, db):
     from api.models import db
     db.create_all()
+
 
 def generate():
     from .models import Lottery, Classroom, User, db
@@ -59,7 +63,8 @@ def generate():
         room = Classroom.query.filter_by(
             grade=grade, index=class_index).first()
         for perf_index in range(total_index):
-            lottery = Lottery(classroom_id=room.id, index=perf_index, done=False)
+            lottery = Lottery(classroom_id=room.id,
+                              index=perf_index, done=False)
             db.session.add(lottery)
 
     classloop(create_classrooms)
@@ -78,4 +83,3 @@ def generate():
         make_debug_user(f"example{i}")
 
     db.session.commit()
-

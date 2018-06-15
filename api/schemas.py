@@ -1,5 +1,6 @@
 from marshmallow import Schema, fields
-from api.models import Lottery, Classroom, User, Application, db
+from api.models import Application
+
 
 class ApplicationSchema(Schema):
     id = fields.Int(dump_only=True)
@@ -7,8 +8,10 @@ class ApplicationSchema(Schema):
     user_id = fields.Int()
     status = fields.Boolean()
 
+
 application_schema = ApplicationSchema()
 applications_schema = ApplicationSchema(many=True)
+
 
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
@@ -19,8 +22,10 @@ class UserSchema(Schema):
         lotteries = Application.query.filter_by(user_id=user.id).all()
         return applications_schema.dump(lotteries)[0]
 
+
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
+
 
 class ClassroomSchema(Schema):
     id = fields.Int(dump_only=True)
@@ -31,8 +36,10 @@ class ClassroomSchema(Schema):
     def classroom_name(self, classroom):
         return classroom.get_classroom_name()
 
+
 classroom_schema = ClassroomSchema()
 classrooms_schema = ClassroomSchema(many=True)
+
 
 class LotterySchema(Schema):
     id = fields.Int(dump_only=True)
@@ -46,6 +53,7 @@ class LotterySchema(Schema):
         name = lottery.classroom.get_classroom_name()
         index = lottery.index
         return f"{grade}{name}.{index}"
+
 
 lottery_schema = LotterySchema()
 lotteries_schema = LotterySchema(many=True)

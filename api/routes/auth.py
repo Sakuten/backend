@@ -14,10 +14,10 @@ def home():
     elif request.headers['Content-Type'] == 'application/json':
         data = request.json
     else:
-        return jsonify(message="Unsupported content type"), 400
+        return jsonify({"message": "Unsupported content type"}), 400
 
     if 'username' not in data or 'password' not in data:
-        return jsonify(message="Invalid request"), 400
+        return jsonify({"message": "Invalid request"}), 400
 
     username = data.get('username')
     password = data.get('password')
@@ -25,6 +25,6 @@ def home():
     if user:
         if user.check_password(password):
             token = generate_token({'user_id': user.id})
-            return jsonify(message="Login Successful",
+            return jsonify({"message": "Login Successful"},
                            token=token.decode())
-    return jsonify(message="Login Unsuccessful"), 400
+    return jsonify({"message": "Login Unsuccessful"}), 400
