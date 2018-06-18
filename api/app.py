@@ -8,7 +8,8 @@ def create_app(config=None):
     """
         create Flask app and initialize DB.
         Args:
-            config (): # more info needed
+            config (Union[dict, string, None]): Flask's configuration dictionary or path to configuration file.
+                                                Further reading: http://flask.pocoo.org/docs/1.0/config/
     """
     app = Flask(__name__)
     # load app sepcified configuration
