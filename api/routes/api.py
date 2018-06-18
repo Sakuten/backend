@@ -15,6 +15,22 @@ bp = Blueprint(__name__, 'api')
 
 @bp.route('/classrooms')
 def list_classrooms():
+    """
+        return classroom list
+        Auth: no need
+        Response like:
+            {
+                "classrooms": [
+                {
+                    "grade": 5,
+                    "id": 1,
+                    "index": 0,
+                    "name": "A"
+                }
+                ...
+                ]
+            }
+    """
     classrooms = Classroom.query.all()
     result = classrooms_schema.dump(classrooms)[0]
     return jsonify(classrooms=result)
@@ -22,6 +38,21 @@ def list_classrooms():
 
 @bp.route('/classrooms/<int:idx>')
 def list_classroom(idx):
+    """
+        return infomation about specified classroom
+        Auth: no need
+        Response like:
+            {
+                "classroom": [
+                {
+                    "grade": 5,
+                    "id": 1,
+                    "index": 0,
+                    "name": "A"
+                }
+                ]
+            }
+    """
     classroom = Classroom.query.get(idx)
     if classroom is None:
         return jsonify({"message": "Classroom could not be found."}), 400
@@ -31,6 +62,21 @@ def list_classroom(idx):
 
 @bp.route('/lotteries')
 def list_lotteries():
+    """
+        return lotteries list.
+        Auth: no need
+        Response like:
+            {
+                "lotteries": [
+                 {
+                    "classroom_id": 1,
+                    "done": false,
+                    "id": 1,
+                    "index": 0,
+                    "name": "5A.0"
+                 }]
+            }
+    """
     lotteries = Lottery.query.all()
     result = lotteries_schema.dump(lotteries)[0]
     return jsonify(lotteries=result)
@@ -38,6 +84,21 @@ def list_lotteries():
 
 @bp.route('/lotteries/<int:idx>')
 def list_lottery(idx):
+    """
+        return infomation about specified lottery.
+        Auth: no need
+        Response like:
+            {
+                "lotterie": [
+                 {
+                    "classroom_id": 1,
+                    "done": false,
+                    "id": 1,
+                    "index": 0,
+                    "name": "5A.0"
+                 }]
+            }
+    """
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 400
@@ -49,6 +110,15 @@ def list_lottery(idx):
 @bp.route('/lotteries/<int:idx>/apply', methods=['PUT', 'DELETE'])
 @login_required()
 def apply_lottery(idx):
+    """
+        add/delete applications.
+        specify the lottery id in the URL.
+        Response like:
+            {
+                "id": 1
+            }
+        "id" is the nuber of application(if user has 2 applications, id is 2, if 3, then id is 3...)
+    """
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 400
@@ -56,9 +126,11 @@ def apply_lottery(idx):
         return jsonify({"message": "This lottery has already done"}), 400
     user = User.query.filter_by(id=g.token_data['user_id']).first()
     previous = Application.query.filter_by(user_id=user.id)
+    # I'm not sure whats goin' on here
     if any([app.lottery.index == lottery.index and app.lottery.id != lottery.id for app in previous.all()]):
         return jsonify(message="You're already applying to a lottery in this period"), 400
     application = previous.filter_by(lottery_id=lottery.id).first()
+    # access DB
     if request.method == 'PUT':
         if not application:
             newapplication = Application(lottery_id=lottery.id, user_id=user.id, status=None)
@@ -94,6 +166,24 @@ def draw_lottery(idx):
 @bp.route('/status', methods=['GET'])
 @login_required()
 def get_status():
+    """
+        return user's id, applications
+        Response like:
+            {
+                "status": {
+                    "applications": [
+                        {
+                            "id": 1,
+                            "lottery_id": 1,
+                            "status": null,
+                            "user_id": 3
+                        }
+                    ],
+                "id": 3,
+                "username": "example1"
+                }
+            }
+    """
     user = User.query.filter_by(id=g.token_data['user_id']).first()
     result = user_schema.dump(user)[0]
     return jsonify(status=result)
