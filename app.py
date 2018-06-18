@@ -43,17 +43,20 @@ def generate():
 
     def create_classrooms(grade, class_index):
         """
-            create classroom object and add to Database
+            create classroom object and add it to Database
             Args:
-                grade (int): set grade. 5 or 6
-                class_index (int): set class_index. 0->A 1->B 2->C 3->D
+                grade (int): Specify the grade.
+                class_index (int): Specify the classroom id to create. 0->A 1->B 2->C 3->D
         """
         room = Classroom(grade=grade, index=class_index)
         db.session.add(room)
 
     def create_lotteries(grade, class_index):
         """
-            
+            create lottery object and add it to Database
+            Args:
+                grade (int): Specify the grade.
+                class_index (int): Specify the classroom id to create lotteries in. 0->A 1->B 2->C 3->D
         """
         room = Classroom.query.filter_by(
             grade=grade, index=class_index).first()
