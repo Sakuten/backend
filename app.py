@@ -23,7 +23,7 @@ def initdb():
 @app.cli.command()
 def generate():
     """
-        Geenrate test DB for test
+        Geenrate test DB
     """
     from api.models import Lottery, Classroom, User, db
     from werkzeug.security import generate_password_hash
@@ -68,7 +68,7 @@ def generate():
 
     def make_debug_user(name):
         """
-            make debug user and add to Database(Should be deleted?)
+            make debug user and add it to Database(Should be deleted?)
             Args:
                 name (int): name of debug user
             Return:
