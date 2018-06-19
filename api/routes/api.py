@@ -71,8 +71,7 @@ def apply_lottery(idx):
         if application:
             db.session.delete(application)
         else:
-            return jsonify({"message":
-                            "You're not applying for this lottery"}), 400
+            return jsonify({"message": "You're not applying for this lottery"}), 400
     db.session.commit()
     return jsonify({"id": application.id if application
                     else newapplication.id})
@@ -85,8 +84,7 @@ def draw_lottery(idx):
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 400
     if lottery.done:
-        return jsonify({"message": "This lottery is already done "
-                        "and cannot be undone"}), 400
+        return jsonify({"message": "This lottery is already done and cannot be undone"}), 400
     applications = Application.query.filter_by(lottery_id=idx).all()
     if len(applications) == 0:
         return jsonify({"message": "Nobody is applying to this lottery"}), 400
