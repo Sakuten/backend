@@ -1,0 +1,871 @@
+{
+  "openapi": "3.0.0",
+  "servers": [
+    {
+      "url": "https://api.sakuten.org/v1"
+    }
+  ],
+  "info": {
+    "description": "Sakuten API. horaaaay!",
+    "version": "1.0.0",
+    "title": "Sakuten API",
+    "termsOfService": "http://sakuten.org/terms/",
+    "contact": {
+      "email": "devteam@sakuten.org"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "tags": [
+    {
+      "name": "user",
+      "description": "User Authenication APIs"
+    },
+    {
+      "name": "lottery",
+      "description": "Lottery System APIs"
+    }
+  ],
+  "paths": {
+    "/auth": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Authenication",
+        "description": "",
+        "operationId": "Authenicate",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Certificate"
+          },
+          "400": {
+            "description": "Invalid Request / Login Unsuccessful / Unsupported content type",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Certificate"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Certificate"
+              }
+            }
+          },
+          "description": "Authenication Information",
+          "required": true
+        }
+      }
+    },
+    "/status": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get Information about you",
+        "description": "",
+        "operationId": "getStatus",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/UserInfo"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "user_auth": []
+          },
+          {
+            "admin_auth": []
+          },
+          {
+            "checker_auth": []
+          }
+        ]
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get list of users",
+        "description": "",
+        "operationId": "getUsers",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/UserList"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        },
+        "security": [
+          {
+            "admin_auth": []
+          }
+        ]
+      }
+    },
+    "/users/{secretId}": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Find user by Secret ID",
+        "description": "Returns a single user",
+        "operationId": "getUserById",
+        "parameters": [
+          {
+            "name": "secretId",
+            "in": "path",
+            "description": "Secret ID of user to return",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SecretID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/UserInfo"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "admin_auth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Ban user by Secret ID",
+        "description": "",
+        "operationId": "banUserById",
+        "parameters": [
+          {
+            "name": "secretId",
+            "in": "path",
+            "description": "Secret ID of user to ban",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SecretID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessfulOperation"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "security": [
+          {
+            "admin_auth": []
+          }
+        ]
+      }
+    },
+    "/classrooms": {
+      "get": {
+        "tags": [
+          "lottery"
+        ],
+        "summary": "Get list of available classrooms",
+        "description": "",
+        "operationId": "getClassrooms",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "sort",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Specify the method to sort the list",
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "filter",
+            "schema": {
+              "type": "string",
+              "example": "available"
+            },
+            "description": "Specify the filter",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ClassroomList"
+          }
+        }
+      }
+    },
+    "/classrooms/{classroomId}": {
+      "get": {
+        "tags": [
+          "lottery"
+        ],
+        "summary": "Get the information of classroom by id",
+        "description": "",
+        "operationId": "getClassroomById",
+        "parameters": [
+          {
+            "name": "classroomId",
+            "in": "path",
+            "description": "ID of classroom to return",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ClassroomInfo"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/classrooms/{classroomId}/winners": {
+      "get": {
+        "tags": [
+          "lottery"
+        ],
+        "summary": "Get the winner list of the class",
+        "description": "",
+        "operationId": "getWinnersById",
+        "parameters": [
+          {
+            "name": "classroomId",
+            "in": "path",
+            "description": "ID of classroom to return",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/UserList"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "security": [
+          {
+            "admin_auth": []
+          }
+        ]
+      }
+    },
+    "/classrooms/{classroomId}/winners/{Id}": {
+      "get": {
+        "tags": [
+          "lottery"
+        ],
+        "summary": "Get the winner by ID",
+        "description": "-> If logged in as admin, this endpoint responses full of the user information. Otherwise, this only check if the user has won and return no additional information but secret id.",
+        "operationId": "getWinnerById",
+        "parameters": [
+          {
+            "name": "classroomId",
+            "in": "path",
+            "description": "ID of classroom to return",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "Id",
+            "in": "path",
+            "description": "ID of user to return",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/UserInfo"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "security": [
+          {
+            "admin_auth": []
+          },
+          {
+            "checker_auth": []
+          }
+        ]
+      }
+    },
+    "/lotteries": {
+      "get": {
+        "tags": [
+          "lottery"
+        ],
+        "summary": "Get list of lotteries",
+        "description": "",
+        "operationId": "getLotteries",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "sort",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Specify the method to sort the list",
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "filter",
+            "schema": {
+              "type": "string",
+              "example": "available"
+            },
+            "description": "Specify the filter",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/LotteryList"
+          }
+        }
+      }
+    },
+    "/lotteries/{lotteryId}": {
+      "get": {
+        "tags": [
+          "lottery"
+        ],
+        "summary": "Get information of the lottery by ID",
+        "description": "",
+        "operationId": "getLotteryById",
+        "parameters": [
+          {
+            "name": "lotteryId",
+            "in": "path",
+            "description": "ID of the lottery to return",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/LotteryInfo"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "lottery"
+        ],
+        "summary": "Apply to the lottery",
+        "description": "",
+        "operationId": "applyLotteryById",
+        "parameters": [
+          {
+            "name": "lotteryId",
+            "in": "path",
+            "description": "ID of the lottery to apply",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessfulOperation"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "security": [
+          {
+            "user_auth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "lottery"
+        ],
+        "summary": "Unapply to the lottery",
+        "description": "",
+        "operationId": "unapplyLotteryById",
+        "parameters": [
+          {
+            "name": "lotteryId",
+            "in": "path",
+            "description": "ID of the lottery to apply",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessfulOperation"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "security": [
+          {
+            "user_auth": []
+          }
+        ]
+      }
+    },
+    "/lotteries/{lotteryId}/draw": {
+      "post": {
+        "tags": [
+          "lottery"
+        ],
+        "summary": "Draw the lottery",
+        "description": "Draw thew lottery and return the list of winning users",
+        "operationId": "drawLotteryById",
+        "parameters": [
+          {
+            "name": "lotteryId",
+            "in": "path",
+            "description": "ID of the lottery to apply",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/UserList"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        },
+        "security": [
+          {
+            "admin_auth": []
+          }
+        ]
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "GitHub",
+    "url": "https://github.com/Sakuten/"
+  },
+  "components": {
+    "securitySchemes": {
+      "user_auth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "fernet"
+      },
+      "checker_auth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "fernet"
+      },
+      "admin_auth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "fernet"
+      }
+    },
+    "responses": {
+      "NotFound": {
+        "description": "Not Found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorMessage"
+            }
+          }
+        }
+      },
+      "Certificate": {
+        "description": "Access Token",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Login Successful"
+                },
+                "token": {
+                  "$ref": "#/components/schemas/Token"
+                }
+              }
+            }
+          }
+        }
+      },
+      "UserList": {
+        "description": "List of Users",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        }
+      },
+      "UserInfo": {
+        "description": "User Information",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/User"
+            }
+          }
+        }
+      },
+      "SuccessfulOperation": {
+        "description": "Successful Operation",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Message"
+            }
+          }
+        }
+      },
+      "ClassroomList": {
+        "description": "List of Classrooms",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Classroom"
+              }
+            }
+          }
+        }
+      },
+      "ClassroomInfo": {
+        "description": "Classroom Information",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Classroom"
+            }
+          }
+        }
+      },
+      "LotteryList": {
+        "description": "List of Lotteries",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Lottery"
+              }
+            }
+          }
+        }
+      },
+      "LotteryInfo": {
+        "description": "Lottery Information",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Lottery"
+            }
+          }
+        }
+      },
+      "InvalidRequest": {
+        "description": "Malformed Authenication Header has detected",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorMessage"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Authorization Failed",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorMessage"
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "You have no permission to perform the action",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorMessage"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Token": {
+        "type": "string",
+        "example": "gAAAAABbKh479Z7Pb77oqmdAWBlgrjySjiKO51wvwWp3DvJFk-FfhuVhPPM1iFxNFgUR8WydJkZhV6WbTQP1Rny18ixAQtmicnVUy7tAyCkYq8U5etbuUsgkzv6YCcDph-1z6PXn01fM3AWbnNRvOHip2j-Nby21Gw==",
+        "description": "Access Token (fernet)"
+      },
+      "Message": {
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Success",
+            "description": "Simple message about the status"
+          }
+        }
+      },
+      "ErrorMessage": {
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Error",
+            "description": "Simple message about the cause of the error"
+          }
+        }
+      },
+      "Classroom": {
+        "type": "object",
+        "required": [
+          "id",
+          "grade",
+          "index"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Classroom Identifier",
+            "example": 0
+          },
+          "grade": {
+            "type": "integer",
+            "description": "The grade of classroom",
+            "example": 5
+          },
+          "index": {
+            "type": "integer",
+            "description": "The index of classroom (0->A, 1->B, 2->C, 3->D)",
+            "example": 0
+          },
+          "name": {
+            "type": "string",
+            "description": "The character refering to the classroom index",
+            "example": "A"
+          }
+        }
+      },
+      "Lottery": {
+        "type": "object",
+        "required": [
+          "id",
+          "done",
+          "classroom_id",
+          "index"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Lottery Identifier",
+            "example": 0
+          },
+          "done": {
+            "type": "boolean",
+            "description": "Whether this lottery is done or not",
+            "example": false
+          },
+          "classroom_id": {
+            "type": "integer",
+            "description": "Classroom Identifier",
+            "example": 0
+          },
+          "index": {
+            "type": "integer",
+            "description": "The index of the lottery",
+            "example": 0
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the lottery",
+            "example": "5A.0"
+          }
+        }
+      },
+      "Application": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Application Identifier"
+          },
+          "lottery": {
+            "$ref": "#/components/schemas/Lottery"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/SecretID"
+          },
+          "public_id": {
+            "$ref": "#/components/schemas/PublicID"
+          },
+          "application_history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Application"
+            }
+          }
+        }
+      },
+      "Certificate": {
+        "type": "object",
+        "required": [
+          "id",
+          "g-recaptcha-response"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/SecretID"
+          },
+          "g-recaptcha-response": {
+            "type": "string",
+            "description": "Google reCAPTCHA response"
+          }
+        }
+      },
+      "SecretID": {
+        "type": "string",
+        "example": "ZXhhbXBsZV92aXNpdG9yXzAwX0EK",
+        "description": "User Secret ID scanned from QR Code"
+      },
+      "PublicID": {
+        "type": "string",
+        "example": "ab10",
+        "description": "User Public ID written in the user card"
+      }
+    }
+  }
+}
