@@ -266,7 +266,7 @@
             "description": "ID of classroom to return",
             "required": true,
             "schema": {
-              "type": "integer"
+              "$ref": "#/components/schemas/ClassroomID"
             }
           }
         ],
@@ -295,7 +295,7 @@
             "description": "ID of classroom to return",
             "required": true,
             "schema": {
-              "type": "integer"
+              "$ref": "#/components/schemas/ClassroomID"
             }
           }
         ],
@@ -329,7 +329,7 @@
             "description": "ID of classroom to return",
             "required": true,
             "schema": {
-              "type": "integer"
+              "$ref": "#/components/schemas/ClassroomID"
             }
           },
           {
@@ -338,7 +338,7 @@
             "description": "ID of user to return",
             "required": true,
             "schema": {
-              "type": "integer"
+              "$ref": "#/components/schemas/SecretID"
             }
           }
         ],
@@ -411,7 +411,7 @@
             "description": "ID of the lottery to return",
             "required": true,
             "schema": {
-              "type": "integer"
+              "$ref": "#/components/schemas/LotteryID"
             }
           }
         ],
@@ -438,7 +438,7 @@
             "description": "ID of the lottery to apply",
             "required": true,
             "schema": {
-              "type": "integer"
+              "$ref": "#/components/schemas/LotteryID"
             }
           }
         ],
@@ -479,7 +479,7 @@
             "description": "ID of the lottery to apply",
             "required": true,
             "schema": {
-              "type": "integer"
+              "$ref": "#/components/schemas/LotteryID"
             }
           }
         ],
@@ -522,7 +522,7 @@
             "description": "ID of the lottery to apply",
             "required": true,
             "schema": {
-              "type": "integer"
+              "$ref": "#/components/schemas/LotteryID"
             }
           }
         ],
@@ -754,9 +754,7 @@
         ],
         "properties": {
           "id": {
-            "type": "integer",
-            "description": "Classroom Identifier",
-            "example": 0
+            "$ref": "#/components/schemas/ClassroomID"
           },
           "grade": {
             "type": "integer",
@@ -785,9 +783,7 @@
         ],
         "properties": {
           "id": {
-            "type": "integer",
-            "description": "Lottery Identifier",
-            "example": 0
+            "$ref": "#/components/schemas/LotteryID"
           },
           "done": {
             "type": "boolean",
@@ -815,8 +811,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "integer",
-            "description": "Application Identifier"
+            "$ref": "#/components/schemas/ApplicationID"
           },
           "lottery": {
             "$ref": "#/components/schemas/Lottery"
@@ -865,6 +860,21 @@
         "type": "string",
         "example": "ab10",
         "description": "User Public ID written in the user card"
+      },
+      "LotteryID": {
+        "type": "integer",
+        "example": 0,
+        "description": "Lottery Identifier"
+      },
+      "ClassroomID": {
+        "type": "integer",
+        "example": 0,
+        "description": "Classroom Identifier"
+      },
+      "ApplicationID": {
+        "type": "integer",
+        "example": 0,
+        "description": "Application Identifier"
       }
     }
   }
