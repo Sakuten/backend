@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
-from sqlalchemy.exc import ProgrammingError
+from sqlalchemy.exc import ProgrammingError, IntegrityError
 from .routes import auth, api
 from .models import db
 
@@ -27,11 +27,11 @@ def create_app(config=None):
                 '(because FLASK_ENV == development)')
             try:
                 db.drop_all()
-            except ProgrammingError:
+            except (ProgrammingError, IntegrityError):
                 app.logger.warning('Good luck with this ;)')
             try:
                 db.create_all()
-            except ProgrammingError:
+            except (ProgrammingError, IntegrityError):
                 app.logger.warning('Good luck with this ;)')
             # initdb(app, db)
             generate()
