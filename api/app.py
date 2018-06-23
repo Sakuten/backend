@@ -14,7 +14,7 @@ config = {
 }
 
 
-def create_app(config=None):
+def create_app():
     app = Flask(__name__, instance_relative_config=True)
     # load app sepcified configuration
     CORS(app, supports_credentials=True)
@@ -23,12 +23,6 @@ def create_app(config=None):
 
     app.config.from_object(config[config_name])
     app.config.from_pyfile('config.cfg', silent=True)
-
-    if config is not None:
-        if isinstance(config, dict):
-            app.config.update(config)
-        elif config.endswith('.py'):
-            app.config.from_pyfile(config)
 
     db.init_app(app)
 
