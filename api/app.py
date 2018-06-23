@@ -4,11 +4,24 @@ from sqlalchemy.exc import ProgrammingError
 from .routes import auth, api
 from .models import db
 
+config = {
+    "development": "config.DevelopmentConfig",
+    "testing": "config.TestingConfig",
+    "preview": "config.PreviewDeploymentConfig",
+    "deployment": "config.DeploymentConfig",
+    "default": "config.DevelopmentConfig"
+}
 
 def create_app(config=None):
-    app = Flask(__name__)
+    app = Flask(__name__, instance_relative_config=True)
     # load app sepcified configuration
     CORS(app, supports_credentials=True)
+
+    config_name = os.getenv('FLASK_CONFIGURATION', 'default')
+
+    app.config.from_object(config[config_name])
+    app.config.from_pyfile('config.cfg', silent=True)
+
     if config is not None:
         if isinstance(config, dict):
             app.config.update(config)
