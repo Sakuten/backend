@@ -12,6 +12,7 @@ config = {
     "default": "config.DevelopmentConfig"
 }
 
+
 def create_app(config=None):
     app = Flask(__name__, instance_relative_config=True)
     # load app sepcified configuration
