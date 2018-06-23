@@ -3,6 +3,7 @@ from flask_cors import CORS
 from sqlalchemy.exc import ProgrammingError
 from .routes import auth, api
 from .models import db
+import os
 
 config = {
     "development": "config.DevelopmentConfig",
