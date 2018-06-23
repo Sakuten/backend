@@ -9,7 +9,6 @@ flask-sqlalchemy = "*"
 marshmallow = "*"
 flask-cors = "*"
 cryptography = "*"
-mysql-connector-python = "*"
 "psycopg2-binary" = "*"
 
 [dev-packages]
