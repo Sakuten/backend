@@ -6,11 +6,11 @@ from .models import db
 import os
 
 config = {
-    "development": "config.DevelopmentConfig",
-    "testing": "config.TestingConfig",
-    "preview": "config.PreviewDeploymentConfig",
-    "deployment": "config.DeploymentConfig",
-    "default": "config.DevelopmentConfig"
+    "development": "api.config.DevelopmentConfig",
+    "testing": "api.config.TestingConfig",
+    "preview": "api.config.PreviewDeploymentConfig",
+    "deployment": "api.config.DeploymentConfig",
+    "default": "api.config.DevelopmentConfig"
 }
 
 
