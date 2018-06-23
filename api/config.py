@@ -12,20 +12,24 @@ class BaseConfig(object):
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
     TESTING = True
+    ENV = 'development'
 
 
 class TestingConfig(BaseConfig):
     DEBUG = False
     TESTING = True
+    ENV = 'development'
 
 
 class PreviewDeploymentConfig(BaseConfig):
     DEBUG = False
     TESTING = False
     SQLALCHEMY_DATABASE_URI = 'sqlite://'
+    ENV = 'development'
 
 
 class DeploymentConfig(PreviewDeploymentConfig):
     # None, to be configured in config.cfg in instance directory
     SQLALCHEMY_DATABASE_URI = None
     SECRET_KEY = None
+    ENV = 'production'
