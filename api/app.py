@@ -28,12 +28,9 @@ def create_app(config=None):
             try:
                 db.drop_all()
             except (ProgrammingError, IntegrityError):
-                app.logger.warning('Good luck with this ;)')
-            try:
-                db.create_all()
-            except (ProgrammingError, IntegrityError):
-                app.logger.warning('Good luck with this ;)')
-            # initdb(app, db)
+                app.logger.warning('drop_all() Failed. Isn\'t this the first run?')
+
+            db.create_all()
             generate()
 
     return app
