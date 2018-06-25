@@ -10,6 +10,7 @@ marshmallow = "*"
 flask-cors = "*"
 cryptography = "*"
 psycopg2-binary = "*"
+gunicorn = "*"
 
 [dev-packages]
 "flake8" = "*"
