@@ -5,7 +5,7 @@ class BaseConfig(object):
     DEBUG = False
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:password@mysql/db'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:password@db/postgres'
     SECRET_KEY = Fernet.generate_key()
 
 
