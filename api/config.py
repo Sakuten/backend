@@ -20,15 +20,9 @@ class TestingConfig(BaseConfig):
     TESTING = True
     ENV = 'development'
 
-
-class PreviewDeploymentConfig(BaseConfig):
+class DeploymentConfig(BaseConfig):
     DEBUG = False
     TESTING = False
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'
-    ENV = 'development'
-
-
-class DeploymentConfig(PreviewDeploymentConfig):
     # None, to be configured in config.cfg in instance directory
     SQLALCHEMY_DATABASE_URI = None
     SECRET_KEY = None
