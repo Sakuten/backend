@@ -41,13 +41,7 @@ def create_app():
     with app.app_context():
         if sqlalchemy.inspect(db.engine).get_table_names() == []:
             app.logger.warning(
-                'Regenerating test data for development '
-                '(because FLASK_ENV == development)')
-            try:
-                db.drop_all()
-            except (ProgrammingError, IntegrityError):
-                app.logger.warning('drop_all() Failed. Isn\'t this the first run?')
-
+                'Generating Initial Data for Database in the first run')
             db.create_all()
             generate()
 
