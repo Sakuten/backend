@@ -8,6 +8,13 @@
     }
   },
   "formation": {},
-  "addons": [],
+  "addons": [
+    {
+      "plan": "heroku-postgresql",
+      "options": {
+        "version": "10.4"
+      }
+    }
+  ],
   "buildpacks": []
 }
