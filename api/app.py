@@ -9,6 +9,7 @@ import sys
 config = {
     "development": "api.config.DevelopmentConfig",
     "testing": "api.config.TestingConfig",
+    "preview": "api.config.PreviewDeploymentConfig",
     "deployment": "api.config.DeploymentConfig",
     "default": "api.config.DevelopmentConfig"
 }
