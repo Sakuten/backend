@@ -17,5 +17,5 @@ WORKDIR /code
 
 ENTRYPOINT ["prehook", "python -V", "--", \
             "prehook", "pipenv install", "--", \
-            "wait-for-it", "mysql:3306", "-t", "0", "--", \
+            "wait-for-it", "db:3456", "-t", "0", "--", \
             "pipenv", "run", "flask", "run"]
