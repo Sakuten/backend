@@ -21,7 +21,7 @@ def create_app(config=None):
     app.register_blueprint(api.bp, url_prefix='/api')
 
     with app.app_context():
-        if app.config['ENV'] == 'development':
+        if sqlalchemy.inspect(db.engine).get_table_names() == []:
             app.logger.warning(
                 'Regenerating test data for development '
                 '(because FLASK_ENV == development)')
