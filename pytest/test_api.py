@@ -5,7 +5,8 @@ import json
 import pytest
 
 from api import app
-from cryptography.fernet import Fernet
+from api.models import User, Classroom, Lottery, Application
+from api.auth import decrypt_token
 
 @pytest.fixture
 def client():
@@ -36,6 +37,15 @@ def test_toppage(client):
 
 def test_auth(client):
     """test whether authorization works correctly
+       1. test token is contained in response
+       2. test token is effective
     """
     resp = post_json(client, '/api/auth/', '{"username":"admin","password":"admin"}')
     assert b'token' in resp.data
+
+    token = resp.data['token']
+    data = decrypt_token(token)
+    user = User.query.filter_by(id=data['data']['user_id']).first()
+
+    assert user is not None
+
