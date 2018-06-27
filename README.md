@@ -5,7 +5,6 @@
 [![Travis CI](https://travis-ci.org/Sakuten/backend.svg?branch=develop)](https://travis-ci.org/Sakuten/backend)
 [![Maintainability](https://api.codeclimate.com/v1/badges/2d2730b300d7b2676c3e/maintainability)](https://codeclimate.com/github/Sakuten/backend/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/2d2730b300d7b2676c3e/test_coverage)](https://codeclimate.com/github/Sakuten/backend/test_coverage)
-[![Heroku](https://heroku-badges.herokuapp.com/?app=sakuten-api-dev&style=flat)](https://sakuten-api-dev.herokuapp.com)
 
 ## Get Started
 
