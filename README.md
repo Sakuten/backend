@@ -1,4 +1,4 @@
-# Sakuteo.backend
+# Sakuten.backend
 
 バックエンドです。
 
