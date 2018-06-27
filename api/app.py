@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
+import sqlalchemy
 from sqlalchemy.exc import ProgrammingError, IntegrityError
 from .routes import auth, api
 from .models import db
