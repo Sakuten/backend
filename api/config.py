@@ -1,5 +1,5 @@
 from cryptography.fernet import Fernet
-
+import os
 
 class BaseConfig(object):
     DEBUG = False
@@ -18,6 +18,13 @@ class DevelopmentConfig(BaseConfig):
 class TestingConfig(BaseConfig):
     DEBUG = False
     TESTING = True
+    ENV = 'development'
+
+class PreviewDeploymentConfig(BaseConfig):
+    DEBUG = True
+    TESTING = False
+    # DATABASE_URL is to be set by Heroku
+    SQLALCHEMY_DATABASE_URI =os.environ.get('DATABASE_URL')
     ENV = 'development'
 
 class DeploymentConfig(BaseConfig):

@@ -1,0 +1,20 @@
+{
+  "name": "sakuten-api",
+  "scripts": {},
+  "env": {
+    "FLASK_CONFIGURATION": {
+      "description": "The config to use. This should be 'preview' to run in Heroku.",
+      "value": "preview"
+    }
+  },
+  "formation": {},
+  "addons": [
+    {
+      "plan": "heroku-postgresql",
+      "options": {
+        "version": "10"
+      }
+    }
+  ],
+  "buildpacks": []
+}
