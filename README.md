@@ -10,6 +10,12 @@
 
 See [Sakuten/devenv](https://github.com/Sakuten/devenv#%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83)
 
+## Deployment
+
+`develop`ブランチのHEADが以下にデプロイされています。
+
+[sakuten-api-dev.herokuapp.com](https://sakuten-api-dev.herokuapp.com)
+
 ## License
 
 MIT License
