@@ -11,6 +11,7 @@ flask-cors = "*"
 cryptography = "*"
 psycopg2-binary = "*"
 gunicorn = "*"
+pytest = "*"
 
 [dev-packages]
 "flake8" = "*"
