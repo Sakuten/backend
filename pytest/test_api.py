@@ -56,8 +56,10 @@ def test_auth(client):
        1. test token is contained in response
        2. test token is effective
     """
-    resp = post_json(client, '/api/auth/', '{"username":"admin","password":"admin"}')
-    assert b'token' in resp.data
+    resp = post_json(client, '/auth/', json_dict={
+        'username':'admin', 'password':'admin'
+    })
+    assert b'token' in resp.get_json
 
     token = resp.data['token']
     data = decrypt_token(token)
