@@ -46,6 +46,12 @@ def login(client, username, password):
     ), follow_redirects=True)
 
 
+def test_login(client):
+    resp = login(client, 'admin', 'admin')
+    assert b'token' in resp.get_json
+    resp = login(client, 'example1', 'example1')
+    assert b'token' in resp.get_json
+
 def test_toppage(client):
     resp = client.get('/')
     assert b'DOC' in resp.data
