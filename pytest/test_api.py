@@ -11,6 +11,8 @@ from api.auth import decrypt_token
 @pytest.fixture
 def client():
     """make a client for testing
+        client (class flask.app.Flask): application <Flask 'api.app'>
+        test_client (class 'Flask.testing.FlaskClient'): test client <FlaskClient <Flask 'api.app'>>
     """
     client = app.create_app()
     db_fd, client.config['DATABASE'] = tempfile.mkstemp()
