@@ -36,6 +36,16 @@ def post_json(client, url, json_dict):
     return client.post(url, json=json_dict, content_type='application/json') # here should be checked , because 'dict' might be wrong usage
 
 
+def login(client, username, password):
+    """logging in as 'username' with 'password'
+        
+    """
+    return client.post('/auth/', data=dict(
+        username=username,
+        password=password
+    ), follow_redirects=True)
+
+
 def test_toppage(client):
     resp = client.get('/')
     assert b'DOC' in resp.data
