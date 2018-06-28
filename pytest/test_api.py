@@ -26,11 +26,15 @@ def client():
     os.close(db_fd)
     os.unlink(client.config['DATABASE'])
 
-
 def post_json(client, url, json_dict):
     """send POST request to 'url' with 'json_dict' as data
+        Args:
+        client (obj): The client application for test. Generated in 'client' method
+        url (str): URL to post JSON.
+        json_dict (dict): A JSON data to post
     """
-    return client.post(url, data=json.dumps(json_dict), content_type='application/json')
+    return client.post(url, json=json_dict, content_type='application/json') # here should be checked , because 'dict' might be wrong usage
+
 
 def test_toppage(client):
     resp = client.get('/')
