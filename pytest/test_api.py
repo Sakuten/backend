@@ -1,8 +1,12 @@
 import os
+import sys
 import tempfile
 import json
 
 import pytest
+
+# Append current path so that we can execute tests from repository root
+sys.path.append(os.getcwd())
 
 from api import app
 from api.models import User, Classroom, Lottery, Application
