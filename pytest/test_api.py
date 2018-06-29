@@ -29,24 +29,23 @@ def client():
 
     yield test_client
 
-def post_json(client, url, json_dict):
+def post_json(client, url, json):
     """send POST request to 'url' with 'json_dict' as data
         Args:
         client (obj): The client application for test. Generated in 'client' method
         url (str): URL to post JSON.
         json_dict (dict): A JSON data to post
     """
-    return client.post(url, json=json_dict, content_type='application/json') # here should be checked , because 'dict' might be wrong usage
+    return client.post(url, json=json) # here should be checked , because 'dict' might be wrong usage
 
 
 def login(client, username, password):
     """logging in as 'username' with 'password'
-        
     """
-    return client.post('/auth/', data=dict(
-        username=username,
-        password=password
-    ), follow_redirects=True)
+    return client.post('/auth/', json={
+        'username': username,
+        'password': password
+    }, follow_redirects=True)
 
 
 def test_login(client):
