@@ -30,15 +30,6 @@ def client():
 
     yield test_client
 
-def post_json(client, url, json):
-    """send POST request to 'url' with 'json_dict' as data
-        Args:
-        client (obj): The client application for test. Generated in 'client' method
-        url (str): URL to post JSON.
-        json_dict (dict): A JSON data to post
-    """
-    return client.post(url, json=json) # here should be checked , because 'dict' might be wrong usage
-
 
 def login(client, username, password):
     """logging in as 'username' with 'password'
@@ -65,10 +56,8 @@ def test_auth(client):
        1. test token is contained in response
        2. test token is effective
     """
-    resp = post_json(client, '/auth/', json_dict={
-        'username':'admin', 'password':'admin'
-    })
-    assert b'token' in resp.get_json
+    resp = login(client, 'admin', 'admin').get_json()
+    assert 'token' in resp
 
     token = resp.data['token']
     data = decrypt_token(token)
