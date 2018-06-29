@@ -59,9 +59,10 @@ def test_auth(client):
     resp = login(client, 'admin', 'admin').get_json()
     assert 'token' in resp
 
-    token = resp.data['token']
-    data = decrypt_token(token)
-    user = User.query.filter_by(id=data['data']['user_id']).first()
+    token = resp['token']
+    with client.application.app_context():
+        data = decrypt_token(token)
+        user = User.query.filter_by(id=data['data']['user_id']).first()
 
     assert user is not None
 
