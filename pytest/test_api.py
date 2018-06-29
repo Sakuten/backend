@@ -37,14 +37,14 @@ def login(client, username, password):
     return client.post('/auth/', json={
         'username': username,
         'password': password
-    }, follow_redirects=True)
+    }, follow_redirects=True).get_json()
 
 
 def test_login(client):
     resp = login(client, 'admin', 'admin')
-    assert 'token' in resp.get_json()
+    assert 'token' in resp
     resp = login(client, 'example1', 'example1')
-    assert 'token' in resp.get_json()
+    assert 'token' in resp
 
 def test_toppage(client):
     resp = client.get('/')
@@ -56,7 +56,7 @@ def test_auth(client):
        1. test token is contained in response
        2. test token is effective
     """
-    resp = login(client, 'admin', 'admin').get_json()
+    resp = login(client, 'admin', 'admin')
     assert 'token' in resp
 
     token = resp['token']
