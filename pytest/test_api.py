@@ -11,6 +11,7 @@ sys.path.append(os.getcwd())
 from api import app
 from api.models import User, Classroom, Lottery, Application
 from api.auth import decrypt_token
+from cryptography.fernet import Fernet
 
 @pytest.fixture
 def client():
