@@ -45,15 +45,24 @@ def login(client, username, password):
 
 
 def test_login(client):
+    """ attempt to login as
+            * admin     (with proper/wrong password)
+            * test_user('example1')     (with proper/wrong password)
+            * non_exist_user('nonexist')
+
+        target_url: /api/auth/
+    """
     resp = login(client, 'admin', 'admin')
-    assert 'token' in resp
+    assert 'Login Successful' in resp['message']
     resp = login(client, 'example1', 'example1')
-    assert 'token' in resp
+    assert 'Login Successful' in resp['message']
+    resp = login(client, 'notexist', 'notexist')
+    assert 'Login Unsuccessful' in resp['message']
 
-
-def test_toppage(client):
-    resp = client.get('/')
-    assert b'DOC' in resp.data
+    resp = login(client, 'admin', 'wrong_admin')
+    assert 'Login Unsuccessful' in resp['message']
+    resp = login(client, 'example1', 'wrong_example1')
+    assert 'Login Unsuccessful' in resp['message']
 
 
 def test_auth(client):
