@@ -13,6 +13,7 @@ from api.models import User, Classroom, Lottery, Application
 from api.auth import decrypt_token
 from cryptography.fernet import Fernet
 
+
 @pytest.fixture
 def client():
     """make a client for testing
@@ -25,7 +26,7 @@ def client():
         'TESTING': True,
         'SECRET_KEY': Fernet.generate_key(),
         'ENV': 'development'
-        })
+    })
     test_client = client.test_client()
 
     yield test_client
@@ -46,6 +47,7 @@ def test_login(client):
     resp = login(client, 'example1', 'example1')
     assert 'token' in resp
 
+
 def test_toppage(client):
     resp = client.get('/')
     assert b'DOC' in resp.data
@@ -65,4 +67,3 @@ def test_auth(client):
         user = User.query.filter_by(id=data['data']['user_id']).first()
 
     assert user is not None
-
