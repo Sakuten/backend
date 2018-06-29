@@ -18,17 +18,16 @@ def client():
         client (class flask.app.Flask): application <Flask 'api.app'>
         test_client (class 'Flask.testing.FlaskClient'): test client <FlaskClient <Flask 'api.app'>>
     """
-    client = app.create_app()
-    db_fd, client.config['DATABASE'] = tempfile.mkstemp()
-    client.config['TESTING'] = True
-    # I have to defined, but I don't know which to set.so, I'll comment out this
-    # client.config['SQLALCHEMY_DATABASE_URI'] = ''
+    client = app.create_app({
+        'SQLALCHEMY_TRACK_MODIFICATIONS': False,
+        'SQLALCHEMY_DATABASE_URI': 'sqlite://',
+        'TESTING': True,
+        'SECRET_KEY': Fernet.generate_key(),
+        'ENV': 'development'
+        })
     test_client = client.test_client()
 
     yield test_client
-
-    os.close(db_fd)
-    os.unlink(client.config['DATABASE'])
 
 def post_json(client, url, json_dict):
     """send POST request to 'url' with 'json_dict' as data
