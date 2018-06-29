@@ -65,10 +65,11 @@ def test_login(client):
     assert 'Login Unsuccessful' in resp['message']
 
 
-def test_auth(client):
-    """test whether authorization works correctly
+def test_auth_token(client):
+    """test vaild token is returned
        1. test token is contained in response
        2. test token is effective
+       target_url: /api/auth/
     """
     resp = login(client, 'admin', 'admin')
     assert 'token' in resp
