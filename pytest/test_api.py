@@ -2,6 +2,7 @@ import os
 import sys
 import tempfile
 import json
+from cryptography.fernet import Fernet
 
 import pytest
 
@@ -11,7 +12,13 @@ sys.path.append(os.getcwd())
 from api import app
 from api.models import User, Classroom, Lottery, Application
 from api.auth import decrypt_token
-from cryptography.fernet import Fernet
+from api.schemas import (
+    user_schema,
+    classrooms_schema,
+    classroom_schema,
+    lotteries_schema,
+    lottery_schema
+)
 
 
 # ===============================  settings and utils
@@ -99,5 +106,21 @@ def test_auth_token(client):
         user = User.query.filter_by(id=data['data']['user_id']).first()
 
     assert user is not None
+
+
+# UNDER CONSTRUCTION
+def test_status(client):
+    user = {'username':'admin',
+            'password':'admin'}
+    resp = as_user_get(client, user['username'], user['password'], '/api/status')
+    assert 'id' in resp.get_json()['status']
+
+    with client.application.app_context():
+        db_status = User.query.filter_by(id=user['username']).first()
+
+    assert resp.get_json()['status'] == user_schema.dump(db_status)[0].dump()
+
+
+
 # ---------- Lottery API
 
