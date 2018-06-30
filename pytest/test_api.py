@@ -14,6 +14,7 @@ from api.auth import decrypt_token
 from cryptography.fernet import Fernet
 
 
+# ===============================  settings and utils
 @pytest.fixture
 def client():
     """make a client for testing
@@ -59,6 +60,9 @@ def as_user_get(client, username, password, url):
    
     return client.get(url, headers={'Authorization': header})
 
+# ================================= tests
+
+# ---------- User API
 def test_login(client):
     """ attempt to login as
             * admin     (with proper/wrong password)
@@ -95,3 +99,5 @@ def test_auth_token(client):
         user = User.query.filter_by(id=data['data']['user_id']).first()
 
     assert user is not None
+# ---------- Lottery API
+
