@@ -21,6 +21,8 @@ from api.schemas import (
 )
 
 
+pre_config = os.getenv('FLASK_CONFIGURATION', 'default')
+
 # ===============================  settings and utils
 @pytest.fixture
 def client():
@@ -28,13 +30,10 @@ def client():
         client (class flask.app.Flask): application <Flask 'api.app'>
         test_client (class 'Flask.testing.FlaskClient'): test client <FlaskClient <Flask 'api.app'>>
     """
-    client = app.create_app({
-        'SQLALCHEMY_TRACK_MODIFICATIONS': False,
-        'SQLALCHEMY_DATABASE_URI': 'sqlite://',
-        'TESTING': True,
-        'SECRET_KEY': Fernet.generate_key(),
-        'ENV': 'development'
-    })
+
+    # set app config to 'testing'.
+    os.environ['FLASK_CONFIGURATION'] = 'testing'
+    client = app.create_app()
     test_client = client.test_client()
 
     yield test_client
