@@ -97,6 +97,7 @@ def test_auth_token(client):
     """test vaild token is returned
        1. test token is contained in response
        2. test token is effective
+
        target_url: /api/auth/
     """
     resp = login(client, 'admin', 'admin')
@@ -126,3 +127,14 @@ def test_status(client):
 
 # ---------- Lottery API
 
+def test_get_allclassrooms(client):
+    """test proper infomation is returned from the API
+        
+        target_url: /api/classrooms
+    """
+    resp = client.get('/api/classrooms')
+
+
+def test_toppage(client):
+    resp = client.get('/')
+    assert b'DOC' in resp.data
