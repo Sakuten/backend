@@ -121,7 +121,7 @@ def test_status(client):
     with client.application.app_context():
         db_status = User.query.filter_by(username=user['username']).first()
 
-        assert resp.get_json()['status'] == user_schema.dump(db_status)[0].dump()
+        assert resp.get_json()['status'] == user_schema.dump(db_status)[0]
 
 
 
