@@ -119,7 +119,7 @@ def test_status(client):
     assert 'id' in resp.get_json()['status']
 
     with client.application.app_context():
-        db_status = User.query.filter_by(id=user['username']).first()
+        db_status = User.query.filter_by(username=user['username']).first()
 
         assert resp.get_json()['status'] == user_schema.dump(db_status)[0].dump()
 
