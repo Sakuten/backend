@@ -147,7 +147,7 @@ def test_login_invalid(client):
 def test_auth_token(client):
     """test vaild token is returned
        1. test: token is contained in response
-       2. test: token is effective
+       2. test: token is vaild
 
        target_url: /api/auth/
     """
