@@ -123,6 +123,25 @@ def test_login_form(client):
     resp = login_with_form(client, 'example1', 'wrong_example1')
     assert 'Login Unsuccessful' in resp['message']
 
+def test_login_invalid(client):
+    """logging in with invalid request params as
+            * test_user('example1')
+        target_url: /api/auth/
+    """
+    resp = client.post('/auth/', json={
+        'username': 'example1',
+    }, follow_redirects=True)
+    assert 400 == resp.status_code
+    assert 'Invalid request' in resp.get_json()['message']
+
+    resp = client.post('/auth/', json={
+        'username': 'example1',
+        'password': 'example1',
+    }, follow_redirects=True, content_type='application/xml')
+    assert 400 == resp.status_code
+    assert 'Unsupported content type' in resp.get_json()['message']
+
+
 def test_auth_token(client):
     """test vaild token is returned
        1. test token is contained in response
