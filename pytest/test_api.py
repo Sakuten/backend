@@ -40,6 +40,8 @@ def client():
 
 
 def teardown():
+    """reset environment
+    """
     os.environ['FLASK_CONFIGURATION'] = pre_config
 
 def login(client, username, password):
@@ -144,8 +146,8 @@ def test_login_invalid(client):
 
 def test_auth_token(client):
     """test vaild token is returned
-       1. test token is contained in response
-       2. test token is effective
+       1. test: token is contained in response
+       2. test: token is effective
 
        target_url: /api/auth/
     """
@@ -162,6 +164,13 @@ def test_auth_token(client):
 
 # UNDER CONSTRUCTION
 def test_status(client):
+    """test it return a vaild response
+        1. test: response contains 'id'
+        2. test: response matches the data in DB
+
+        auth: required
+        target_url: /api/status
+    """
     user = {'username':'admin',
             'password':'admin'}
     resp = as_user_get(client, user['username'], user['password'], '/api/status')
