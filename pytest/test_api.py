@@ -22,6 +22,10 @@ from api.schemas import (
 
 
 pre_config = os.getenv('FLASK_CONFIGURATION', 'default')
+admin = {'username':'admin',
+        'password':'admin'}
+test_user = {'username':'example1',
+        'password':'example1'}
 
 # ===============================  settings and utils
 @pytest.fixture
@@ -94,16 +98,16 @@ def test_login(client):
 
         target_url: /api/auth/
     """
-    resp = login(client, 'admin', 'admin')
+    resp = login(client, admin['username'], admin['password'])
     assert 'Login Successful' in resp['message']
-    resp = login(client, 'example1', 'example1')
+    resp = login(client, test_user['username'], test_user['password'])
     assert 'Login Successful' in resp['message']
     resp = login(client, 'notexist', 'notexist')
     assert 'Login Unsuccessful' in resp['message']
 
-    resp = login(client, 'admin', 'wrong_admin')
+    resp = login(client, admin['username'], 'wrong_admin')
     assert 'Login Unsuccessful' in resp['message']
-    resp = login(client, 'example1', 'wrong_example1')
+    resp = login(client, test_user['username'], 'wrong_example1')
     assert 'Login Unsuccessful' in resp['message']
 
 def test_login_form(client):
@@ -114,32 +118,32 @@ def test_login_form(client):
         with Content-Type: application/x-www-form-urlencoded
         target_url: /api/auth/
     """
-    resp = login_with_form(client, 'admin', 'admin')
+    resp = login_with_form(client, admin['username'], admin['password'])
     assert 'Login Successful' in resp['message']
-    resp = login_with_form(client, 'example1', 'example1')
+    resp = login_with_form(client, test_user['username'], test_user['password'])
     assert 'Login Successful' in resp['message']
     resp = login_with_form(client, 'notexist', 'notexist')
     assert 'Login Unsuccessful' in resp['message']
 
-    resp = login_with_form(client, 'admin', 'wrong_admin')
+    resp = login_with_form(client, admin['username'], 'wrong_admin')
     assert 'Login Unsuccessful' in resp['message']
-    resp = login_with_form(client, 'example1', 'wrong_example1')
+    resp = login_with_form(client, test_user['username'], 'wrong_example1')
     assert 'Login Unsuccessful' in resp['message']
 
 def test_login_invalid(client):
     """logging in with invalid request params as
-            * test_user('example1')
+            * test_user
         target_url: /api/auth/
     """
     resp = client.post('/auth/', json={
-        'username': 'example1',
+        'username': test_user['username'],
     }, follow_redirects=True)
     assert 400 == resp.status_code
     assert 'Invalid request' in resp.get_json()['message']
 
     resp = client.post('/auth/', json={
-        'username': 'example1',
-        'password': 'example1',
+        'username': test_user['username'],
+        'password': test_user['password'],
     }, follow_redirects=True, content_type='application/xml')
     assert 400 == resp.status_code
     assert 'Unsupported content type' in resp.get_json()['message']
@@ -152,7 +156,7 @@ def test_auth_token(client):
 
        target_url: /api/auth/
     """
-    resp = login(client, 'admin', 'admin')
+    resp = login(client, admin['username'], admin['password'])
     assert 'token' in resp
 
     token = resp['token']
@@ -171,8 +175,7 @@ def test_status(client):
         auth: required
         target_url: /api/status
     """
-    user = {'username':'admin',
-            'password':'admin'}
+    user = test_user
     resp = as_user_get(client, user['username'], user['password'], '/api/status')
     assert 'id' in resp.get_json()['status']
 
