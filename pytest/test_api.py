@@ -187,11 +187,14 @@ def test_status(client):
 
 def test_get_allclassrooms(client):
     """test proper infomation is returned from the API
-        
         target_url: /api/classrooms
     """
     resp = client.get('/api/classrooms')
 
+    with client.application.app_context():
+        db_status = Classroom.query.all()
+
+        assert resp.get_json()['classrooms'] == classrooms_schema.dump(db_status)[0]
 
 def test_toppage(client):
     resp = client.get('/')
