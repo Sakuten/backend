@@ -12,7 +12,7 @@
 |  O   | attempt with wrong header             | /api/status                        | 400         | test_status_wrong_header               |
 |  O   | test whether given list is correct    | /api/classrooms                    | 200         | test_get_allclassrooms                 |
 |  O   | test whether given list is correct    | /api/classrooms/<id>/              | 200         | test_get_specific_classroom            |
-|  O   | attempt to give invaild id            | /api/classrooms/<id>/              | 404         | test_get_specific_classroom_invaild_id |
+|  O   | attempt to give invaild id            | /api/classrooms/<id>/              | 400         | test_get_specific_classroom_invaild_id |
 |  O   | test whether given list is correct    | /api/lotteries                     | 200         | test_get_alllotteries                  |
 |  O   | test whether given list is correct    | /api/lotteries/<id>                | 200         | test_get_specific_lottery              |
 |      | attempt to give invaild id            | /api/lotteries/<id>                | 400         | test_get_specific_lottery_invalid_id   |
