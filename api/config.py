@@ -24,7 +24,9 @@ class PreviewDeploymentConfig(BaseConfig):
     DEBUG = True
     TESTING = False
     # DATABASE_URL is to be set by Heroku
-    SQLALCHEMY_DATABASE_URI =os.environ.get('DATABASE_URL')
+    # SECRET_KEY is to be set in config vars
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    SECRET_KEY = os.environ.get('SECRET_KEY')
     ENV = 'development'
 
 class DeploymentConfig(BaseConfig):
