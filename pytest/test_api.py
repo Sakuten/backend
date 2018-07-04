@@ -82,6 +82,7 @@ def as_user_get(client, username, password, url):
    
     return client.get(url, headers={'Authorization': header})
 
+
 # ================================= tests
 
 # ---------- User API
@@ -162,7 +163,6 @@ def test_auth_token(client):
     assert user is not None
 
 
-# UNDER CONSTRUCTION
 def test_status(client):
     """test it return a vaild response
         1. test: response contains 'id'
@@ -199,7 +199,6 @@ def test_get_allclassrooms(client):
 
 def test_get_specific_classroom(client):
     """test proper infomation is returned from the API
-
         target_url: /api/classrooms/<id>
     """
     idx = '1' # classroom id to test
@@ -209,6 +208,18 @@ def test_get_specific_classroom(client):
         db_status = Classroom.query.filter_by(id=idx).first()
 
         assert resp.get_json()['classroom'] == classroom_schema.dump(db_status)[0]
+
+
+def test_get_alllotteries(client):
+    """test proper infomation is returned from the API
+        target_url: /api/lotteries
+    """
+    resp = client.get('/api/lotteries')
+
+    with client.application.app_context():
+        db_status = Lottery.query.all()
+
+        assert resp.get_json()['lotteries'] == lotteries_schema.dump(db_status)[0]
 
 
 
