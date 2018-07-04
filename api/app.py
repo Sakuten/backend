@@ -19,7 +19,8 @@ config = {
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
 
-    app.url_map.strict_slashes = False # Allow to access with or without trailing slash
+    # Allow to access with or without trailing slash
+    app.url_map.strict_slashes = False
 
     CORS(app, supports_credentials=True)
 
