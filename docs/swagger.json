@@ -2,14 +2,20 @@
   "openapi": "3.0.0",
   "servers": [
     {
-      "url": "https://api.sakuten.org/v1"
+      "url": "https://api.sakuten.jp/v1"
+    },
+    {
+      "url": "https://sakuten-api-dev.herokuapp.com"
+    },
+    {
+      "url": "http://localhost:8888"
     }
   ],
   "info": {
-    "description": "The Web API for the school featival in [Koishikawa Secondary Education School](http://www.koishikawachuto-e.metro.tokyo.jp/). This is developed by the Sakuten Development Team, which is independent of teachers. You can find more about Sakuten at [sakuten.org](https://sakuten.org/). Also you can explore the source code of this system on [GitHub](https://github.com/Sakuten).",
-    "version": "1.0.0",
+    "description": "**This specification is the pre-development vesion** The Web API for the school featival in [Koishikawa Secondary Education School](http://www.koishikawachuto-e.metro.tokyo.jp/). This is developed by the Sakuten Development Team, which is independent of teachers. You can find more about Sakuten at [sakuten.org](https://sakuten.org/). Also you can explore the source code of this system on [GitHub](https://github.com/Sakuten).",
+    "version": "0.0.5",
     "title": "Sakuten API",
-    "termsOfService": "https://sakuten.org/terms/",
+    "termsOfService": "https://www.sakuten.jp/terms/",
     "contact": {
       "email": "devteam@sakuten.org"
     },
@@ -70,7 +76,7 @@
         }
       }
     },
-    "/status": {
+    "/api/status": {
       "get": {
         "tags": [
           "user"
@@ -102,120 +108,7 @@
         ]
       }
     },
-    "/users": {
-      "get": {
-        "tags": [
-          "user"
-        ],
-        "summary": "Get list of users",
-        "description": "",
-        "operationId": "getUsers",
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/UserList"
-          },
-          "400": {
-            "$ref": "#/components/responses/InvalidRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          }
-        },
-        "security": [
-          {
-            "admin_auth": []
-          }
-        ]
-      }
-    },
-    "/users/{secretId}": {
-      "get": {
-        "tags": [
-          "user"
-        ],
-        "summary": "Find user by Secret ID",
-        "description": "Returns a single user",
-        "operationId": "getUserById",
-        "parameters": [
-          {
-            "name": "secretId",
-            "in": "path",
-            "description": "Secret ID of user to return",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/SecretID"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/UserInfo"
-          },
-          "400": {
-            "$ref": "#/components/responses/InvalidRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "description": "User not found"
-          }
-        },
-        "security": [
-          {
-            "admin_auth": []
-          }
-        ]
-      },
-      "delete": {
-        "tags": [
-          "user"
-        ],
-        "summary": "Ban user by Secret ID",
-        "description": "",
-        "operationId": "banUserById",
-        "parameters": [
-          {
-            "name": "secretId",
-            "in": "path",
-            "description": "Secret ID of user to ban",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/SecretID"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/SuccessfulOperation"
-          },
-          "400": {
-            "$ref": "#/components/responses/InvalidRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        },
-        "security": [
-          {
-            "admin_auth": []
-          }
-        ]
-      }
-    },
-    "/classrooms": {
+    "/api/classrooms": {
       "get": {
         "tags": [
           "lottery"
@@ -223,27 +116,6 @@
         "summary": "Get list of available classrooms",
         "description": "",
         "operationId": "getClassrooms",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "sort",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Specify the method to sort the list",
-            "required": false
-          },
-          {
-            "in": "query",
-            "name": "filter",
-            "schema": {
-              "type": "string",
-              "example": "available"
-            },
-            "description": "Specify the filter",
-            "required": false
-          }
-        ],
         "responses": {
           "200": {
             "$ref": "#/components/responses/ClassroomList"
@@ -251,7 +123,7 @@
         }
       }
     },
-    "/classrooms/{classroomId}": {
+    "/api/classrooms/{classroomId}": {
       "get": {
         "tags": [
           "lottery"
@@ -280,87 +152,7 @@
         }
       }
     },
-    "/classrooms/{classroomId}/winners": {
-      "get": {
-        "tags": [
-          "lottery"
-        ],
-        "summary": "Get the winner list of the class",
-        "description": "",
-        "operationId": "getWinnersById",
-        "parameters": [
-          {
-            "name": "classroomId",
-            "in": "path",
-            "description": "ID of classroom to return",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/ClassroomID"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/UserList"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        },
-        "security": [
-          {
-            "admin_auth": []
-          }
-        ]
-      }
-    },
-    "/classrooms/{classroomId}/winners/{Id}": {
-      "get": {
-        "tags": [
-          "lottery"
-        ],
-        "summary": "Get the winner by ID",
-        "description": "-> If logged in as admin, this endpoint responses full of the user information. Otherwise, this only check if the user has won and return no additional information but secret id.",
-        "operationId": "getWinnerById",
-        "parameters": [
-          {
-            "name": "classroomId",
-            "in": "path",
-            "description": "ID of classroom to return",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/ClassroomID"
-            }
-          },
-          {
-            "name": "Id",
-            "in": "path",
-            "description": "ID of user to return",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/SecretID"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/UserInfo"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          }
-        },
-        "security": [
-          {
-            "admin_auth": []
-          },
-          {
-            "checker_auth": []
-          }
-        ]
-      }
-    },
-    "/lotteries": {
+    "/api/lotteries": {
       "get": {
         "tags": [
           "lottery"
@@ -396,7 +188,7 @@
         }
       }
     },
-    "/lotteries/{lotteryId}": {
+    "/api/lotteries/{lotteryId}": {
       "get": {
         "tags": [
           "lottery"
@@ -423,8 +215,10 @@
             "$ref": "#/components/responses/NotFound"
           }
         }
-      },
-      "post": {
+      }
+    },
+    "/api/lotteries/{lotteryId}/apply": {
+      "put": {
         "tags": [
           "lottery"
         ],
@@ -444,7 +238,19 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/SuccessfulOperation"
+            "description": "Successfully applied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "$ref": "#/components/schemas/ApplicationID"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
             "$ref": "#/components/responses/InvalidRequest"
@@ -485,7 +291,19 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/SuccessfulOperation"
+            "description": "Successfully unapplied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "$ref": "#/components/schemas/ApplicationID"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
             "$ref": "#/components/responses/InvalidRequest"
@@ -507,8 +325,8 @@
         ]
       }
     },
-    "/lotteries/{lotteryId}/draw": {
-      "post": {
+    "/api/lotteries/{lotteryId}/draw": {
+      "get": {
         "tags": [
           "lottery"
         ],
@@ -528,7 +346,7 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/UserList"
+            "$ref": "#/components/responses/UserChosen"
           },
           "400": {
             "$ref": "#/components/responses/InvalidRequest"
@@ -603,14 +421,16 @@
           }
         }
       },
-      "UserList": {
-        "description": "List of Users",
+      "UserChosen": {
+        "description": "Chosen User",
         "content": {
           "application/json": {
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/User"
+              "type": "object",
+              "properties": {
+                "chosen": {
+                  "$ref": "#/components/schemas/SecretID"
+                }
               }
             }
           }
@@ -621,7 +441,12 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "#/components/schemas/User"
+              "type": "object",
+              "properties": {
+                "status": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
             }
           }
         }
@@ -813,8 +638,16 @@
           "id": {
             "$ref": "#/components/schemas/ApplicationID"
           },
-          "lottery": {
-            "$ref": "#/components/schemas/Lottery"
+          "lottery_id": {
+            "$ref": "#/components/schemas/LotteryID"
+          },
+          "status": {
+            "type": "boolean",
+            "description": "true if won, false if not won. null means undrawn. (deprecated)",
+            "example": true
+          },
+          "user_id": {
+            "$ref": "#/components/schemas/SecretID"
           }
         }
       },
@@ -824,10 +657,10 @@
           "id": {
             "$ref": "#/components/schemas/SecretID"
           },
-          "public_id": {
-            "$ref": "#/components/schemas/PublicID"
+          "username": {
+            "$ref": "#/components/schemas/Username"
           },
-          "application_history": {
+          "applications": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Application"
@@ -838,28 +671,32 @@
       "Certificate": {
         "type": "object",
         "required": [
-          "id",
-          "g-recaptcha-response"
+          "username",
+          "password"
         ],
         "properties": {
-          "id": {
-            "$ref": "#/components/schemas/SecretID"
+          "username": {
+            "$ref": "#/components/schemas/Username"
           },
-          "g-recaptcha-response": {
-            "type": "string",
-            "description": "Google reCAPTCHA response"
+          "password": {
+            "$ref": "#/components/schemas/Password"
           }
         }
       },
       "SecretID": {
-        "type": "string",
-        "example": "ZXhhbXBsZV92aXNpdG9yXzAwX0EK",
-        "description": "User Secret ID scanned from QR Code"
+        "type": "integer",
+        "example": 1,
+        "description": "User ID number (not secret but named secret for future compatibility)"
       },
-      "PublicID": {
+      "Username": {
         "type": "string",
-        "example": "ab10",
-        "description": "User Public ID written in the user card"
+        "example": "example1",
+        "description": "Username (deprecated; will be replaced by id auth)"
+      },
+      "Password": {
+        "type": "string",
+        "example": "example1",
+        "description": "Password (deprecated; will be replaced by id auth)"
       },
       "LotteryID": {
         "type": "integer",
