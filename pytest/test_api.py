@@ -196,6 +196,22 @@ def test_get_allclassrooms(client):
 
         assert resp.get_json()['classrooms'] == classrooms_schema.dump(db_status)[0]
 
+
+def test_get_specific_classroom(client):
+    """test proper infomation is returned from the API
+
+        target_url: /api/classrooms/<id>
+    """
+    idx = '1' # classroom id to test
+    resp = client.get('/api/classrooms/'+idx)
+
+    with client.application.app_context():
+        db_status = Classroom.query.filter_by(id=idx).first()
+
+        assert resp.get_json()['classroom'] == classroom_schema.dump(db_status)[0]
+
+
+
 def test_toppage(client):
     resp = client.get('/')
     assert b'DOC' in resp.data
