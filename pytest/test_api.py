@@ -222,6 +222,18 @@ def test_get_alllotteries(client):
         assert resp.get_json()['lotteries'] == lotteries_schema.dump(db_status)[0]
 
 
+def test_get_specific_lottery(client):
+    """test proper infomation is returned from the API
+        target_url: /api/lotteries/<id>
+    """
+    idx = '1' # lottery id to test
+    resp = client.get('/api/lotteries/'+idx)
+
+    with client.application.app_context():
+        db_status = Lottery.query.filter_by(id=idx).first()
+
+        assert resp.get_json()['lottery'] == lottery_schema.dump(db_status)[0]
+
 
 def test_toppage(client):
     resp = client.get('/')
