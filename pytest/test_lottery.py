@@ -64,6 +64,22 @@ def test_get_specific_lottery(client):
 
         assert resp.get_json()['lottery'] == lottery_schema.dump(db_status)[0]
 
+
+def test_get_specific_lottery_invalid_id(client):
+    """test proper errpr is returned from the API
+        target_url: /api/classrooms/<id>
+    """
+    idx = '102913012' # lottery id to test
+    resp = client.get('/api/lotteries/'+idx)
+
+    with client.application.app_context():
+        db_status = Lottery.query.filter_by(id=idx).first()
+
+        assert resp.status_code == 400
+
+
+
+
 def test_apply(client):
     """attempt to apply new application.
         1. test: error isn't returned

@@ -15,7 +15,7 @@
 |  O   | attempt to give invaild id            | /api/classrooms/<id>/              | 400         | test_get_specific_classroom_invaild_id |
 |  O   | test whether given list is correct    | /api/lotteries                     | 200         | test_get_alllotteries                  |
 |  O   | test whether given list is correct    | /api/lotteries/<id>                | 200         | test_get_specific_lottery              |
-|      | attempt to give invaild id            | /api/lotteries/<id>                | 400         | test_get_specific_lottery_invalid_id   |
+|  O   | attempt to give invaild id            | /api/lotteries/<id>                | 400         | test_get_specific_lottery_invalid_id   |
 |  O   | check DB is changed correctly         | /api/lotteries/<id>/apply [PUT]    | 200         | test_apply                             |
 |      | attempt to apply with wrong header    | /api/lotteries/<id>/apply [PUT]    | 400         | test_apply_invaild_header              |
 |      | attempt to apply with wrong auth data | /api/lotteries/<id>/apply [PUT]    | 401         | test_apply_invaild_auth                |
