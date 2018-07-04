@@ -17,7 +17,7 @@
 |  O   | test whether given list is correct    | /api/lotteries/<id>                | 200         | test_get_specific_lottery              |
 |  O   | attempt to give invaild id            | /api/lotteries/<id>                | 400         | test_get_specific_lottery_invalid_id   |
 |  O   | check DB is changed correctly         | /api/lotteries/<id>/apply [PUT]    | 200         | test_apply                             |
-|      | attempt to apply with wrong header    | /api/lotteries/<id>/apply [PUT]    | 400         | test_apply_invaild_header              |
+|  O   | attempt to apply with wrong header    | /api/lotteries/<id>/apply [PUT]    | 400         | test_apply_invaild_header              |
 |      | attempt to apply with wrong auth data | /api/lotteries/<id>/apply [PUT]    | 401         | test_apply_invaild_auth                |
 |      | attempt to apply without permission   | /api/lotteries/<id>/apply [PUT]    | 403         | test_apply_noperm                      |
 |      | attempt to apply invaild lottery      | /api/lotteries/<id>/apply [PUT]    | 404         | test_apply_invaild                     |

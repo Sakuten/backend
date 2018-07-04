@@ -101,4 +101,14 @@ def test_apply(client):
         assert application is not None
 
 
+def test_apply_invaild_header(client):
+    """attempt to apply with wrong header.
+        this cause error in /api/auth. not in /api/routes/api
+        target_url: /api/lotteries/<id>/apply
+    """
+    idx = '1'
+    token = login(client, test_user['username'], test_user['password'])['token']
+    resp = client.put('/api/lotteries/'+idx+'/apply', headers={'Authorization_wrong': 'Bearer '+ token})
+
+    assert resp.status_code == 401
 
