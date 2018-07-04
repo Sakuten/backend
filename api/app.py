@@ -18,9 +18,12 @@ config = {
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
-    # load app sepcified configuration
+
+    app.url_map.strict_slashes = False # Allow to access with or without trailing slash
+
     CORS(app, supports_credentials=True)
 
+    # load app sepcified configuration
     config_name = os.getenv('FLASK_CONFIGURATION', 'default')
 
     app.config.from_object(config[config_name])
