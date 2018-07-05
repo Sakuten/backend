@@ -527,6 +527,15 @@
               "$ref": "#/components/schemas/ErrorMessage"
             }
           }
+        },
+        "headers": {
+          "WWW-Authenicate": {
+            "schema": {
+              "type": "string",
+              "example": "Bearer error=\"invalid_request\""
+            },
+            "description": "Authenication Error Code. For details, please refer to RFC 6750 3. The WWW-Authenticate Response Header Field"
+          }
         }
       },
       "Unauthorized": {
@@ -537,6 +546,15 @@
               "$ref": "#/components/schemas/ErrorMessage"
             }
           }
+        },
+        "headers": {
+          "WWW-Authenicate": {
+            "schema": {
+              "type": "string",
+              "example": "Bearer realm=\"token_required\""
+            },
+            "description": "Authenication Error Code. For details, please refer to RFC 6750 3. The WWW-Authenticate Response Header Field"
+          }
         }
       },
       "Forbidden": {
@@ -546,6 +564,15 @@
             "schema": {
               "$ref": "#/components/schemas/ErrorMessage"
             }
+          }
+        },
+        "headers": {
+          "WWW-Authenicate": {
+            "schema": {
+              "type": "string",
+              "example": "Bearer error=\"insufficient_scope\""
+            },
+            "description": "Authenication Error Code. For details, please refer to RFC 6750 3. The WWW-Authenticate Response Header Field"
           }
         }
       }
