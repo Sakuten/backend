@@ -101,9 +101,6 @@
           },
           {
             "admin_auth": []
-          },
-          {
-            "checker_auth": []
           }
         ]
       }
