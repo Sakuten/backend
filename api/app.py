@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
 import sqlalchemy
-from sqlalchemy.exc import ProgrammingError, IntegrityError
 from .routes import auth, api
 from .models import db
 import os
@@ -27,12 +26,16 @@ def create_app():
     app.config.from_pyfile('config.cfg', silent=True)
 
     if app.config.get('SQLALCHEMY_DATABASE_URI', None) is None:
-        app.logger.error("SQLALCHEMY_DATABASE_URI is not set. Didn't you forget to set it in instance/config.cfg?")
-        sys.exit(4) # Return 4 to exit gunicorn
+        app.logger.error(
+            "SQLALCHEMY_DATABASE_URI is not set."
+            "Didn't you forget to set it in instance/config.cfg?")
+        sys.exit(4)  # Return 4 to exit gunicorn
 
     if app.config.get('SECRET_KEY', None) is None:
-        app.logger.error("SECRET_KEY is not set Didn't you forget to set it in instance/config.cfg?")
-        sys.exit(4) # Return 4 to exit gunicorn
+        app.logger.error(
+            "SECRET_KEY is not set."
+            "Didn't you forget to set it in instance/config.cfg?")
+        sys.exit(4)  # Return 4 to exit gunicorn
 
     db.init_app(app)
 
