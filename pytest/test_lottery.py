@@ -99,27 +99,3 @@ def test_apply(client):
         application = Application.query.filter_by(lottery=target_lottery, user_id=user.id) # this application should be added by previous 'client.put'
 
         assert application is not None
-
-
-def test_apply_invaild_header(client):
-    """attempt to apply with wrong header.
-        this cause error in /api/auth. not in /api/routes/api
-        target_url: /api/lotteries/<id>/apply
-    """
-    idx = '1'
-    token = login(client, test_user['username'], test_user['password'])['token']
-    resp = client.put('/api/lotteries/'+idx+'/apply', headers={'Authorization_wrong': 'Bearer '+ token})
-
-    assert resp.status_code == 401
-
-def test_apply_invaild_auth(client):
-    """attempt to apply with wrong auth.
-        target_url: /api/lotteries/<id>/apply
-    """
-    idx = '1'
-    token = login(client, test_user['username'], test_user['password'])['token']
-    resp = client.put('/api/lotteries/'+idx+'/apply', headers={'Authorization': 'Bearer test_wrong_token'+ token})
-
-    assert resp.status_code == 401
-
-
