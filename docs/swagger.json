@@ -143,7 +143,7 @@
           "200": {
             "$ref": "#/components/responses/ClassroomInfo"
           },
-          "404": {
+          "400": {
             "$ref": "#/components/responses/NotFound"
           }
         }
@@ -208,7 +208,7 @@
           "200": {
             "$ref": "#/components/responses/LotteryInfo"
           },
-          "404": {
+          "400": {
             "$ref": "#/components/responses/NotFound"
           }
         }
@@ -250,16 +250,20 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidRequest"
+            "description": "Not Found / Invalid Request / Lottery has already done / You're already applying to a lottery in this period",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
           },
           "403": {
             "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
           }
         },
         "security": [
@@ -303,16 +307,20 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/InvalidRequest"
+            "description": "Not Found / Invalid Request / Lottery has already done / You're already applying to a lottery in this period / You're not applying for this lottery",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
           },
           "403": {
             "$ref": "#/components/responses/Forbidden"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
           }
         },
         "security": [
@@ -346,7 +354,14 @@
             "$ref": "#/components/responses/UserChosen"
           },
           "400": {
-            "$ref": "#/components/responses/InvalidRequest"
+            "description": "Not Found / Invalid Request / This lottery is already done and cannot be undone / Nobody is applying to this lottery",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
