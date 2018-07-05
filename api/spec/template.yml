@@ -1,13 +1,13 @@
 swagger: '2.0'
 info:
   contact:
-    email: devteam@sakuten.org
+    email: devteam.sakuten@gmail.com
   description: >-
     **This specification is the pre-development vesion** The Web API for the
     school featival in [Koishikawa Secondary Education
     School](http://www.koishikawachuto-e.metro.tokyo.jp/). This is developed by
     the Sakuten Development Team, which is independent of teachers. You can find
-    more about Sakuten at [sakuten.org](https://sakuten.org/). Also you can
+    more about Sakuten at [sakuten.jp](https://sakuten.jp/). Also you can
     explore the source code of this system on
     [GitHub](https://github.com/Sakuten).
   license:
