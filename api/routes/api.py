@@ -9,11 +9,13 @@ from api.schemas import (
     lottery_schema
 )
 from api.auth import login_required
+from api.swagger import spec
 
 bp = Blueprint(__name__, 'api')
 
 
 @bp.route('/classrooms')
+@spec('api/classrooms.yml')
 def list_classrooms():
     classrooms = Classroom.query.all()
     result = classrooms_schema.dump(classrooms)[0]
@@ -21,6 +23,7 @@ def list_classrooms():
 
 
 @bp.route('/classrooms/<int:idx>')
+@spec('api/classrooms/idx.yml')
 def list_classroom(idx):
     classroom = Classroom.query.get(idx)
     if classroom is None:
@@ -30,6 +33,7 @@ def list_classroom(idx):
 
 
 @bp.route('/lotteries')
+@spec('api/lotteries.yml')
 def list_lotteries():
     lotteries = Lottery.query.all()
     result = lotteries_schema.dump(lotteries)[0]
@@ -37,6 +41,7 @@ def list_lotteries():
 
 
 @bp.route('/lotteries/<int:idx>')
+@spec('api/lotteries/idx.yml')
 def list_lottery(idx):
     lottery = Lottery.query.get(idx)
     if lottery is None:
@@ -47,6 +52,8 @@ def list_lottery(idx):
 
 
 @bp.route('/lotteries/<int:idx>/apply', methods=['PUT', 'DELETE'])
+@spec('api/lotteries/apply.yml', methods=['PUT'])
+@spec('api/lotteries/cancel.yml', methods=['DELETE'])
 @login_required()
 def apply_lottery(idx):
     lottery = Lottery.query.get(idx)
@@ -79,6 +86,7 @@ def apply_lottery(idx):
 
 
 @bp.route('/lotteries/<int:idx>/draw')
+@spec('api/lotteries/draw.yml')
 @login_required('admin')
 def draw_lottery(idx):
     lottery = Lottery.query.get(idx)
@@ -100,6 +108,7 @@ def draw_lottery(idx):
 
 
 @bp.route('/status', methods=['GET'])
+@spec('api/status.yml')
 @login_required()
 def get_status():
     user = User.query.filter_by(id=g.token_data['user_id']).first()

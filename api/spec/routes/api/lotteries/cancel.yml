@@ -1,0 +1,53 @@
+Unapply to the lottery
+---
+produces:
+  - application/json
+parameters:
+  - description: ID of the lottery to apply
+    in: path
+    name: lotteryId
+    required: true
+    type: integer
+    x-example: 0
+responses:
+  '200':
+    description: Successfully unapplied
+    schema:
+      properties:
+        id:
+          $ref: '#/definitions/ApplicationID'
+      type: object
+  '400':
+    description: >-
+      Not Found / Invalid Request / Lottery has already done / You're
+      already applying to a lottery in this period / You're not applying
+      for this lottery
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+  '401':
+    description: Authorization Failed
+    headers:
+      WWW-Authenicate:
+        description: >-
+          Authenication Error Code. For details, please refer to RFC 6750
+          3. The WWW-Authenticate Response Header Field
+        type: string
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+  '403':
+    description: You have no permission to perform the action
+    headers:
+      WWW-Authenicate:
+        description: >-
+          Authenication Error Code. For details, please refer to RFC 6750
+          3. The WWW-Authenticate Response Header Field
+        type: string
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+security:
+  - user_auth: []
+tags:
+  - lottery
+description: ''
+operationId: unapplyLotteryById
+summary: Unapply to the lottery
