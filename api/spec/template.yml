@@ -11,8 +11,8 @@ info:
     explore the source code of this system on
     [GitHub](https://github.com/Sakuten).
   license:
-    name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
   termsOfService: 'https://www.sakuten.jp/terms/'
   title: Sakuten API
   version: 0.0.5
