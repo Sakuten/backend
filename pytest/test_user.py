@@ -103,6 +103,6 @@ def test_status_invaild_header(client):
         target_url: /api/status
     """
     resp = client.get('/api/status', headers={'Authorization_wrong':'Bearer no_token_here'})
-    assert resp.status_code == 401
+    assert resp.status_code == 401 and 'token_required' in resp.headers['WWW-Authenticate']
 
 
