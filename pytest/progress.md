@@ -8,7 +8,7 @@
 |  O   | login with Unsupported Content-Type   |  -         |   -                                | 400         | test_login_invaild                     |
 |  O   | test whether given token is vaild     |  -         |   -                                | 400         | test_auth_token                        |
 |  O   | test whether given status is vaild    |  user      | /api/status                        | 200         | test_status                            |
-|      | attempt with wrong header             |  user      | /api/status                        | 400         | test_status_wrong_header               |
+|  O   | attempt with invaild header           |  user      | /api/status                        | 401         | test_status_invaild_header             |
 |      | attempt without proper auth           |  user      | /api/status                        | 401         | test_status_invaild_auth               |
 |  O   | test whether given list is correct    |  -         | /api/classrooms                    | 200         | test_get_allclassrooms                 |
 |  O   | test whether given list is correct    |  -         | /api/classrooms/<id>/              | 200         | test_get_specific_classroom            |

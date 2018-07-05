@@ -97,4 +97,12 @@ def test_status(client):
         assert resp.get_json()['status'] == user_schema.dump(db_status)[0]
 
 
+def test_status_invaild_header(client):
+    """attempt to get status with wrong header.
+        this cause error in /api/auth. not in /api/routes/api
+        target_url: /api/status
+    """
+    resp = client.get('/api/status', headers={'Authorization_wrong':'Bearer no_token_here'})
+    assert resp.status_code == 401
+
 
