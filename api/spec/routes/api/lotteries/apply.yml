@@ -33,16 +33,6 @@ responses:
         type: string
     schema:
       $ref: '#/definitions/ErrorMessage'
-  '403':
-    description: You have no permission to perform the action
-    headers:
-      WWW-Authenicate:
-        description: >-
-          Authenication Error Code. For details, please refer to RFC 6750
-          3. The WWW-Authenticate Response Header Field
-        type: string
-    schema:
-      $ref: '#/definitions/ErrorMessage'
 security:
   - user_auth: []
 tags:
