@@ -12,6 +12,7 @@ cryptography = "*"
 psycopg2-binary = "*"
 gunicorn = "*"
 flasgger = "*"
+pyyaml = "*"
 
 [dev-packages]
 "flake8" = "*"
