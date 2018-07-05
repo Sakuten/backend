@@ -106,3 +106,11 @@ def test_status_invaild_header(client):
     assert resp.status_code == 401 and 'token_required' in resp.headers['WWW-Authenticate']
 
 
+def test_status_invaild_auth(client):
+    """attempt to get status with wrong auth data.
+        this cause error in /api/auth. not in /api/routes/api
+        target_url: /api/status
+    """
+    resp = client.get('/api/status', headers={'Authorization':'Bearer wrong_token_here'})
+    assert resp.status_code == 401 and 'invalid_token' in resp.headers['WWW-Authenticate']
+
