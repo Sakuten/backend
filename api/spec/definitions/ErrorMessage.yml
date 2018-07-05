@@ -1,0 +1,10 @@
+Return an error message
+---
+type: object
+required:
+  - message
+properties:
+  message:
+    type: string
+    example: Error
+    description: Simple message about the cause of the error
