@@ -66,7 +66,7 @@ def test_get_specific_lottery(client):
         assert resp.get_json()['lottery'] == lottery_schema.dump(db_status)[0]
 
 
-def test_get_specific_lottery_invalid_id(client):
+def test_get_specific_lottery_invaild_id(client):
     """test proper errpr is returned from the API
         target_url: /api/classrooms/<id>
     """
