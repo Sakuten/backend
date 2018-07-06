@@ -32,7 +32,7 @@ def test_get_specific_classroom_invaild_id(client):
     """test proper errpr is returned from the API
         target_url: /api/classrooms/<id>
     """
-    idx = '10021014' # classroom id to test
+    idx = invaild_classroom_id # classroom id to test
     resp = client.get('/api/classrooms/'+idx)
 
     with client.application.app_context():
@@ -70,7 +70,7 @@ def test_get_specific_lottery_invalid_id(client):
     """test proper errpr is returned from the API
         target_url: /api/classrooms/<id>
     """
-    idx = '102913012' # lottery id to test
+    idx = invaild_lottery_id # lottery id to test
     resp = client.get('/api/lotteries/'+idx)
 
     with client.application.app_context():
@@ -100,6 +100,8 @@ def test_apply(client):
         application = Application.query.filter_by(lottery=target_lottery, user_id=user.id) # this application should be added by previous 'client.put'
 
         assert application is not None
+
+
 @pytest.mark.skip(reason='not implemented yet')
 def test_apply_noperm(client):
     """attempt to apply without proper permission.

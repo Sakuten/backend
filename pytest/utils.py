@@ -11,6 +11,9 @@ from api.schemas import (
     lottery_schema
 )
 
+
+# --- variables
+
 pre_config = os.getenv('FLASK_CONFIGURATION', 'default')
 
 admin = {'username':'admin',
@@ -18,6 +21,10 @@ admin = {'username':'admin',
 test_user = {'username':'example1',
         'password':'example1'}
 
+invaild_classroom_id = '999999999999'
+invaild_lottery_id = '9999999999'
+
+# --- methods
 
 def login(client, username, password):
     """logging in as 'username' with 'password'
