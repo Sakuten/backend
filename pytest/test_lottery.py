@@ -73,10 +73,7 @@ def test_get_specific_lottery_invaild_id(client):
     idx = invaild_lottery_id # lottery id to test
     resp = client.get('/api/lotteries/'+idx)
 
-    with client.application.app_context():
-        db_status = Lottery.query.filter_by(id=idx).first()
-
-        assert resp.status_code == 400
+    assert resp.status_code == 400 and resp.get_json()['message'] == 'Lottery could not be found.'
 
 
 
