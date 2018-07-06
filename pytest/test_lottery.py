@@ -35,10 +35,7 @@ def test_get_specific_classroom_invaild_id(client):
     idx = invaild_classroom_id # classroom id to test
     resp = client.get('/api/classrooms/'+idx)
 
-    with client.application.app_context():
-        db_status = Classroom.query.filter_by(id=idx).first()
-
-        assert resp.status_code == 400
+    assert resp.status_code == 400 and resp.get_json()['message'] == 'Classroom could not be found.'
 
 
 def test_get_alllotteries(client):
