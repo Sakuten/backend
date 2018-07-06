@@ -21,7 +21,8 @@ watchdog = "*"
 python_version = "3.6"
 
 [scripts]
-start = "flask run"
+"start:flask" = "flask run"
+"start:dep" = "watchmedo shell-command -p './Pipfile' -c 'pipenv install' -W"
+start = "/bin/bash -c 'pipenv run start:dep & pipenv run start:flask'"
 fix = "autopep8 -ivr ."
 lint = "flake8 ."
-watchdep = "watchmedo shell-command -p './Pipfile' -c 'pipenv install' -W"
