@@ -85,7 +85,7 @@ def test_apply(client):
     """attempt to apply new application.
         1. test: error isn't returned
         2. test: DB is changed
-        target_url: /api/lotteries/<id>/apply
+        target_url: /api/lotteries/<id>/apply [PUT]
     """
     idx = '1'
     token = login(client, test_user['username'], test_user['password'])['token']
@@ -105,7 +105,7 @@ def test_apply(client):
 @pytest.mark.skip(reason='not implemented yet')
 def test_apply_noperm(client):
     """attempt to apply without proper permission.
-        target_url: /api/lotteries/<id>/apply
+        target_url: /api/lotteries/<id>/apply [PUT]
     """
     idx = '1'
     token = login(client, admin['username'], admin['password'])['token']
@@ -116,7 +116,7 @@ def test_apply_noperm(client):
 
 def test_apply_invaild(client):
     """attempt to apply to non-exsit lottery
-        target_url: /api/lotteries/<id>/apply
+        target_url: /api/lotteries/<id>/apply [PUT]
     """
     idx= invaild_lottery_id
     token = login(client, test_user['username'], test_user['password'])['token']
