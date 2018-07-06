@@ -1,4 +1,5 @@
 from utils import *
+import pytest
 
 
 # ---------- Lottery API
@@ -99,3 +100,15 @@ def test_apply(client):
         application = Application.query.filter_by(lottery=target_lottery, user_id=user.id) # this application should be added by previous 'client.put'
 
         assert application is not None
+@pytest.mark.skip(reason='not implemented yet')
+def test_apply_noperm(client):
+    """attempt to apply without proper permission.
+        target_url: /api/lotteries/<id>/apply
+    """
+    idx = '1'
+    token = login(client, admin['username'], admin['password'])['token']
+    resp = client.put('/api/lotteries/'+idx+'/apply', headers={'Authorization': 'Bearer '+ token})
+
+    assert '' in resp.get_json().keys() # not completed yet
+
+
