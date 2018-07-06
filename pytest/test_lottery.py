@@ -114,3 +114,12 @@ def test_apply_noperm(client):
     assert '' in resp.get_json().keys() # not completed yet
 
 
+def test_apply_invaild(client):
+    """attempt to apply to non-exsit lottery
+        target_url: /api/lotteries/<id>/apply
+    """
+    idx= invaild_lottery_id
+    token = login(client, test_user['username'], test_user['password'])['token']
+    resp = client.put('/api/lotteries/'+idx+'/apply', headers={'Authorization': 'Bearer '+ token})
+
+    assert resp.status_code == 400 and resp.get_json()['message'] == 'Lottery could not be found.'
