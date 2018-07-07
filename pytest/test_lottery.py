@@ -1,4 +1,5 @@
 from utils import *
+from api.models import Application, db
 import pytest
 
 
@@ -117,3 +118,24 @@ def test_apply_invaild(client):
     resp = client.put('/api/lotteries/'+idx+'/apply', headers={'Authorization': 'Bearer '+ token})
 
     assert resp.status_code == 400 and resp.get_json()['message'] == 'Lottery could not be found.'
+def test_cancel(client):
+    """test: cancel added application
+        1. add new application to db
+        2. send request to cancel
+        3. check response's status_code and db status
+        target_url: /api/lotteries/<id>/apply [DELETE]
+    """
+    lottery_id = '1'
+
+    with client.application.app_context():
+
+        token = login(client, test_user['username'], test_user['password'])['token']
+        user_id = client.get('/api/status', headers={'Authorization': 'Bearer '+ token}).get_json()['status']['id']
+        newapplication = Application(
+                        lottery_id=lottery_id, user_id=user_id, status=None)
+        db.session.add(newapplication)
+
+        resp = client.delete('/api/lotteries/' + lottery_id + '/apply', headers={'Authorization':'Bearer ' + token})
+
+        print('application: '+  str(Application.query.filter_by(lottery_id=lottery_id, user_id=user_id).first)) # debug
+        assert resp.status_code == 200 and Application.query.filter_by(lottery_id=lottery_id,user_id=user_id).first() is None
