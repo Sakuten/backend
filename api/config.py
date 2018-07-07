@@ -1,6 +1,7 @@
 from cryptography.fernet import Fernet
 import os
 
+
 class BaseConfig(object):
     DEBUG = False
     TESTING = False
@@ -20,6 +21,7 @@ class TestingConfig(BaseConfig):
     TESTING = True
     ENV = 'development'
 
+
 class PreviewDeploymentConfig(BaseConfig):
     DEBUG = True
     TESTING = False
@@ -28,6 +30,7 @@ class PreviewDeploymentConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     SECRET_KEY = os.environ.get('SECRET_KEY')
     ENV = 'development'
+
 
 class DeploymentConfig(BaseConfig):
     DEBUG = False
