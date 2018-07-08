@@ -234,3 +234,16 @@ def test_draw_noperm(client):
 
     assert resp.status_code == 403
     assert 'Forbidden' in resp.get_json()['message'] # not completed yet
+
+
+def test_draw_invaild(client):
+    """attempt to draw non-exsit lottery
+        target_url: /api/lotteries/<id>/draw [GET]
+    """
+    idx= invaild_lottery_id
+    token = login(client, admin['username'], admin['password'])['token']
+    resp = client.get('/api/lotteries/'+idx+'/draw', headers={'Authorization': 'Bearer '+ token})
+
+    assert resp.status_code == 400
+    assert resp.get_json()['message'] == 'Lottery could not be found.'
+
