@@ -118,6 +118,19 @@ def test_apply_invaild(client):
     resp = client.put('/api/lotteries/'+idx+'/apply', headers={'Authorization': 'Bearer '+ token})
 
     assert resp.status_code == 400 and resp.get_json()['message'] == 'Lottery could not be found.'
+
+
+# ----------------- later -----------------------------------------------------------------------
+@pytest.mark.skip(reason='not made yet')
+def test_apply_already_done(client):
+    assert 'a' == 'a'
+
+@pytest.mark.skip(reason='not made yet')
+def test_apply_same_period(client):
+    assert 'b' == 'b'
+# -----------------------------------------------------------------------------------------------
+
+
 def test_cancel(client):
     """test: cancel added application
         1. add new application to db
