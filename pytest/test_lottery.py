@@ -1,5 +1,5 @@
 from utils import *
-from api.models import Application, db
+from api.models import Application, Lottery, db
 import pytest
 
 
@@ -162,3 +162,35 @@ def test_cancel_invaild(client):
     resp = client.delete('/api/lotteries/' + lottery_id + '/apply', headers={'Authorization':'Bearer ' + token})
 
     assert resp.status_code == 400 and resp.get_json()['message'] == "You're not applying for this lottery"
+
+
+def test_cancel_already_done(client):
+    """attempt to cancel application that already-done lottery
+        1. create 'done' lottery
+        2. add application to that lottery
+        3. attempt to cancel that application
+        target_url: /api/lotteries/<id>/apply [DELETE]
+    """
+    classroom_id = '1'
+    lottery_index = '1'
+    user = test_user
+
+    with client.application.app_context():
+        done_lottery = Lottery(
+            classroom_id=classroom_id, index=lottery_index, done=True)
+        db.session.add(done_lottery)
+        db.session.commit()
+
+        lottery_id = str(Lottery.query.filter_by(index=lottery_index).first().id)
+        token = login(client, user['username'], user['password'])['token']
+        user_id = client.get('/api/status', headers={'Authorization': 'Bearer '+ token}).get_json()['status']['id']
+
+        #newapplication = Application(
+        #                lottery_id=lottery_id, user_id=user_id, status=False)
+        #db.session.add(newapplication)
+
+        print(Lottery.query.filter_by(index=lottery_index).first().id) #debug
+
+        resp = client.delete('/api/lotteries/'+ lottery_id +'/apply', headers={'Authorization':'Bearer '+ token})
+
+        assert resp.status_code == 400 and resp.get_json()['message'] == 'This lottery has already done'
