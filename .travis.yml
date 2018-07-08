@@ -3,7 +3,7 @@ python:
   - "3.6"
 sudo: false
 before_install:
-  - pip install --user pipenv
+  - pip install pipenv
 install:
   - pipenv install --dev
 script:
