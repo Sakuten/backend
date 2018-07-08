@@ -119,12 +119,26 @@ def test_apply_invaild(client):
 
     assert resp.status_code == 400 and resp.get_json()['message'] == 'Lottery could not be found.'
 
+def test_apply_already_done(client):
+    """attempt to apply previously drawn application.
+        1. test: error is returned
+        target_url: /api/lotteries/<id>/apply [PUT]
+    """
+    idx = '1'
+    token = login(client, test_user['username'], test_user['password'])['token']
+
+    with client.application.app_context():
+        target_lottery = Lottery.query.filter_by(id=idx).first()
+        target_lottery.done = True
+        db.session.add(target_lottery)
+        db.session.commit()
+
+    resp = client.put('/api/lotteries/'+idx+'/apply', headers={'Authorization': 'Bearer '+ token})
+
+    assert resp.status_code == 400
+    assert 'already done' in resp.get_json()['message']
 
 # ----------------- later -----------------------------------------------------------------------
-@pytest.mark.skip(reason='not made yet')
-def test_apply_already_done(client):
-    assert 'a' == 'a'
-
 @pytest.mark.skip(reason='not made yet')
 def test_apply_same_period(client):
     assert 'b' == 'b'
