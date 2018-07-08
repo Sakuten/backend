@@ -139,3 +139,15 @@ def test_cancel(client):
 
         print('application: '+  str(Application.query.filter_by(lottery_id=lottery_id, user_id=user_id).first)) # debug
         assert resp.status_code == 200 and Application.query.filter_by(lottery_id=lottery_id,user_id=user_id).first() is None
+
+
+def test_cancel_invaild(client):
+    """attempt to cancel non-applied application.
+        target_url: /api/lotteries/<id>/apply [DELETE]
+    """
+
+    lottery_id = '1'
+    token = login(client, test_user['username'], test_user['password'])['token']
+    resp = client.delete('/api/lotteries/' + lottery_id + '/apply', headers={'Authorization':'Bearer ' + token})
+
+    assert resp.status_code == 400 and resp.get_json()['message'] == "You're not applying for this lottery"
