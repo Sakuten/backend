@@ -23,8 +23,8 @@
 |  O   | attempt to apply the same period      |  user      | /api/lotteries/<id>/apply [PUT]    | 400         | test_apply_same_period                 |             |
 |  O   | check DB is changed correctly         |  user      | /api/lotteries/<id>/apply [DELETE] | 200         | test_cancel                            |             |
 |  O   | attempt to cancel invaild lottery     |  user      | /api/lotteries/<id>/apply [DELETE] | 400         | test_cancel_invaild                    |             |
-|      | attempt to cancel already-done lottery|  user      | /api/lotteries/<id>/apply [DELETE] | 400         | test_cancel_already_done               |             |
 |      | attempt to cancel without permission  |  user      | /api/lotteries/<id>/apply [DELETE] | 403         | test_cancel_noperm                     | for future  |
+|  O   | attempt to cancel already-done lottery|  user      | /api/lotteries/<id>/apply [DELETE] | 400         | test_cancel_already_done               |             |
 |  O   | draw lottery & check DB is changed    |  admin     | /api/lotteries/<id>/draw           | 200         | test_draw                              |             |
 |  O   | attempt to draw invaild lottery       |  admin     | /api/lotteries/<id>/draw           | 400         | test_draw_invaild                      |             |
 |  O   | attempt to draw already-done lottery  |  admin     | /api/lotteries/<id>/draw           | 400         | test_draw_already_done                 |             |
