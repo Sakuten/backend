@@ -115,8 +115,8 @@ def test_status_invaild_header(client):
         this cause error in /api/auth. not in /api/routes/api
         target_url: /api/status
     """
-    resp = client.get(
-        '/api/status', headers={'Authorization_wrong': 'Bearer no_token_here'})
+    resp = client.get('/api/status',
+                      headers={'Authorization_wrong': 'Bearer no_token_here'})
     assert resp.status_code == 401
     assert 'token_required' in resp.headers['WWW-Authenticate']
 
@@ -126,7 +126,7 @@ def test_status_invaild_auth(client):
         this cause error in /api/auth. not in /api/routes/api
         target_url: /api/status
     """
-    resp = client.get(
-        '/api/status', headers={'Authorization': 'Bearer wrong_token_here'})
+    resp = client.get('/api/status',
+                      headers={'Authorization': 'Bearer wrong_token_here'})
     assert resp.status_code == 401
     assert 'invalid_token' in resp.headers['WWW-Authenticate']

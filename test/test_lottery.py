@@ -27,9 +27,9 @@ def test_get_allclassrooms(client):
 
     with client.application.app_context():
         db_status = Classroom.query.all()
+        classroom_list = classrooms_schema.dump(db_status)[0]
 
-        assert resp.get_json()['classrooms'] == classrooms_schema.dump(
-            db_status)[0]
+    assert resp.get_json()['classrooms'] == classroom_list
 
 
 def test_get_specific_classroom(client):
@@ -41,9 +41,9 @@ def test_get_specific_classroom(client):
 
     with client.application.app_context():
         db_status = Classroom.query.filter_by(id=idx).first()
+        classroom = classroom_schema.dump(db_status)[0]
 
-        assert resp.get_json()['classroom'] == classroom_schema.dump(
-            db_status)[0]
+    assert resp.get_json()['classroom'] == classroom
 
 
 def test_get_specific_classroom_invaild_id(client):
@@ -65,9 +65,9 @@ def test_get_alllotteries(client):
 
     with client.application.app_context():
         db_status = Lottery.query.all()
+        lottery_list = lotteries_schema.dump(db_status)[0]
 
-        assert resp.get_json()['lotteries'] == lotteries_schema.dump(
-            db_status)[0]
+    assert resp.get_json()['lotteries'] == lottery_list
 
 
 def test_get_specific_lottery(client):
@@ -79,8 +79,9 @@ def test_get_specific_lottery(client):
 
     with client.application.app_context():
         db_status = Lottery.query.filter_by(id=idx).first()
+        lottery = lottery_schema.dump(db_status)[0]
 
-        assert resp.get_json()['lottery'] == lottery_schema.dump(db_status)[0]
+    assert resp.get_json()['lottery'] == lottery
 
 
 def test_get_specific_lottery_invaild_id(client):
@@ -189,9 +190,10 @@ def test_apply_same_period(client):
     resp = client.put('/api/lotteries/'+idx+'/apply',
                       headers={'Authorization': 'Bearer ' + token})
 
+    message = resp.get_json()['message']
+
     assert resp.status_code == 400
-    assert 'already applying to a lottery in this period' in resp.get_json()[
-        'message']
+    assert 'already applying to a lottery in this period' in message
 
 
 def test_cancel(client):
@@ -215,9 +217,11 @@ def test_cancel(client):
 
         resp = client.delete('/api/lotteries/' + lottery_id + '/apply',
                              headers={'Authorization': 'Bearer ' + token})
-        assert resp.status_code == 200
-        assert Application.query.filter_by(
-            lottery_id=lottery_id, user_id=user_id).first() is None
+        application = Application.query.filter_by(
+            lottery_id=lottery_id, user_id=user_id).first()
+
+    assert resp.status_code == 200
+    assert application is None
 
 
 def test_cancel_invaild(client):
