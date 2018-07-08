@@ -138,11 +138,26 @@ def test_apply_already_done(client):
     assert resp.status_code == 400
     assert 'already done' in resp.get_json()['message']
 
-# ----------------- later -----------------------------------------------------------------------
-@pytest.mark.skip(reason='not made yet')
 def test_apply_same_period(client):
-    assert 'b' == 'b'
-# -----------------------------------------------------------------------------------------------
+    """attempt to apply to the same period with the previous application
+        1. test: error is returned
+        target_url: /api/lotteries/<id>/apply [PUT]
+    """
+    idx = '1'
+    token = login(client, test_user['username'], test_user['password'])['token']
+
+    with client.application.app_context():
+        target_lottery = Lottery.query.filter_by(id=idx).first()
+        booking_lottery = Lottery.query.filter_by(index=target_lottery.index).filter(Lottery.id != idx).first()
+        user = User.query.filter_by(username=test_user['username']).first()
+        application = Application(lottery=booking_lottery, user_id=user.id)
+        db.session.add(application)
+        db.session.commit()
+
+    resp = client.put('/api/lotteries/'+idx+'/apply', headers={'Authorization': 'Bearer '+ token})
+
+    assert resp.status_code == 400
+    assert 'already applying to a lottery in this period' in resp.get_json()['message']
 
 
 def test_cancel(client):
