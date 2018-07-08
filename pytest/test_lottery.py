@@ -149,8 +149,6 @@ def test_cancel(client):
         db.session.add(newapplication)
 
         resp = client.delete('/api/lotteries/' + lottery_id + '/apply', headers={'Authorization':'Bearer ' + token})
-
-        print('application: '+  str(Application.query.filter_by(lottery_id=lottery_id, user_id=user_id).first)) # debug
         assert resp.status_code == 200 and Application.query.filter_by(lottery_id=lottery_id,user_id=user_id).first() is None
 
 
