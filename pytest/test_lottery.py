@@ -224,6 +224,44 @@ def test_cancel_already_done(client):
 
         assert resp.status_code == 400 and resp.get_json()['message'] == 'This lottery has already done'
 
+def test_draw(client):
+    """attempt to draw a lottery
+        1. some users make application to one lottery
+        2. admin draws a lottery
+        3. test: error isn't returned
+        4. drawn id is one of applicant
+        5. test: DB is changed
+        target_url: /api/lotteries/<id>/apply [PUT]
+    """
+    idx = '1'
+
+    with client.application.app_context():
+        target_lottery = Lottery.query.filter_by(id=idx).first()
+        users = User.query.all()
+        for user in users:
+            application = Application(lottery=target_lottery, user_id=user.id)
+            db.session.add(application)
+        db.session.commit()
+
+    token = login(client, admin['username'], admin['password'])['token']
+    resp = client.get('/api/lotteries/'+idx+'/draw', headers={'Authorization': 'Bearer '+ token})
+
+    assert resp.status_code == 200
+    assert 'chosen' in resp.get_json().keys()
+
+    chosen_id = resp.get_json()['chosen']
+
+    with client.application.app_context():
+        user = User.query.filter_by(id=chosen_id).first()
+        assert user is not None
+        target_lottery = Lottery.query.filter_by(id=idx).first()
+        assert target_lottery.done
+        users = User.query.all()
+        for user in users:
+            application = Application.query.filter_by(lottery=target_lottery, user_id=user.id).first()
+            is_won = user.id == chosen_id
+            assert application.status == is_won
+
 def test_draw_noperm(client):
     """attempt to draw without proper permission.
         target_url: /api/lotteries/<id>/draw [GET]
