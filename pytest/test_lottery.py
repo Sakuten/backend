@@ -223,3 +223,14 @@ def test_cancel_already_done(client):
         resp = client.delete('/api/lotteries/'+ lottery_id +'/apply', headers={'Authorization':'Bearer '+ token})
 
         assert resp.status_code == 400 and resp.get_json()['message'] == 'This lottery has already done'
+
+def test_draw_noperm(client):
+    """attempt to draw without proper permission.
+        target_url: /api/lotteries/<id>/draw [GET]
+    """
+    idx = '1'
+    token = login(client, test_user['username'], test_user['password'])['token']
+    resp = client.get('/api/lotteries/'+idx+'/draw', headers={'Authorization': 'Bearer '+ token})
+
+    assert resp.status_code == 403
+    assert 'Forbidden' in resp.get_json()['message'] # not completed yet
