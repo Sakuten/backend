@@ -37,7 +37,7 @@ def test_get_specific_classroom_invaild_id(client):
     resp = client.get('/api/classrooms/'+idx)
 
     assert resp.status_code == 400
-    assert resp.get_json()['message'] == 'Classroom could not be found.'
+    assert 'Classroom could not be found.' in resp.get_json()['message']
 
 
 def test_get_alllotteries(client):
@@ -73,7 +73,7 @@ def test_get_specific_lottery_invaild_id(client):
     resp = client.get('/api/lotteries/'+idx)
 
     assert resp.status_code == 400
-    assert resp.get_json()['message'] == 'Lottery could not be found.'
+    assert 'Lottery could not be found.' in resp.get_json()['message']
 
 
 
@@ -120,7 +120,7 @@ def test_apply_invaild(client):
     resp = client.put('/api/lotteries/'+idx+'/apply', headers={'Authorization': 'Bearer '+ token})
 
     assert resp.status_code == 400
-    assert resp.get_json()['message'] == 'Lottery could not be found.'
+    assert 'Lottery could not be found.' in resp.get_json()['message']
 
 def test_apply_already_done(client):
     """attempt to apply previously drawn application.
@@ -195,7 +195,7 @@ def test_cancel_invaild(client):
     resp = client.delete('/api/lotteries/' + lottery_id + '/apply', headers={'Authorization':'Bearer ' + token})
 
     assert resp.status_code == 400
-    assert resp.get_json()['message'] == "You're not applying for this lottery"
+    assert "You're not applying for this lottery" in resp.get_json()['message']
 
 
 def test_cancel_already_done(client):
@@ -279,7 +279,7 @@ def test_draw_invaild(client):
     resp = client.get('/api/lotteries/'+idx+'/draw', headers={'Authorization': 'Bearer '+ token})
 
     assert resp.status_code == 400
-    assert resp.get_json()['message'] == 'Lottery could not be found.'
+    assert 'Lottery could not be found.' in resp.get_json()['message']
 
 def test_draw_already_done(client):
     """attempt to draw previously drawn application.
