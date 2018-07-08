@@ -1,9 +1,13 @@
-from api import app
 
+import sys
 import os
 import pytest
 
-pre_config = os.environ['FLASK_CONFIGURATION']
+# Append current path so that we can execute tests from repository root
+sys.path.append(os.getcwd())  # noqa: E402
+from api import app
+
+pre_config = os.environ.get('FLASK_CONFIGURATION', None)
 
 # ===============================  settings and utils
 
