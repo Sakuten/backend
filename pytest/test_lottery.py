@@ -36,7 +36,8 @@ def test_get_specific_classroom_invaild_id(client):
     idx = invaild_classroom_id # classroom id to test
     resp = client.get('/api/classrooms/'+idx)
 
-    assert resp.status_code == 400 and resp.get_json()['message'] == 'Classroom could not be found.'
+    assert resp.status_code == 400
+    assert resp.get_json()['message'] == 'Classroom could not be found.'
 
 
 def test_get_alllotteries(client):
@@ -71,7 +72,8 @@ def test_get_specific_lottery_invaild_id(client):
     idx = invaild_lottery_id # lottery id to test
     resp = client.get('/api/lotteries/'+idx)
 
-    assert resp.status_code == 400 and resp.get_json()['message'] == 'Lottery could not be found.'
+    assert resp.status_code == 400
+    assert resp.get_json()['message'] == 'Lottery could not be found.'
 
 
 
@@ -117,7 +119,8 @@ def test_apply_invaild(client):
     token = login(client, test_user['username'], test_user['password'])['token']
     resp = client.put('/api/lotteries/'+idx+'/apply', headers={'Authorization': 'Bearer '+ token})
 
-    assert resp.status_code == 400 and resp.get_json()['message'] == 'Lottery could not be found.'
+    assert resp.status_code == 400
+    assert resp.get_json()['message'] == 'Lottery could not be found.'
 
 def test_apply_already_done(client):
     """attempt to apply previously drawn application.
@@ -179,7 +182,8 @@ def test_cancel(client):
         db.session.commit()
 
         resp = client.delete('/api/lotteries/' + lottery_id + '/apply', headers={'Authorization':'Bearer ' + token})
-        assert resp.status_code == 200 and Application.query.filter_by(lottery_id=lottery_id,user_id=user_id).first() is None
+        assert resp.status_code == 200
+        assert Application.query.filter_by(lottery_id=lottery_id,user_id=user_id).first() is None
 
 
 def test_cancel_invaild(client):
@@ -191,7 +195,8 @@ def test_cancel_invaild(client):
     token = login(client, test_user['username'], test_user['password'])['token']
     resp = client.delete('/api/lotteries/' + lottery_id + '/apply', headers={'Authorization':'Bearer ' + token})
 
-    assert resp.status_code == 400 and resp.get_json()['message'] == "You're not applying for this lottery"
+    assert resp.status_code == 400
+    assert resp.get_json()['message'] == "You're not applying for this lottery"
 
 
 def test_cancel_already_done(client):
