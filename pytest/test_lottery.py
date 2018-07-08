@@ -220,6 +220,28 @@ def test_cancel_already_done(client):
     assert resp.status_code == 400
     assert 'This lottery has already done' in resp.get_json()['message']
 
+
+@pytest.mark.skip(reason='not implemented yet')
+def test_cancel_noperm(client):
+    """attempt to cancel without permission
+      
+    """
+    idx = '1'
+    user = {'username':'hoge','password':'hugo'}
+    token = login(client, user['username'], user['password'])['token']
+
+    with client.application.app_context():
+        target_lottery = Lottery.query.filter_by(id=idx).first()
+        target_lottery.done = True
+        db.session.add(target_lottery)
+        db.session.commit()
+
+    resp = client.delete('/api/lotteries/'+ idx +'/apply', headers={'Authorization':'Bearer '+ token})
+
+    assert resp.status_code == 400
+    assert 'insufficient_scope' in resp.headers['WWW-Authenticate']
+
+
 def test_draw(client):
     """attempt to draw a lottery
         1. some users make application to one lottery
