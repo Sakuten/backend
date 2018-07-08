@@ -50,14 +50,14 @@ def test_login_invalid(client):
     resp = client.post('/auth/', json={
         'username': test_user['username'],
     }, follow_redirects=True)
-    assert 400 == resp.status_code
+    assert resp.status_code == 400
     assert 'Invalid request' in resp.get_json()['message']
 
     resp = client.post('/auth/', json={
         'username': test_user['username'],
         'password': test_user['password'],
     }, follow_redirects=True, content_type='application/xml')
-    assert 400 == resp.status_code
+    assert resp.status_code == 400
     assert 'Unsupported content type' in resp.get_json()['message']
 
 
