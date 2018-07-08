@@ -50,14 +50,14 @@ def test_login_invalid(client):
     resp = client.post('/auth/', json={
         'username': test_user['username'],
     }, follow_redirects=True)
-    assert 400 == resp.status_code
+    assert resp.status_code == 400
     assert 'Invalid request' in resp.get_json()['message']
 
     resp = client.post('/auth/', json={
         'username': test_user['username'],
         'password': test_user['password'],
     }, follow_redirects=True, content_type='application/xml')
-    assert 400 == resp.status_code
+    assert resp.status_code == 400
     assert 'Unsupported content type' in resp.get_json()['message']
 
 
@@ -103,7 +103,8 @@ def test_status_invaild_header(client):
         target_url: /api/status
     """
     resp = client.get('/api/status', headers={'Authorization_wrong':'Bearer no_token_here'})
-    assert resp.status_code == 401 and 'token_required' in resp.headers['WWW-Authenticate']
+    assert resp.status_code == 401
+    assert 'token_required' in resp.headers['WWW-Authenticate']
 
 
 def test_status_invaild_auth(client):
@@ -112,5 +113,6 @@ def test_status_invaild_auth(client):
         target_url: /api/status
     """
     resp = client.get('/api/status', headers={'Authorization':'Bearer wrong_token_here'})
-    assert resp.status_code == 401 and 'invalid_token' in resp.headers['WWW-Authenticate']
+    assert resp.status_code == 401
+    assert 'invalid_token' in resp.headers['WWW-Authenticate']
 
