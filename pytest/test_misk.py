@@ -1,4 +1,3 @@
-from utils import *
 
 def test_toppage(client):
     resp = client.get('/')

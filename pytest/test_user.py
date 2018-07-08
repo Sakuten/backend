@@ -1,7 +1,16 @@
-from utils import *
-
-
+from utils import (
+    as_user_get,
+    login_with_form,
+    login,
+    admin,
+    test_user
+)
+from api.models import User
+from api.schemas import user_schema
+from api.auth import decrypt_token
 # ---------- User API
+
+
 def test_login(client):
     """ attempt to login as
             * admin     (with proper/wrong password)
@@ -22,6 +31,7 @@ def test_login(client):
     resp = login(client, test_user['username'], 'wrong_example1')
     assert 'Login Unsuccessful' in resp['message']
 
+
 def test_login_form(client):
     """ attempt to login as
             * admin     (with proper/wrong password)
@@ -32,7 +42,8 @@ def test_login_form(client):
     """
     resp = login_with_form(client, admin['username'], admin['password'])
     assert 'Login Successful' in resp['message']
-    resp = login_with_form(client, test_user['username'], test_user['password'])
+    resp = login_with_form(
+        client, test_user['username'], test_user['password'])
     assert 'Login Successful' in resp['message']
     resp = login_with_form(client, 'notexist', 'notexist')
     assert 'Login Unsuccessful' in resp['message']
@@ -41,6 +52,7 @@ def test_login_form(client):
     assert 'Login Unsuccessful' in resp['message']
     resp = login_with_form(client, test_user['username'], 'wrong_example1')
     assert 'Login Unsuccessful' in resp['message']
+
 
 def test_login_invalid(client):
     """logging in with invalid request params as
@@ -88,7 +100,8 @@ def test_status(client):
         target_url: /api/status
     """
     user = test_user
-    resp = as_user_get(client, user['username'], user['password'], '/api/status')
+    resp = as_user_get(client, user['username'],
+                       user['password'], '/api/status')
     assert 'id' in resp.get_json()['status']
 
     with client.application.app_context():
@@ -102,7 +115,8 @@ def test_status_invaild_header(client):
         this cause error in /api/auth. not in /api/routes/api
         target_url: /api/status
     """
-    resp = client.get('/api/status', headers={'Authorization_wrong':'Bearer no_token_here'})
+    resp = client.get(
+        '/api/status', headers={'Authorization_wrong': 'Bearer no_token_here'})
     assert resp.status_code == 401
     assert 'token_required' in resp.headers['WWW-Authenticate']
 
@@ -112,7 +126,7 @@ def test_status_invaild_auth(client):
         this cause error in /api/auth. not in /api/routes/api
         target_url: /api/status
     """
-    resp = client.get('/api/status', headers={'Authorization':'Bearer wrong_token_here'})
+    resp = client.get(
+        '/api/status', headers={'Authorization': 'Bearer wrong_token_here'})
     assert resp.status_code == 401
     assert 'invalid_token' in resp.headers['WWW-Authenticate']
-
