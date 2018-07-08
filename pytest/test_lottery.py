@@ -171,11 +171,10 @@ def test_cancel(client):
         target_url: /api/lotteries/<id>/apply [DELETE]
     """
     lottery_id = '1'
+    token = login(client, test_user['username'], test_user['password'])['token']
+    user_id = client.get('/api/status', headers={'Authorization': 'Bearer '+ token}).get_json()['status']['id']
 
     with client.application.app_context():
-
-        token = login(client, test_user['username'], test_user['password'])['token']
-        user_id = client.get('/api/status', headers={'Authorization': 'Bearer '+ token}).get_json()['status']['id']
         newapplication = Application(
                         lottery_id=lottery_id, user_id=user_id, status=None)
         db.session.add(newapplication)
