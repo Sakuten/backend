@@ -26,5 +26,5 @@ def home():
         if user.check_password(password):
             token = generate_token({'user_id': user.id})
             return jsonify({"message": "Login Successful",
-                           "token": token.decode()})
+                            "token": token.decode()})
     return jsonify({"message": "Login Unsuccessful"}), 400
