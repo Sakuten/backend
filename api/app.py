@@ -27,12 +27,12 @@ def create_app():
 
         ENVIRONMENT_VALIABLES:
             FLASK_CONFIGURATION (string): define config type.
-                                            (one of 'defalt', 'development', 'testing', 'previous', 'deployment')
+                ('defalut'|'development'|'testing'|'preview'|'deployment')
         Return:
             app (Flask): generated flask application
         Exit Status:
-            4 : 'SQLALCHEMY_DATABASE_URI is not set.' or 'SECRET_KEY is not set.'
-        
+            4 : SQLALCHEMY_DATABASE_URI or SECRET_KEY is not set.
+
     """
     app = Flask(__name__, instance_relative_config=True)
     # load app sepcified configuration

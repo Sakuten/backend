@@ -79,7 +79,7 @@ class Lottery(db.Model):
             index (int): class number(0->A,1->B,2->C,3->D)
             done (bool): whether it's done or not
     """
-    id = db.Column(db.Integer, primary_key=True) # 'id' should be defined,
+    id = db.Column(db.Integer, primary_key=True)  # 'id' should be defined,
     classroom_id = db.Column(db.Integer, db.ForeignKey(
         'classroom.id', ondelete='CASCADE'))
     classroom = db.relationship('Classroom')
@@ -99,7 +99,7 @@ class Application(db.Model):
             lottery (): [help wanted]
             user_id (int): [help wanted]
             user (): [help wanted]
-            status (Boolen): shows whether this application is chosen or not. initalized with None
+            status (Boolen): whether chosen or not. initalized with None
     """
     __table_args__ = (UniqueConstraint(
         "lottery_id", "user_id", name="unique_idx_lottery_user"),)

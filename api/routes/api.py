@@ -17,7 +17,7 @@ bp = Blueprint(__name__, 'api')
 def list_classrooms():
     """
         return classroom list
-        
+
         Headers:
             no-header
     """
@@ -45,7 +45,7 @@ def list_classroom(idx):
 def list_lotteries():
     """
         return lotteries list.
-        
+
         Headers:
             no-headers
     """
@@ -58,7 +58,7 @@ def list_lotteries():
 def list_lottery(idx):
     """
         return infomation about specified lottery.
-         
+
         Headers:
             no-headers
    """
@@ -121,7 +121,7 @@ def apply_lottery(idx):
 @login_required('admin')
 def draw_lottery(idx):
     """draw lottery as adminstrator
-        
+
         Headers:
             Authorization: 'Bearer + token'
         Permission:
