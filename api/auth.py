@@ -17,13 +17,11 @@ def generate_token(obj):
     """
     fernet = Fernet(current_app.config['SECRET_KEY'])
     now = datetime.now().timestamp()
-    expiration = current_app.config.get('TOKEN_EXPIRATION', 43200)  # 12 hours
     data = {
         'issued_at': now,
-        'expiration_date': now + expiration,
         'data': obj
     }
-    return fernet.encrypt(json.dumps(data).encode()), expiration
+    return fernet.encrypt(json.dumps(data).encode())
 
 
 def decrypt_token(token):
@@ -35,9 +33,8 @@ def decrypt_token(token):
             decrypted token (dictionary): decrypted token contents
     """
     fernet = Fernet(current_app.config['SECRET_KEY'])
-    expiration = current_app.config.get('TOKEN_EXPIRATION', 43200)  # 12 hours
     try:
-        decrypted = fernet.decrypt(token.encode(), expiration)
+        decrypted = fernet.decrypt(token.encode())
     except InvalidToken:
         return None
     return json.loads(decrypted.decode())
@@ -59,7 +56,7 @@ def login_required(required_name=None):
                     message = 'Forbidden'
                 else:
                     message = 'Unknown Error'
-                resp = make_response(jsonify(message=message), code)
+                resp = make_response(jsonify({"message": message}), code)
                 if headm:
                     resp.headers['WWW-Authenticate'] = 'Bearer ' + headm
                 return resp

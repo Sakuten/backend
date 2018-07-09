@@ -9,6 +9,10 @@ flask-sqlalchemy = "*"
 marshmallow = "*"
 flask-cors = "*"
 cryptography = "*"
+psycopg2-binary = "*"
+gunicorn = "*"
+pytest = "*"
+watchdog = "*"
 
 [dev-packages]
 "flake8" = "*"
@@ -18,6 +22,9 @@ cryptography = "*"
 python_version = "3.6"
 
 [scripts]
-start = "flask run"
+"start:flask" = "flask run"
+"start:dep" = "watchmedo shell-command -p './Pipfile' -c 'pipenv install --dev' -W"
+start = "/bin/bash -c 'pipenv run start:dep & pipenv run start:flask'"
 fix = "autopep8 -ivr ."
 lint = "flake8 ."
+test = "pytest"

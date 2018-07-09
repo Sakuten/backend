@@ -17,7 +17,7 @@ class User(db.Model):
     """
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(40), unique=True)
-    passhash = db.Column(db.String(64))
+    passhash = db.Column(db.String(128))
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -90,8 +90,10 @@ class Lottery(db.Model):
 
         return "<Lottery {}.{}>".format(self.classroom, self.index)
 
+
 class Application(db.Model):
-    __table_args__ = (UniqueConstraint("lottery_id", "user_id", name="unique_idx_lottery_user"),)
+    __table_args__ = (UniqueConstraint(
+        "lottery_id", "user_id", name="unique_idx_lottery_user"),)
 
     id = db.Column(db.Integer, primary_key=True)
     lottery_id = db.Column(db.Integer, db.ForeignKey(
