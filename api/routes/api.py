@@ -114,6 +114,13 @@ def apply_lottery(idx):
 @bp.route('/lotteries/<int:idx>/draw')
 @login_required('admin')
 def draw_lottery(idx):
+    """draw lottery as adminstrator
+        
+        Headers:
+            Authorization: 'Bearer + token'
+        Permission:
+            adminstrator
+    """
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 400
