@@ -10,9 +10,9 @@ def generate_token(obj):
     """
         generate token and expiration, return it.
         Args:
-            data (dict): the data to encrypt
+            obj (dict): the data to encrypt
         Return:
-            token (str): encrypted token
+            token (bytes): encrypted token
     """
     fernet = Fernet(current_app.config['SECRET_KEY'])
     now = datetime.now().timestamp()
