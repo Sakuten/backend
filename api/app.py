@@ -16,6 +16,24 @@ config = {
 
 
 def create_app():
+    """create base flask application
+        1. generate flask application
+        2. set config based on 'FLASK_CONFIGURATION'
+        3. initialize DB
+        4. some other settings
+
+        Args:
+            no-args needed
+
+        ENVIRONMENT_VALIABLES:
+            FLASK_CONFIGURATION (string): define config type.
+                                            (one of 'defalt', 'development', 'testing', 'previous', 'deployment')
+        Return:
+            app (Flask): generated flask application
+        Exit Status:
+            4 : 'SQLALCHEMY_DATABASE_URI is not set.' or 'SECRET_KEY is not set.'
+        
+    """
     app = Flask(__name__, instance_relative_config=True)
     # load app sepcified configuration
     CORS(app, supports_credentials=True)
