@@ -76,6 +76,12 @@ def apply_lottery(idx):
     """
         apply/cancel applications.
         specify the lottery id in the URL.
+
+        Args:
+            idx (int): lottery id to apply/cancel
+        Methods:
+            PUT : apply new application
+            DELETE : cancel exist application
         Headers:
             Authorization: 'Bearer + token'
         Permission:
