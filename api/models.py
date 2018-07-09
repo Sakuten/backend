@@ -95,10 +95,8 @@ class Application(db.Model):
     """application model for DB
         DB contents:
             id (int): application unique id
-            lottery_id (int): lottery_id that point to [help wanted]
-            lottery (): [help wanted]
-            user_id (int): [help wanted]
-            user (): [help wanted]
+            lottery_id (int): lottery id this application linked to
+            user_id (int): user id of this application
             status (Boolen): whether chosen or not. initalized with None
     """
     __table_args__ = (UniqueConstraint(
