@@ -18,18 +18,6 @@ def list_classrooms():
     """
         return classroom list
         Auth: no need
-        Response like:
-            {
-                "classrooms": [
-                {
-                    "grade": 5,
-                    "id": 1,
-                    "index": 0,
-                    "name": "A"
-                }
-                ...
-                ]
-            }
     """
     classrooms = Classroom.query.all()
     result = classrooms_schema.dump(classrooms)[0]
@@ -41,17 +29,6 @@ def list_classroom(idx):
     """
         return infomation about specified classroom
         Auth: no need
-        Response like:
-            {
-                "classroom": [
-                {
-                    "grade": 5,
-                    "id": 1,
-                    "index": 0,
-                    "name": "A"
-                }
-                ]
-            }
     """
     classroom = Classroom.query.get(idx)
     if classroom is None:
@@ -65,17 +42,7 @@ def list_lotteries():
     """
         return lotteries list.
         Auth: no need
-        Response like:
-            {
-                "lotteries": [
-                 {
-                    "classroom_id": 1,
-                    "done": false,
-                    "id": 1,
-                    "index": 0,
-                    "name": "5A.0"
-                 }]
-            }
+        
     """
     lotteries = Lottery.query.all()
     result = lotteries_schema.dump(lotteries)[0]
@@ -87,18 +54,6 @@ def list_lottery(idx):
     """
         return infomation about specified lottery.
         Auth: no need
-        Response like:
-            {
-                "lotterie": [
-                 {
-                    "classroom_id": 1,
-                    "done": false,
-                    "id": 1,
-                    "index": 0,
-                    "name": "5A.0"
-                 }]
-            }
-    """
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 400
@@ -113,11 +68,6 @@ def apply_lottery(idx):
     """
         add/delete applications.
         specify the lottery id in the URL.
-        Response like:
-            {
-                "id": 1
-            }
-        "id" is the nuber of application(if user has 2 applications, id is 2, if 3, then id is 3...)
     """
     lottery = Lottery.query.get(idx)
     if lottery is None:
@@ -175,21 +125,6 @@ def draw_lottery(idx):
 def get_status():
     """
         return user's id, applications
-        Response like:
-            {
-                "status": {
-                    "applications": [
-                        {
-                            "id": 1,
-                            "lottery_id": 1,
-                            "status": null,
-                            "user_id": 3
-                        }
-                    ],
-                "id": 3,
-                "username": "example1"
-                }
-            }
     """
     user = User.query.filter_by(id=g.token_data['user_id']).first()
     result = user_schema.dump(user)[0]
