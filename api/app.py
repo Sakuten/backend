@@ -26,7 +26,7 @@ def create_app():
             no-args needed
 
         ENVIRONMENT_VALIABLES:
-            FLASK_CONFIGURATION (string): define config type.
+            FLASK_CONFIGURATION (str): define config type.
                 ('defalut'|'development'|'testing'|'preview'|'deployment')
         Return:
             app (Flask): generated flask application

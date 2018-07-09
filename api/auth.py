@@ -10,9 +10,9 @@ def generate_token(obj):
     """
         generate token and expiration, return it.
         Args:
-            data (dictionary): the data to encrypt
+            data (dict): the data to encrypt
         Return:
-            token (string): encrypted token
+            token (str): encrypted token
     """
     fernet = Fernet(current_app.config['SECRET_KEY'])
     now = datetime.now().timestamp()
@@ -27,9 +27,9 @@ def decrypt_token(token):
     """
         decrypt the token.
         Args:
-            token (string): encrypted token.
+            token (str): encrypted token.
         Return:
-            decrypted data (dictionary): decrypted contents
+            decrypted data (dict): decrypted contents
     """
     fernet = Fernet(current_app.config['SECRET_KEY'])
     try:

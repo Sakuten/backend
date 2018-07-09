@@ -9,11 +9,11 @@ class User(db.Model):
     """
         User model for DB
         Args:
-            username (string): user name.
-            passhash (string): password hash.
+            username (str): user name.
+            passhash (str): password hash.
         DB contents:
-            username (string): user name.
-            passhash (string): password hash.
+            username (str): user name.
+            passhash (str): password hash.
     """
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(40), unique=True)
@@ -32,7 +32,7 @@ class User(db.Model):
         """
             check given password is correct or not.
             Args:
-                password (string): string to check
+                password (str): string to check
             Return:
                 return (bool): True -> correct, False -> incorrect
         """
