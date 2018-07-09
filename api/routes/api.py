@@ -17,9 +17,6 @@ bp = Blueprint(__name__, 'api')
 def list_classrooms():
     """
         return classroom list
-
-        Headers:
-            no-header
     """
     classrooms = Classroom.query.all()
     result = classrooms_schema.dump(classrooms)[0]
@@ -30,9 +27,6 @@ def list_classrooms():
 def list_classroom(idx):
     """
         return infomation about specified classroom
-
-        Headers:
-            no-headers
     """
     classroom = Classroom.query.get(idx)
     if classroom is None:
@@ -45,9 +39,6 @@ def list_classroom(idx):
 def list_lotteries():
     """
         return lotteries list.
-
-        Headers:
-            no-headers
     """
     lotteries = Lottery.query.all()
     result = lotteries_schema.dump(lotteries)[0]
@@ -58,10 +49,7 @@ def list_lotteries():
 def list_lottery(idx):
     """
         return infomation about specified lottery.
-
-        Headers:
-            no-headers
-   """
+    """
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 400
@@ -76,16 +64,6 @@ def apply_lottery(idx):
     """
         apply/cancel applications.
         specify the lottery id in the URL.
-
-        Args:
-            idx (int): lottery id to apply/cancel
-        Methods:
-            PUT : apply new application
-            DELETE : cancel exist application
-        Headers:
-            Authorization: 'Bearer + token'
-        Permission:
-            normal_user
     """
     lottery = Lottery.query.get(idx)
     if lottery is None:
@@ -120,12 +98,8 @@ def apply_lottery(idx):
 @bp.route('/lotteries/<int:idx>/draw')
 @login_required('admin')
 def draw_lottery(idx):
-    """draw lottery as adminstrator
-
-        Headers:
-            Authorization: 'Bearer + token'
-        Permission:
-            adminstrator
+    """
+        draw lottery as adminstrator
     """
     lottery = Lottery.query.get(idx)
     if lottery is None:
@@ -150,11 +124,6 @@ def draw_lottery(idx):
 def get_status():
     """
         return user's id, applications
-
-        Headers:
-            Authorization: 'Bearer + token'
-        Permission:
-            normal_user
     """
     user = User.query.filter_by(id=g.token_data['user_id']).first()
     result = user_schema.dump(user)[0]

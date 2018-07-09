@@ -10,12 +10,6 @@ def home():
     """
         top page. Require/Check Login
     """
-    # check form of request body
-    # request header has:
-    #    * (no Content-Type)                               |
-    #    * Content-Type: application/x-www-form-urlencoded |-- read from 'form'
-    #    * Content-Type: application/json  |----- read from 'json'
-    #    * Content-Type: (other type) |--- error 400
     if 'Content-Type' not in request.headers or \
         request.headers['Content-Type'] == \
             'application/x-www-form-urlencoded':
