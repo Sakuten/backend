@@ -74,7 +74,7 @@ def list_lottery(idx):
 @login_required()
 def apply_lottery(idx):
     """
-        add/delete applications.
+        apply/cancel applications.
         specify the lottery id in the URL.
         Headers:
             Authorization: 'Bearer + token'
