@@ -76,6 +76,16 @@ def initdb(app, db):
 
 
 def generate():
+    """generate DB contents
+        1. generate classrooms
+        2. generate lotteries
+        3. generate users
+
+        Args:
+            no-args needed
+        Return:
+            no-return given
+    """
     from .models import Lottery, Classroom, User, db
     from werkzeug.security import generate_password_hash
     total_index = 4
