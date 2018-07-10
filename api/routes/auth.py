@@ -7,6 +7,9 @@ bp = Blueprint(__name__, 'auth')
 
 @bp.route('/', methods=['POST'])
 def home():
+    """
+        top page. Require/Check Login
+    """
     if 'Content-Type' not in request.headers or \
         request.headers['Content-Type'] == \
             'application/x-www-form-urlencoded':
@@ -19,6 +22,7 @@ def home():
     if 'username' not in data or 'password' not in data:
         return jsonify({"message": "Invalid request"}), 400
 
+    # login flow
     username = data.get('username')
     password = data.get('password')
     user = User.query.filter_by(username=username).first()
