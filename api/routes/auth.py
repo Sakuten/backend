@@ -1,11 +1,13 @@
 from flask import Blueprint, jsonify, request
 from api.models import User
 from api.auth import generate_token
+from api.swagger import spec
 
 bp = Blueprint(__name__, 'auth')
 
 
 @bp.route('/', methods=['POST'])
+@spec('auth.yml')
 def home():
     """
         top page. Require/Check Login

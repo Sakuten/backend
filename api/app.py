@@ -2,6 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 import sqlalchemy
 from .routes import auth, api
+from .swagger import swag
 from .models import db
 import os
 import sys
@@ -56,6 +57,7 @@ def create_app():
         sys.exit(4)  # Return 4 to exit gunicorn
 
     db.init_app(app)
+    swag.init_app(app)
 
     app.register_blueprint(auth.bp, url_prefix='/auth')
     app.register_blueprint(api.bp, url_prefix='/api')

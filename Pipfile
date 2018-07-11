@@ -11,6 +11,8 @@ flask-cors = "*"
 cryptography = "*"
 psycopg2-binary = "*"
 gunicorn = "*"
+flasgger = "*"
+pyyaml = "*"
 pytest = "*"
 watchdog = "*"
 
