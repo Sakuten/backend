@@ -17,6 +17,9 @@ bp = Blueprint(__name__, 'api')
 @bp.route('/classrooms')
 @spec('api/classrooms.yml')
 def list_classrooms():
+    """
+        return classroom list
+    """
     classrooms = Classroom.query.all()
     result = classrooms_schema.dump(classrooms)[0]
     return jsonify({"classrooms": result})
@@ -25,6 +28,9 @@ def list_classrooms():
 @bp.route('/classrooms/<int:idx>')
 @spec('api/classrooms/idx.yml')
 def list_classroom(idx):
+    """
+        return infomation about specified classroom
+    """
     classroom = Classroom.query.get(idx)
     if classroom is None:
         return jsonify({"message": "Classroom could not be found."}), 400
@@ -35,6 +41,9 @@ def list_classroom(idx):
 @bp.route('/lotteries')
 @spec('api/lotteries.yml')
 def list_lotteries():
+    """
+        return lotteries list.
+    """
     lotteries = Lottery.query.all()
     result = lotteries_schema.dump(lotteries)[0]
     return jsonify({"lotteries": result})
@@ -43,6 +52,9 @@ def list_lotteries():
 @bp.route('/lotteries/<int:idx>')
 @spec('api/lotteries/idx.yml')
 def list_lottery(idx):
+    """
+        return infomation about specified lottery.
+    """
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 400
@@ -56,6 +68,10 @@ def list_lottery(idx):
 @spec('api/lotteries/cancel.yml', methods=['DELETE'])
 @login_required()
 def apply_lottery(idx):
+    """
+        apply/cancel applications.
+        specify the lottery id in the URL.
+    """
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 400
@@ -69,6 +85,7 @@ def apply_lottery(idx):
         msg = "You're already applying to a lottery in this period"
         return jsonify({"message": msg}), 400
     application = previous.filter_by(lottery_id=lottery.id).first()
+    # access DB
     if request.method == 'PUT':
         if not application:
             newapplication = Application(
@@ -89,6 +106,9 @@ def apply_lottery(idx):
 @spec('api/lotteries/draw.yml')
 @login_required('admin')
 def draw_lottery(idx):
+    """
+        draw lottery as adminstrator
+    """
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 400
@@ -111,6 +131,9 @@ def draw_lottery(idx):
 @spec('api/status.yml')
 @login_required()
 def get_status():
+    """
+        return user's id, applications
+    """
     user = User.query.filter_by(id=g.token_data['user_id']).first()
     result = user_schema.dump(user)[0]
     return jsonify({"status": result})

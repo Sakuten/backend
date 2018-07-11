@@ -1,0 +1,40 @@
+@startuml
+
+class User {
+  + id
+  + username
+  + passhash
+  + __repr__()
+  + get_user_id()
+  + check_password()
+}
+
+class Classroom {
+  + id
+  + grade
+  + index
+  + __repr__()
+  + get_classroom_name()
+}
+
+class Lottery {
+  + id
+  + classroom_id
+  + classroom
+  + index
+  + done
+  + __repr__()
+}
+
+class Application {
+  + __table_args__
+  + id
+  + lottery_id
+  + lottery
+  + user_id
+  + user
+  + status
+  + __repr__()
+}
+
+@enduml

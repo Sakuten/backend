@@ -17,6 +17,24 @@ config = {
 
 
 def create_app():
+    """create base flask application
+        1. generate flask application
+        2. set config based on 'FLASK_CONFIGURATION'
+        3. initialize DB
+        4. some other settings
+
+        Args:
+            no-args needed
+
+        ENVIRONMENT_VALIABLES:
+            FLASK_CONFIGURATION (str): define config type.
+                ('defalut'|'development'|'testing'|'preview'|'deployment')
+        Return:
+            app (Flask): generated flask application
+        Exit Status:
+            4 : SQLALCHEMY_DATABASE_URI or SECRET_KEY is not set.
+
+    """
     app = Flask(__name__, instance_relative_config=True)
     # load app sepcified configuration
     CORS(app, supports_credentials=True)
@@ -60,6 +78,16 @@ def initdb(app, db):
 
 
 def generate():
+    """generate DB contents
+        1. generate classrooms
+        2. generate lotteries
+        3. generate users
+
+        Args:
+            no-args needed
+        Return:
+            no-return given
+    """
     from .models import Lottery, Classroom, User, db
     from werkzeug.security import generate_password_hash
     total_index = 4
