@@ -28,16 +28,6 @@ class User(db.Model):
         """
         return self.id
 
-    def check_password(self, password):
-        """
-            check given password is correct or not.
-            Args:
-                password (str): string to check
-            Return:
-                return (bool): True -> correct, False -> incorrect
-        """
-        return check_password_hash(self.passhash, password)
-
 
 class Classroom(db.Model):
     """
