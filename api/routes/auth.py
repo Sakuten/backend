@@ -19,12 +19,12 @@ def home():
     else:
         return jsonify({"message": "Unsupported content type"}), 400
 
-    if 'username' not in data or 'password' not in data:
+    if 'username' not in data or 'g-recaptcha-response' not in data:
         return jsonify({"message": "Invalid request"}), 400
 
     # login flow
     username = data.get('username')
-    password = data.get('password')
+    recaptcha_code = data.get('g-recaptcha-response')
     user = User.query.filter_by(username=username).first()
     if user:
         if user.check_password(password):
