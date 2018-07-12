@@ -28,7 +28,7 @@ def home():
     recaptcha_code = data.get('g-recaptcha-response')
     user = User.query.filter_by(username=username).first()
     if user:
-        recaptcha_auth = urlopen('https://www.google.com/recaptcha/api/siteverify?secret='+ secret_key +'&response='+ recaptcha_code).read()
+        recaptcha_auth = urlopen(f'https://www.google.com/recaptcha/api/siteverify?secret={secret_key}&response={recaptcha_code}').read()
         if recaptcha_auth['success'] == True: # i'm not sure this thing work
             token = generate_token({'user_id': user.id})
             return jsonify({"message": "Login Successful",
