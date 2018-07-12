@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from urllib.request import urlopen
+import json
 from api.models import User
 from api.auth import generate_token
 
@@ -29,7 +30,7 @@ def home():
     user = User.query.filter_by(username=username).first()
     if user:
         recaptcha_auth = urlopen(f'https://www.google.com/recaptcha/api/siteverify?secret={secret_key}&response={recaptcha_code}').read()
-        if recaptcha_auth['success'] == True: # i'm not sure this thing work
+        if json.loads(recaptcha_auth)['success']:
             token = generate_token({'user_id': user.id})
             return jsonify({"message": "Login Successful",
                             "token": token.decode()})
