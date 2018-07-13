@@ -13,8 +13,8 @@ from api.auth import decrypt_token
 
 def test_login(client):
     """ attempt to login as
-            * admin     (with proper/wrong recaptcha)
-            * test_user('example1')     (with proper/wrong recaptcha)
+            * admin
+            * test_user('example1')
             * non_exist_user('nonexist')
 
         target_url: /api/auth/
@@ -26,16 +26,11 @@ def test_login(client):
     resp = login(client, 'notexist', 'notexist')
     assert 'Login Unsuccessful' in resp['message']
 
-    resp = login(client, admin['username'], 'wrong_admin')
-    assert 'Login Unsuccessful' in resp['message']
-    resp = login(client, test_user['username'], 'wrong_example1')
-    assert 'Login Unsuccessful' in resp['message']
-
 
 def test_login_form(client):
     """ attempt to login as
-            * admin     (with proper/wrong recaptcha)
-            * test_user('example1')     (with proper/wrong recaptcha)
+            * admin
+            * test_user('example1')
             * non_exist_user('nonexist')
         with Content-Type: application/x-www-form-urlencoded
         target_url: /api/auth/
@@ -46,11 +41,6 @@ def test_login_form(client):
         client, test_user['username'], test_user['g-recaptcha-response'])
     assert 'Login Successful' in resp['message']
     resp = login_with_form(client, 'notexist', 'notexist')
-    assert 'Login Unsuccessful' in resp['message']
-
-    resp = login_with_form(client, admin['username'], 'wrong_admin')
-    assert 'Login Unsuccessful' in resp['message']
-    resp = login_with_form(client, test_user['username'], 'wrong_example1')
     assert 'Login Unsuccessful' in resp['message']
 
 
