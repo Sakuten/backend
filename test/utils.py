@@ -1,9 +1,9 @@
 # --- variables
 
 admin = {'username': 'admin',
-         'password': 'admin'}
+         'g-recaptcha-response': ''}
 test_user = {'username': 'example1',
-             'password': 'example1'}
+             'g-recaptcha-response': ''}
 
 invalid_classroom_id = '999999999999'
 invalid_lottery_id = '9999999999'
@@ -11,41 +11,41 @@ invalid_lottery_id = '9999999999'
 # --- methods
 
 
-def login(client, username, password):
-    """logging in as 'username' with 'password'
+def login(client, username, rresp):
+    """logging in as 'username' with 'g-recaptcha-response'
         client (class Flask.testing.FlaskClient): the client
         username (str): the username to login
-        password (str): the password for the 'username'
+        rresp (str): the recapctha response code. can be empty in testing
     """
     return client.post('/auth/', json={
         'username': username,
-        'password': password
+        'g-recaptcha-response': rresp
     }, follow_redirects=True).get_json()
 
 
-def login_with_form(client, username, password):
-    """logging in as 'username' with 'password',
+def login_with_form(client, username, rresp):
+    """logging in as 'username' with 'g-recaptcha-response',
             with Content-Type: application/x-www-form-urlencoded
         client (class Flask.testing.FlaskClient): the client
         username (str): the username to login
-        password (str): the password for the 'username'
+        rresp (str): the recapctha response code. can be empty in testing
     """
     return client.post('/auth/', data={
         'username': username,
-        'password': password
+        'g-recaptcha-response': rresp
     }, follow_redirects=True).get_json()
 
 
-def as_user_get(client, username, password, url):
+def as_user_get(client, username, rresp, url):
     """make a response as logined user
          1. login as the user
          2. make GET request with 'token' made in 1.
          3. return response
          client (class Flask.testing.FlaskClient): the client
          username (str): the username to login
-         password (str): the password for the 'username'
+         rresp (str): the recapctha response code. can be empty in testing
    """
-    login_data = login(client, username, password)
+    login_data = login(client, username, rresp)
     token = login_data['token']
     header = 'Bearer ' + token
 

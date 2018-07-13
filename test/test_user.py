@@ -13,15 +13,15 @@ from api.auth import decrypt_token
 
 def test_login(client):
     """ attempt to login as
-            * admin     (with proper/wrong password)
-            * test_user('example1')     (with proper/wrong password)
+            * admin     (with proper/wrong recaptcha)
+            * test_user('example1')     (with proper/wrong recaptcha)
             * non_exist_user('nonexist')
 
         target_url: /api/auth/
     """
-    resp = login(client, admin['username'], admin['password'])
+    resp = login(client, admin['username'], admin['g-recaptcha-response'])
     assert 'Login Successful' in resp['message']
-    resp = login(client, test_user['username'], test_user['password'])
+    resp = login(client, test_user['username'], test_user['g-recaptcha-response'])
     assert 'Login Successful' in resp['message']
     resp = login(client, 'notexist', 'notexist')
     assert 'Login Unsuccessful' in resp['message']
@@ -34,16 +34,16 @@ def test_login(client):
 
 def test_login_form(client):
     """ attempt to login as
-            * admin     (with proper/wrong password)
-            * test_user('example1')     (with proper/wrong password)
+            * admin     (with proper/wrong recaptcha)
+            * test_user('example1')     (with proper/wrong recaptcha)
             * non_exist_user('nonexist')
         with Content-Type: application/x-www-form-urlencoded
         target_url: /api/auth/
     """
-    resp = login_with_form(client, admin['username'], admin['password'])
+    resp = login_with_form(client, admin['username'], admin['g-recaptcha-response'])
     assert 'Login Successful' in resp['message']
     resp = login_with_form(
-        client, test_user['username'], test_user['password'])
+        client, test_user['username'], test_user['g-recaptcha-response'])
     assert 'Login Successful' in resp['message']
     resp = login_with_form(client, 'notexist', 'notexist')
     assert 'Login Unsuccessful' in resp['message']
@@ -67,7 +67,7 @@ def test_login_invalid(client):
 
     resp = client.post('/auth/', json={
         'username': test_user['username'],
-        'password': test_user['password'],
+        'g-recaptcha-response': test_user['g-recaptcha-response'],
     }, follow_redirects=True, content_type='application/xml')
     assert resp.status_code == 400
     assert 'Unsupported content type' in resp.get_json()['message']
@@ -80,7 +80,7 @@ def test_auth_token(client):
 
        target_url: /api/auth/
     """
-    resp = login(client, admin['username'], admin['password'])
+    resp = login(client, admin['username'], admin['g-recaptcha-response'])
     assert 'token' in resp
 
     token = resp['token']
@@ -101,7 +101,7 @@ def test_status(client):
     """
     user = test_user
     resp = as_user_get(client, user['username'],
-                       user['password'], '/api/status')
+                       user['g-recaptcha-response'], '/api/status')
     assert 'id' in resp.get_json()['status']
 
     with client.application.app_context():
