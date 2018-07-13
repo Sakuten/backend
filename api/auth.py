@@ -7,6 +7,13 @@ import json
 
 
 def generate_token(obj):
+    """
+        generate token and expiration, return it.
+        Args:
+            obj (dict): the data to encrypt
+        Return:
+            token (bytes): encrypted token
+    """
     fernet = Fernet(current_app.config['SECRET_KEY'])
     now = datetime.now().timestamp()
     data = {
@@ -17,6 +24,13 @@ def generate_token(obj):
 
 
 def decrypt_token(token):
+    """
+        decrypt the token.
+        Args:
+            token (str): encrypted token.
+        Return:
+            decrypted data (dict): decrypted contents
+    """
     fernet = Fernet(current_app.config['SECRET_KEY'])
     try:
         decrypted = fernet.decrypt(token.encode())
@@ -26,6 +40,9 @@ def decrypt_token(token):
 
 
 def login_required(required_name=None):
+    """
+        a decorder to require login
+    """
     def login_required_impl(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
@@ -43,6 +60,7 @@ def login_required(required_name=None):
                     resp.headers['WWW-Authenticate'] = 'Bearer ' + headm
                 return resp
 
+            # check form of request header
             if 'Authorization' not in request.headers:
                 return auth_error(401, 'realm="token_required"')
             auth = request.headers['Authorization'].split()

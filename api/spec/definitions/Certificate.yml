@@ -1,0 +1,11 @@
+The Login Certificate
+---
+properties:
+  password:
+    $ref: '#/definitions/Password'
+  username:
+    $ref: '#/definitions/Username'
+required:
+  - username
+  - password
+type: object

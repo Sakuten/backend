@@ -1,0 +1,25 @@
+Get the information of classroom by id
+---
+produces:
+  - application/json
+parameters:
+  - description: ID of classroom to return
+    in: path
+    name: classroomId
+    required: true
+    type: integer
+    x-example: 0
+responses:
+  '200':
+    description: Classroom Information
+    schema:
+      $ref: '#/definitions/Classroom'
+  '400':
+    description: Not Found
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+tags:
+  - lottery
+description: ''
+operationId: getClassroomById
+summary: Get the information of classroom by id

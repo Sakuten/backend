@@ -1,0 +1,28 @@
+Get list of lotteries
+---
+produces:
+  - application/json
+parameters:
+  - description: Specify the method to sort the list
+    in: query
+    name: sort
+    required: false
+    type: string
+  - description: Specify the filter
+    in: query
+    name: filter
+    required: false
+    type: string
+    x-example: available
+responses:
+  '200':
+    description: List of Lotteries
+    schema:
+      items:
+        $ref: '#/definitions/Lottery'
+      type: array
+tags:
+  - lottery
+description: ''
+operationId: getLotteries
+summary: Get list of lotteries
