@@ -30,7 +30,7 @@ def home():
     user = User.query.filter_by(username=username).first()
     if user:
         secret_key = current_app.config['RECAPTCHA_SECRET_KEY']
-        request_uri = f'https://www.google.com/recaptcha/api/siteverify?secret={secret_key}&response={recaptcha_code}'
+        request_uri = f'https://www.google.com/recaptcha/api/siteverify?secret={secret_key}&response={recaptcha_code}'  # noqa: E501
         recaptcha_auth = urlopen(request_uri).read()
         if json.loads(recaptcha_auth)['success']:
             token = generate_token({'user_id': user.id})

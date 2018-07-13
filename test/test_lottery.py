@@ -126,7 +126,8 @@ def test_apply_noperm(client):
         target_url: /api/lotteries/<id>/apply [PUT]
     """
     idx = '1'
-    token = login(client, admin['username'], admin['g-recaptcha-response'])['token']
+    token = login(client, admin['username'],
+                  admin['g-recaptcha-response'])['token']
     resp = client.put('/api/lotteries/'+idx+'/apply',
                       headers={'Authorization': 'Bearer ' + token})
 
@@ -248,7 +249,8 @@ def test_cancel_already_done(client):
     """
     idx = '1'
     user = test_user
-    token = login(client, user['username'], user['g-recaptcha-response'])['token']
+    token = login(client, user['username'],
+                  user['g-recaptcha-response'])['token']
 
     with client.application.app_context():
         target_lottery = Lottery.query.filter_by(id=idx).first()
@@ -270,7 +272,8 @@ def test_cancel_noperm(client):
     """
     idx = '1'
     user = {'username': 'hoge', 'g-recaptcha-response': 'hugo'}
-    token = login(client, user['username'], user['g-recaptcha-response'])['token']
+    token = login(client, user['username'],
+                  user['g-recaptcha-response'])['token']
 
     with client.application.app_context():
         target_lottery = Lottery.query.filter_by(id=idx).first()
@@ -304,7 +307,8 @@ def test_draw(client):
             db.session.add(application)
         db.session.commit()
 
-    token = login(client, admin['username'], admin['g-recaptcha-response'])['token']
+    token = login(client, admin['username'],
+                  admin['g-recaptcha-response'])['token']
     resp = client.get('/api/lotteries/'+idx+'/draw',
                       headers={'Authorization': 'Bearer ' + token})
 
@@ -345,7 +349,8 @@ def test_draw_invaild(client):
         target_url: /api/lotteries/<id>/draw [GET]
     """
     idx = invalid_lottery_id
-    token = login(client, admin['username'], admin['g-recaptcha-response'])['token']
+    token = login(client, admin['username'],
+                  admin['g-recaptcha-response'])['token']
     resp = client.get('/api/lotteries/'+idx+'/draw',
                       headers={'Authorization': 'Bearer ' + token})
 
@@ -359,7 +364,8 @@ def test_draw_already_done(client):
         target_url: /api/lotteries/<id>/draw [GET]
     """
     idx = '1'
-    token = login(client, admin['username'], admin['g-recaptcha-response'])['token']
+    token = login(client, admin['username'],
+                  admin['g-recaptcha-response'])['token']
 
     with client.application.app_context():
         target_lottery = Lottery.query.filter_by(id=idx).first()

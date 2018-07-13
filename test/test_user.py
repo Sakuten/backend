@@ -21,7 +21,8 @@ def test_login(client):
     """
     resp = login(client, admin['username'], admin['g-recaptcha-response'])
     assert 'Login Successful' in resp['message']
-    resp = login(client, test_user['username'], test_user['g-recaptcha-response'])
+    resp = login(client, test_user['username'],
+                 test_user['g-recaptcha-response'])
     assert 'Login Successful' in resp['message']
     resp = login(client, 'notexist', 'notexist')
     assert 'Login Unsuccessful' in resp['message']
@@ -35,7 +36,8 @@ def test_login_form(client):
         with Content-Type: application/x-www-form-urlencoded
         target_url: /api/auth/
     """
-    resp = login_with_form(client, admin['username'], admin['g-recaptcha-response'])
+    resp = login_with_form(
+        client, admin['username'], admin['g-recaptcha-response'])
     assert 'Login Successful' in resp['message']
     resp = login_with_form(
         client, test_user['username'], test_user['g-recaptcha-response'])
