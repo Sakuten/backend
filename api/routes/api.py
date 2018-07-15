@@ -132,7 +132,7 @@ def draw_lottery(idx):
 @login_required()
 def get_status():
     """
-        return user's id, applications
+        return user's id and applications
     """
     user = User.query.filter_by(id=g.token_data['user_id']).first()
     result = user_schema.dump(user)[0]
