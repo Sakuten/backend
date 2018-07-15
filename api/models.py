@@ -18,6 +18,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(40), unique=True)
     passhash = db.Column(db.String(128))
+    public_id = db.Column(db.String(4), unique=True)
 
     def __repr__(self):
         return '<User %r>' % self.username
