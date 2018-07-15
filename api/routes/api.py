@@ -46,7 +46,7 @@ def list_lotteries():
     """
     lotteries = Lottery.query.all()
     result = lotteries_schema.dump(lotteries)[0]
-    return jsonify({"lotteries": result})
+    return jsonify(result)
 
 
 @bp.route('/lotteries/<int:idx>')
