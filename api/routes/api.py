@@ -58,9 +58,8 @@ def list_lottery(idx):
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 400
-    lottery_result = lottery_schema.dump(lottery)[0]
-    classroom_result = classroom_schema.dump(lottery.classroom)[0]
-    return jsonify({"lottery": lottery_result, "classroom": classroom_result})
+    result = lottery_schema.dump(lottery)[0]
+    return jsonify(result)
 
 
 @bp.route('/lotteries/<int:idx>/apply', methods=['PUT', 'DELETE'])
