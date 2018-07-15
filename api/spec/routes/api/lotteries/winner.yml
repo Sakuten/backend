@@ -1,0 +1,27 @@
+Get list of winners for specific lottery
+---
+produces:
+  - application/json
+parameters:
+  - description: ID of the lotttery
+    in: path
+    name: lotteryId
+    required: true
+    type: integer
+    x-example: 0
+responses:
+  '200':
+    description: List of Winners
+    schema:
+      items:
+        name: WinnerId
+        type: string
+      type: array
+  '400':
+    description: Not found / Invalid Request
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+tags:
+  - lottery
+description: get the list of winners' identification Id for specified lottery Id
+operationId: getWinners
