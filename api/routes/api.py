@@ -22,7 +22,7 @@ def list_classrooms():
     """
     classrooms = Classroom.query.all()
     result = classrooms_schema.dump(classrooms)[0]
-    return jsonify({"classrooms": result})
+    return jsonify(result)
 
 
 @bp.route('/classrooms/<int:idx>')
