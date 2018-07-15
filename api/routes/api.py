@@ -35,7 +35,7 @@ def list_classroom(idx):
     if classroom is None:
         return jsonify({"message": "Classroom could not be found."}), 400
     result = classroom_schema.dump(classroom)[0]
-    return jsonify({"classroom": result})
+    return jsonify(result)
 
 
 @bp.route('/lotteries')
