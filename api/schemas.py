@@ -16,7 +16,7 @@ applications_schema = ApplicationSchema(many=True)
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     username = fields.Str()
-    applications = fields.Method("get_applications", dump_only=True)
+    application_history = fields.Method("get_applications", dump_only=True)
 
     def get_applications(self, user):
         lotteries = Application.query.filter_by(user_id=user.id).all()
