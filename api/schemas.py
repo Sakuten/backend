@@ -4,10 +4,11 @@ from api.models import Application
 
 class ApplicationSchema(Schema):
     id = fields.Int(dump_only=True)
-    lottery_id = fields.Int()
-    user_id = fields.Int()
-    status = fields.Boolean()
+    lottery= fields.Method("get_lottery", dump_only=True)
 
+    def get_lottery(self, application):
+        lottery = Lottery.query.get(application.lottery_id)
+        return lottery_schema.dump(lottery)[0]
 
 application_schema = ApplicationSchema()
 applications_schema = ApplicationSchema(many=True)
