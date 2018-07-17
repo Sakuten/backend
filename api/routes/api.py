@@ -77,7 +77,7 @@ def apply_lottery(idx):
     """
     lottery = Lottery.query.get(idx)
     if lottery is None:
-        return jsonify({"message": "Lottery could not be found."}), 400
+        return jsonify({"message": "Lottery could not be found."}), 404
     if lottery.done:
         return jsonify({"message": "This lottery has already done"}), 400
     user = User.query.filter_by(id=g.token_data['user_id']).first()
