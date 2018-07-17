@@ -1,0 +1,6 @@
+This isn't enough.
+We, should change:
+  * the method 'PUT' to 'POST',
+  * some status_code to 404, etc
+
+And also, few things are ambiguous so I'm asking for it to @coord-e.
