@@ -17,7 +17,7 @@ def test_login(client):
             * test_user('example1')     (with proper/wrong password)
             * non_exist_user('nonexist')
 
-        target_url: /api/auth/
+        target_url: /auth/
     """
     resp = login(client, admin['username'], admin['password'])
     assert 'Login Successful' in resp['message']
@@ -38,7 +38,7 @@ def test_login_form(client):
             * test_user('example1')     (with proper/wrong password)
             * non_exist_user('nonexist')
         with Content-Type: application/x-www-form-urlencoded
-        target_url: /api/auth/
+        target_url: /auth/
     """
     resp = login_with_form(client, admin['username'], admin['password'])
     assert 'Login Successful' in resp['message']
@@ -57,7 +57,7 @@ def test_login_form(client):
 def test_login_invalid(client):
     """logging in with invalid request params as
             * test_user
-        target_url: /api/auth/
+        target_url: /auth/
     """
     resp = client.post('/auth/', json={
         'username': test_user['username'],
@@ -78,7 +78,7 @@ def test_auth_token(client):
        1. test: token is contained in response
        2. test: token is vaild
 
-       target_url: /api/auth/
+       target_url: /auth/
     """
     resp = login(client, admin['username'], admin['password'])
     assert 'token' in resp
@@ -97,12 +97,12 @@ def test_status(client):
         2. test: response matches the data in DB
 
         auth: required
-        target_url: /api/status
+        target_url: /status
     """
     user = test_user
     resp = as_user_get(client, user['username'],
-                       user['password'], '/api/status')
     assert 'id' in resp.get_json()['status']
+                       user['password'], '/status')
 
     with client.application.app_context():
         db_status = User.query.filter_by(username=user['username']).first()
@@ -113,9 +113,9 @@ def test_status(client):
 def test_status_invaild_header(client):
     """attempt to get status with wrong header.
         this cause error in /api/auth. not in /api/routes/api
-        target_url: /api/status
+        target_url: /status
     """
-    resp = client.get('/api/status',
+    resp = client.get('/status',
                       headers={'Authorization_wrong': 'Bearer no_token_here'})
     assert resp.status_code == 401
     assert 'token_required' in resp.headers['WWW-Authenticate']
@@ -124,9 +124,9 @@ def test_status_invaild_header(client):
 def test_status_invaild_auth(client):
     """attempt to get status with wrong auth data.
         this cause error in /api/auth. not in /api/routes/api
-        target_url: /api/status
+        target_url: /status
     """
-    resp = client.get('/api/status',
+    resp = client.get('/status',
                       headers={'Authorization': 'Bearer wrong_token_here'})
     assert resp.status_code == 401
     assert 'invalid_token' in resp.headers['WWW-Authenticate']
