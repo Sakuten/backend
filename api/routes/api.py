@@ -46,6 +46,8 @@ def list_lotteries():
     """
         return lotteries list.
     """
+    filter = request.args.get('filter') # this value will be used to query the result. Now, no meaning.
+    sort = request.args.get('sort') # # this value will be used to sort the result. Now, no meaning.
     lotteries = Lottery.query.all()
     result = lotteries_schema.dump(lotteries)[0]
     return jsonify(result)
