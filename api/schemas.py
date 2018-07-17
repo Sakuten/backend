@@ -1,5 +1,5 @@
 from marshmallow import Schema, fields
-from api.models import Application
+from api.models import Application, Lottery
 
 
 class ApplicationSchema(Schema):
