@@ -101,13 +101,13 @@ def test_status(client):
     """
     user = test_user
     resp = as_user_get(client, user['username'],
-    assert 'id' in resp.get_json()['status']
                        user['password'], '/status')
+    assert 'id' in resp.get_json()
 
     with client.application.app_context():
         db_status = User.query.filter_by(username=user['username']).first()
 
-        assert resp.get_json()['status'] == user_schema.dump(db_status)[0]
+        assert resp.get_json() == user_schema.dump(db_status)[0]
 
 
 def test_status_invaild_header(client):
