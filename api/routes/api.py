@@ -114,7 +114,7 @@ def draw_lottery(idx):
     """
     lottery = Lottery.query.get(idx)
     if lottery is None:
-        return jsonify({"message": "Lottery could not be found."}), 400
+        return jsonify({"message": "Lottery could not be found."}), 404
     if lottery.done:
         return jsonify({"message": "This lottery is already done "
                         "and cannot be undone"}), 400
