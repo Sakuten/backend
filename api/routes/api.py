@@ -53,9 +53,9 @@ def list_lotteries():
     return jsonify(result)
 
 
+@bp.route('/lotteries/<int:idx>', methods=['GET'])
 @spec('api/lotteries/idx.yml')
 def list_lottery(idx):
-@bp.route('/lotteries/<int:idx>', methods=['GET'])
     """
         return infomation about specified lottery.
     """
