@@ -61,7 +61,7 @@ def list_lottery(idx):
     """
     lottery = Lottery.query.get(idx)
     if lottery is None:
-        return jsonify({"message": "Lottery could not be found."}), 400
+        return jsonify({"message": "Lottery could not be found."}), 404
     result = lottery_schema.dump(lottery)[0]
     return jsonify(result)
 
