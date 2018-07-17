@@ -20,6 +20,8 @@ def list_classrooms():
     """
         return classroom list
     """
+    filter = request.args.get('filter') # this value will be used to query the result. Now, no meaning.
+    sort = request.args.get('sort') # # this value will be used to sort the result. Now, no meaning.
     classrooms = Classroom.query.all()
     result = classrooms_schema.dump(classrooms)[0]
     return jsonify(result)
