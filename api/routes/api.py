@@ -66,8 +66,8 @@ def list_lottery(idx):
     return jsonify(result)
 
 
-@bp.route('/lotteries/<int:idx>', methods=['PUT', 'DELETE'])
-@spec('api/lotteries/apply.yml', methods=['PUT'])
+@bp.route('/lotteries/<int:idx>', methods=['POST', 'DELETE'])
+@spec('api/lotteries/apply.yml', methods=['POST'])
 @spec('api/lotteries/cancel.yml', methods=['DELETE'])
 @login_required()
 def apply_lottery(idx):
@@ -89,7 +89,7 @@ def apply_lottery(idx):
         return jsonify({"message": msg}), 400
     application = previous.filter_by(lottery_id=lottery.id).first()
     # access DB
-    if request.method == 'PUT':
+    if request.method == 'POST':
         if not application:
             newapplication = Application(
                 lottery_id=lottery.id, user_id=user.id, status=None)
