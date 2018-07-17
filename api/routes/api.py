@@ -20,8 +20,10 @@ def list_classrooms():
     """
         return classroom list
     """
-    filter = request.args.get('filter') # this value will be used to query the result. Now, no meaning.
-    sort = request.args.get('sort') # # this value will be used to sort the result. Now, no meaning.
+# those two values will be used in the future. now, not used
+    filter = request.args.get('filter')
+    sort = request.args.get('sort')
+
     classrooms = Classroom.query.all()
     result = classrooms_schema.dump(classrooms)[0]
     return jsonify(result)
@@ -46,8 +48,10 @@ def list_lotteries():
     """
         return lotteries list.
     """
-    filter = request.args.get('filter') # this value will be used to query the result. Now, no meaning.
-    sort = request.args.get('sort') # # this value will be used to sort the result. Now, no meaning.
+# those two values will be used in the future. now, not used
+    filter = request.args.get('filter')
+    sort = request.args.get('sort')
+
     lotteries = Lottery.query.all()
     result = lotteries_schema.dump(lotteries)[0]
     return jsonify(result)
