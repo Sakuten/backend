@@ -60,7 +60,7 @@ def create_app():
     swag.init_app(app)
 
     app.register_blueprint(auth.bp, url_prefix='/auth')
-    app.register_blueprint(api.bp, url_prefix='/api')
+    app.register_blueprint(api.bp)
 
     with app.app_context():
         if sqlalchemy.inspect(db.engine).get_table_names() == []:
