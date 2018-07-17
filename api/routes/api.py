@@ -105,7 +105,7 @@ def apply_lottery(idx):
                     else newapplication.id})
 
 
-@bp.route('/lotteries/<int:idx>/draw')
+@bp.route('/lotteries/<int:idx>/draw', methods=['POST'])
 @spec('api/lotteries/draw.yml')
 @login_required('admin')
 def draw_lottery(idx):
