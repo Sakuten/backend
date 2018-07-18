@@ -59,7 +59,7 @@ def create_app():
     db.init_app(app)
     swag.init_app(app)
 
-    app.register_blueprint(auth.bp, url_prefix='/auth')
+    app.register_blueprint(auth.bp)
     app.register_blueprint(api.bp)
 
     with app.app_context():

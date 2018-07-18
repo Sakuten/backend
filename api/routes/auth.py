@@ -6,7 +6,7 @@ from api.swagger import spec
 bp = Blueprint(__name__, 'auth')
 
 
-@bp.route('/', methods=['POST'])
+@bp.route('/auth', methods=['POST'])
 @spec('auth.yml')
 def home():
     """
