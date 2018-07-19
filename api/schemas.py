@@ -48,12 +48,21 @@ class LotterySchema(Schema):
     index = fields.Int()
     done = fields.Boolean()
     name = fields.Method("format_name", dump_only=True)
+    winners = fields.Method("get_winners", dump_only=True)
 
     def format_name(self, lottery):
         grade = lottery.classroom.grade
         name = lottery.classroom.get_classroom_name()
         index = lottery.index
         return f"{grade}{name}.{index}"
+
+    def get_winners(self, lottery):
+        winners = Application.query.filter_by(lottery_id=lottery.id, status=True).all()
+        winners_id = []
+        for winner in winners:
+            winners_id.append(winner.user_id)
+        return winners_id
+
 
 
 lottery_schema = LotterySchema()
