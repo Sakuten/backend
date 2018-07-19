@@ -129,7 +129,7 @@ def draw_lottery(idx):
     for application in applications:
         if application.id == chosen.id:
             application.status = "won"
-        else
+        else:
             application.status = "lose"
         db.session.add(application)
     lottery.done = True
