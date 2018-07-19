@@ -96,7 +96,7 @@ def apply_lottery(idx):
     if request.method == 'POST':
         if not application:
             newapplication = Application(
-                lottery_id=lottery.id, user_id=user.id, status=None)
+                lottery_id=lottery.id, user_id=user.id, status="pending")
             db.session.add(newapplication)
     else:
         if application:
@@ -127,7 +127,10 @@ def draw_lottery(idx):
         return jsonify({"message": "Nobody is applying to this lottery"}), 400
     chosen = random.choice(applications)
     for application in applications:
-        application.status = application.id == chosen.id
+        if application.id == chosen.id:
+            application.status = "won"
+        else
+            application.status = "lose"
         db.session.add(application)
     lottery.done = True
     db.session.commit()
