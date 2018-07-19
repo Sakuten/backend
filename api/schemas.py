@@ -4,6 +4,7 @@ from api.models import Application, Lottery
 
 class ApplicationSchema(Schema):
     id = fields.Int(dump_only=True)
+    status = fields.Str()
     lottery = fields.Method("get_lottery", dump_only=True)
 
     def get_lottery(self, application):
