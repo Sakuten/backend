@@ -140,7 +140,9 @@ def draw_lottery(idx):
         db.session.add(application)
     lottery.done = True
     db.session.commit()
-    return jsonify({"chosen": chosen.user.id})
+    winner = User.query.get(chosen.user_id)
+    result = user_schema.dump(winner)
+    return jsonify(result)
 
 
 @bp.route('/status', methods=['GET'])
