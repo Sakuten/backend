@@ -34,16 +34,16 @@ def test_get_allclassrooms(client):
 
 def test_get_specific_classroom(client):
     """test proper infomation is returned from the API
-        target_url: /api/classrooms/<id>
+        target_url: /classrooms/<id>
     """
     idx = '1'  # classroom id to test
-    resp = client.get('/api/classrooms/'+idx)
+    resp = client.get('/classrooms/'+idx)
 
     with client.application.app_context():
         db_status = Classroom.query.filter_by(id=idx).first()
         classroom = classroom_schema.dump(db_status)[0]
 
-    assert resp.get_json()['classroom'] == classroom
+    assert resp.get_json() == classroom
 
 
 def test_get_specific_classroom_invaild_id(client):
