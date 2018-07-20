@@ -48,12 +48,12 @@ def test_get_specific_classroom(client):
 
 def test_get_specific_classroom_invaild_id(client):
     """test proper errpr is returned from the API
-        target_url: /api/classrooms/<id>
+        target_url: /classrooms/<id>
     """
     idx = invalid_classroom_id  # classroom id to test
-    resp = client.get('/api/classrooms/'+idx)
+    resp = client.get('/classrooms/'+idx)
 
-    assert resp.status_code == 400
+    assert resp.status_code == 404
     assert 'Classroom could not be found.' in resp.get_json()['message']
 
 
