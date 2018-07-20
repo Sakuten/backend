@@ -38,7 +38,7 @@ def list_classroom(idx):
     """
     classroom = Classroom.query.get(idx)
     if classroom is None:
-        return jsonify({"message": "Classroom could not be found."}), 400
+        return jsonify({"message": "Classroom could not be found."}), 404
     result = classroom_schema.dump(classroom)[0]
     return jsonify(result)
 
