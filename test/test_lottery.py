@@ -21,15 +21,15 @@ from api.schemas import (
 
 def test_get_allclassrooms(client):
     """test proper infomation is returned from the API
-        target_url: /api/classrooms
+        target_url: /classrooms
     """
-    resp = client.get('/api/classrooms')
+    resp = client.get('/classrooms')
 
     with client.application.app_context():
         db_status = Classroom.query.all()
         classroom_list = classrooms_schema.dump(db_status)[0]
 
-    assert resp.get_json()['classrooms'] == classroom_list
+    assert resp.get_json() == classroom_list
 
 
 def test_get_specific_classroom(client):
