@@ -108,6 +108,8 @@ def apply_lottery(idx):
     else:
         if application:
             db.session.delete(application)
+            db.session.commit()
+            return jsonify({"message": "Successful Operation"})
         else:
             return jsonify({"message":
                             "You're not applying for this lottery"}), 400
