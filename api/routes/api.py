@@ -5,6 +5,7 @@ from api.schemas import (
     user_schema,
     classrooms_schema,
     classroom_schema,
+    application_schema,
     lotteries_schema,
     lottery_schema
 )
@@ -98,15 +99,18 @@ def apply_lottery(idx):
             newapplication = Application(
                 lottery_id=lottery.id, user_id=user.id, status="pending")
             db.session.add(newapplication)
+            db.session.commit()
+            result = application_schema.dump(newapplication)[0]
+            return jsonify(result)
+        else:
+            result = application_schema.dump(application)[0]
+            return jsonify(result)
     else:
         if application:
             db.session.delete(application)
         else:
             return jsonify({"message":
                             "You're not applying for this lottery"}), 400
-    db.session.commit()
-    return jsonify({"id": application.id if application
-                    else newapplication.id})
 
 
 @bp.route('/lotteries/<int:idx>/draw', methods=['POST'])
