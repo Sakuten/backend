@@ -196,26 +196,27 @@ def test_apply_same_period(client):
     assert 'already applying to a lottery in this period' in message
 
 
+@pytest.mark.skip(reason='will be repaced with "/application" endpoint')
 def test_cancel(client):
     """test: cancel added application
         1. add new application to db
         2. send request to cancel
         3. check response's status_code and db status
-        target_url: /api/lotteries/<id>/apply [DELETE]
+        target_url: /lotteries/<id> [DELETE]
     """
     lottery_id = '1'
     token = login(client, test_user['username'],
                   test_user['password'])['token']
-    user_resp = client.get('/api/status',
+    user_resp = client.get('/status',
                            headers={'Authorization': 'Bearer ' + token})
-    user_id = user_resp.get_json()['status']['id']
+    user_id = user_resp.get_json()['id']
     with client.application.app_context():
         newapplication = Application(
-            lottery_id=lottery_id, user_id=user_id, status=None)
+            lottery_id=lottery_id, user_id=user_id, status='pending')
         db.session.add(newapplication)
         db.session.commit()
 
-        resp = client.delete('/api/lotteries/' + lottery_id + '/apply',
+        resp = client.delete('/applications/' + lottery_id,
                              headers={'Authorization': 'Bearer ' + token})
         application = Application.query.filter_by(
             lottery_id=lottery_id, user_id=user_id).first()
