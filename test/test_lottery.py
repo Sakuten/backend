@@ -162,7 +162,7 @@ def test_apply_already_done(client):
         db.session.add(target_lottery)
         db.session.commit()
 
-    resp = client.put('/api/lotteries/'+idx+'/apply',
+    resp = client.post('/lotteries/'+idx,
                       headers={'Authorization': 'Bearer ' + token})
 
     assert resp.status_code == 400
