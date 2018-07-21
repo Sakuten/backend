@@ -346,14 +346,14 @@ def test_draw_noperm(client):
 
 def test_draw_invaild(client):
     """attempt to draw non-exsit lottery
-        target_url: /api/lotteries/<id>/draw [GET]
+        target_url: /lotteries/<id>/draw [POST]
     """
     idx = invalid_lottery_id
     token = login(client, admin['username'], admin['password'])['token']
-    resp = client.get('/api/lotteries/'+idx+'/draw',
+    resp = client.post('/lotteries/'+idx+'/draw',
                       headers={'Authorization': 'Bearer ' + token})
 
-    assert resp.status_code == 400
+    assert resp.status_code == 404
     assert 'Lottery could not be found.' in resp.get_json()['message']
 
 
