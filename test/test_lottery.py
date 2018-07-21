@@ -172,7 +172,7 @@ def test_apply_already_done(client):
 def test_apply_same_period(client):
     """attempt to apply to the same period with the previous application
         1. test: error is returned
-        target_url: /api/lotteries/<id>/apply [PUT]
+        target_url: /lotteries/<id> [POST]
     """
     idx = '1'
     token = login(client, test_user['username'],
@@ -187,7 +187,7 @@ def test_apply_same_period(client):
         db.session.add(application)
         db.session.commit()
 
-    resp = client.put('/api/lotteries/'+idx+'/apply',
+    resp = client.post('/lotteries/'+idx,
                       headers={'Authorization': 'Bearer ' + token})
 
     message = resp.get_json()['message']
