@@ -11,6 +11,7 @@ class ApplicationSchema(Schema):
         lottery = Lottery.query.get(application.lottery_id)
         return lottery_schema.dump(lottery)[0]
 
+
 application_schema = ApplicationSchema()
 applications_schema = ApplicationSchema(many=True)
 
@@ -58,12 +59,12 @@ class LotterySchema(Schema):
         return f"{grade}{name}.{index}"
 
     def get_winners(self, lottery):
-        winners = Application.query.filter_by(lottery_id=lottery.id, status="won").all()
+        winners = Application.query.filter_by(
+            lottery_id=lottery.id, status="won").all()
         winners_id = []
         for winner in winners:
             winners_id.append(winner.user_id)
         return winners_id
-
 
 
 lottery_schema = LotterySchema()

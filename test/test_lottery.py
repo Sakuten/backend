@@ -21,6 +21,8 @@ from api.schemas import (
 
 # ---------- Lottery API
 
+@pytest.mark.classrooms
+@pytest.mark.all
 def test_get_allclassrooms(client):
     """test proper infomation is returned from the API
         target_url: /classrooms
@@ -107,7 +109,7 @@ def test_apply(client):
     token = login(client, test_user['username'],
                   test_user['password'])['token']
     resp = client.post('/lotteries/'+idx,
-                      headers={'Authorization': 'Bearer ' + token})
+                       headers={'Authorization': 'Bearer ' + token})
 
     with client.application.app_context():
         # get needed objects
@@ -118,7 +120,7 @@ def test_apply(client):
             lottery=target_lottery, user_id=user.id).first()
 
         assert application is not None
-        assert resp.get_json() ==  application_schema.dump(application)[0]
+        assert resp.get_json() == application_schema.dump(application)[0]
 
 
 @pytest.mark.skip(reason='not implemented yet')
@@ -129,7 +131,7 @@ def test_apply_noperm(client):
     idx = '1'
     token = login(client, admin['username'], admin['password'])['token']
     resp = client.post('/lotteries/'+idx,
-                      headers={'Authorization': 'Bearer ' + token})
+                       headers={'Authorization': 'Bearer ' + token})
 
     assert resp.status_code == 403
     assert 'no permission' in resp.get_json().keys()  # not completed yet
@@ -143,7 +145,7 @@ def test_apply_invaild(client):
     token = login(client, test_user['username'],
                   test_user['password'])['token']
     resp = client.post('/lotteries/'+idx,
-                      headers={'Authorization': 'Bearer ' + token})
+                       headers={'Authorization': 'Bearer ' + token})
 
     assert resp.status_code == 404
     assert 'Lottery could not be found.' in resp.get_json()['message']
@@ -165,7 +167,7 @@ def test_apply_already_done(client):
         db.session.commit()
 
     resp = client.post('/lotteries/'+idx,
-                      headers={'Authorization': 'Bearer ' + token})
+                       headers={'Authorization': 'Bearer ' + token})
 
     assert resp.status_code == 400
     assert 'already done' in resp.get_json()['message']
@@ -190,7 +192,7 @@ def test_apply_same_period(client):
         db.session.commit()
 
     resp = client.post('/lotteries/'+idx,
-                      headers={'Authorization': 'Bearer ' + token})
+                       headers={'Authorization': 'Bearer ' + token})
 
     message = resp.get_json()['message']
 
@@ -265,7 +267,8 @@ def test_cancel_already_done(client):
                          headers={'Authorization': 'Bearer ' + token})
 
     assert resp.status_code == 400
-    assert 'The Application has already fullfilled' in resp.get_json()['message']
+    assert 'The Application has already fullfilled' in resp.get_json()[
+        'message']
 
 
 @pytest.mark.skip(reason='not implemented yet')
@@ -280,8 +283,8 @@ def test_cancel_noperm(client):
     owner_token = login(client, owner['username'], owner['password'])['token']
     user_token = login(client, user['username'], user['password'])['token']
 
-
-    client.post('/lotteries/'+ idx, headers={'Authorization': 'Bearer' + owner_token})
+    client.post('/lotteries/' + idx,
+                headers={'Authorization': 'Bearer' + owner_token})
     resp = client.delete('/applications/' + idx,
                          headers={'Authorization': 'Bearer ' + user_token})
 
@@ -309,7 +312,7 @@ def test_draw(client):
 
     token = login(client, admin['username'], admin['password'])['token']
     resp = client.post('/lotteries/'+idx+'/draw',
-                      headers={'Authorization': 'Bearer ' + token})
+                       headers={'Authorization': 'Bearer ' + token})
 
     assert resp.status_code == 200
 
@@ -338,7 +341,7 @@ def test_draw_noperm(client):
     token = login(client, test_user['username'],
                   test_user['password'])['token']
     resp = client.post('/lotteries/'+idx+'/draw',
-                      headers={'Authorization': 'Bearer ' + token})
+                       headers={'Authorization': 'Bearer ' + token})
 
     assert resp.status_code == 403
     assert 'Forbidden' in resp.get_json()['message']
@@ -351,7 +354,7 @@ def test_draw_invaild(client):
     idx = invalid_lottery_id
     token = login(client, admin['username'], admin['password'])['token']
     resp = client.post('/lotteries/'+idx+'/draw',
-                      headers={'Authorization': 'Bearer ' + token})
+                       headers={'Authorization': 'Bearer ' + token})
 
     assert resp.status_code == 404
     assert 'Lottery could not be found.' in resp.get_json()['message']
@@ -372,7 +375,7 @@ def test_draw_already_done(client):
         db.session.commit()
 
     resp = client.post('/lotteries/'+idx+'/draw',
-                      headers={'Authorization': 'Bearer ' + token})
+                       headers={'Authorization': 'Bearer ' + token})
 
     assert resp.status_code == 400
     assert 'already done' in resp.get_json()['message']
@@ -396,7 +399,7 @@ def test_draw_nobody_apply(client):
             db.session.commit()
 
     resp = client.post('/lotteries/'+idx+'/draw',
-                      headers={'Authorization': 'Bearer ' + token})
+                       headers={'Authorization': 'Bearer ' + token})
 
     assert resp.status_code == 400
     assert 'nobody' in resp.get_json()['message']
