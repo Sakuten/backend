@@ -332,16 +332,16 @@ def test_draw(client):
 
 def test_draw_noperm(client):
     """attempt to draw without proper permission.
-        target_url: /api/lotteries/<id>/draw [GET]
+        target_url: /lotteries/<id>/draw [POST]
     """
     idx = '1'
     token = login(client, test_user['username'],
                   test_user['password'])['token']
-    resp = client.get('/api/lotteries/'+idx+'/draw',
+    resp = client.post('/lotteries/'+idx+'/draw',
                       headers={'Authorization': 'Bearer ' + token})
 
     assert resp.status_code == 403
-    assert 'Forbidden' in resp.get_json()['message']  # not completed yet
+    assert 'Forbidden' in resp.get_json()['message']
 
 
 def test_draw_invaild(client):
