@@ -86,12 +86,12 @@ def test_get_specific_lottery(client):
 
 def test_get_specific_lottery_invaild_id(client):
     """test proper errpr is returned from the API
-        target_url: /api/classrooms/<id>
+        target_url: /classrooms/<id>
     """
     idx = invalid_lottery_id  # lottery id to test
-    resp = client.get('/api/lotteries/'+idx)
+    resp = client.get('/lotteries/'+idx)
 
-    assert resp.status_code == 400
+    assert resp.status_code == 404
     assert 'Lottery could not be found.' in resp.get_json()['message']
 
 
