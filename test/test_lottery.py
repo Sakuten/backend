@@ -225,15 +225,16 @@ def test_cancel(client):
     assert application is None
 
 
+@pytest.mark.skip(reason='will be repaced with "/application" endpoint')
 def test_cancel_invaild(client):
     """attempt to cancel non-applied application.
-        target_url: /api/lotteries/<id>/apply [DELETE]
+        target_url: /lotteries/<id> [DELETE]
     """
 
     lottery_id = '1'
     token = login(client, test_user['username'],
                   test_user['password'])['token']
-    resp = client.delete('/api/lotteries/' + lottery_id + '/apply',
+    resp = client.delete('/applications/' + lottery_id,
                          headers={'Authorization': 'Bearer ' + token})
 
     assert resp.status_code == 400
