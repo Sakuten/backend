@@ -59,15 +59,15 @@ def test_get_specific_classroom_invaild_id(client):
 
 def test_get_alllotteries(client):
     """test proper infomation is returned from the API
-        target_url: /api/lotteries
+        target_url: /lotteries
     """
-    resp = client.get('/api/lotteries')
+    resp = client.get('/lotteries')
 
     with client.application.app_context():
         db_status = Lottery.query.all()
         lottery_list = lotteries_schema.dump(db_status)[0]
 
-    assert resp.get_json()['lotteries'] == lottery_list
+    assert resp.get_json() == lottery_list
 
 
 def test_get_specific_lottery(client):
