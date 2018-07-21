@@ -10,6 +10,7 @@ from utils import (
 
 from api.models import Lottery, Classroom, User, Application, db
 from api.schemas import (
+    user_schema,
     classrooms_schema,
     classroom_schema,
     application_schema,
@@ -290,12 +291,11 @@ def test_cancel_noperm(client):
 
 def test_draw(client):
     """attempt to draw a lottery
-        1. some users make application to one lottery
-        2. admin draws a lottery
-        3. test: error isn't returned
-        4. drawn id is one of applicant
-        5. test: DB is changed
-        target_url: /api/lotteries/<id>/apply [PUT]
+        1. make some applications to one lottery
+        2. draws the lottery
+        3. test: status code, whether winner status is returned
+        4. test: DB is changed
+        target_url: /lotteries/<id>/apply [PUT]
     """
     idx = '1'
 
@@ -308,24 +308,25 @@ def test_draw(client):
         db.session.commit()
 
     token = login(client, admin['username'], admin['password'])['token']
-    resp = client.get('/api/lotteries/'+idx+'/draw',
+    resp = client.post('/lotteries/'+idx+'/draw',
                       headers={'Authorization': 'Bearer ' + token})
 
     assert resp.status_code == 200
-    assert 'chosen' in resp.get_json().keys()
 
-    chosen_id = resp.get_json()['chosen']
-
+    chosen_id = resp.get_json()[0]['id']
     with client.application.app_context():
         user = User.query.filter_by(id=chosen_id).first()
+
         assert user is not None
+        assert resp.get_json()[0] == user_schema.dump(user)[0]
+
         target_lottery = Lottery.query.filter_by(id=idx).first()
         assert target_lottery.done
         users = User.query.all()
         for user in users:
             application = Application.query.filter_by(
                 lottery=target_lottery, user_id=user.id).first()
-            is_won = user.id == chosen_id
+            is_won = 'won' if user.id == chosen_id else 'lose'
             assert application.status == is_won
 
 
