@@ -135,22 +135,22 @@ def test_apply_noperm(client):
 
 def test_apply_invaild(client):
     """attempt to apply to non-exsit lottery
-        target_url: /api/lotteries/<id>/apply [PUT]
+        target_url: /lotteries/<id> [PUT]
     """
     idx = invalid_lottery_id
     token = login(client, test_user['username'],
                   test_user['password'])['token']
-    resp = client.put('/api/lotteries/'+idx+'/apply',
+    resp = client.post('/lotteries/'+idx,
                       headers={'Authorization': 'Bearer ' + token})
 
-    assert resp.status_code == 400
+    assert resp.status_code == 404
     assert 'Lottery could not be found.' in resp.get_json()['message']
 
 
 def test_apply_already_done(client):
     """attempt to apply previously drawn application.
         1. test: error is returned
-        target_url: /api/lotteries/<id>/apply [PUT]
+        target_url: /lotteries/<id> [POST]
     """
     idx = '1'
     token = login(client, test_user['username'],
