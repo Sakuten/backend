@@ -123,14 +123,15 @@ def test_apply(client):
 @pytest.mark.skip(reason='not implemented yet')
 def test_apply_noperm(client):
     """attempt to apply without proper permission.
-        target_url: /api/lotteries/<id>/apply [PUT]
+        target_url: /lotteries/<id>/apply [POST]
     """
     idx = '1'
     token = login(client, admin['username'], admin['password'])['token']
-    resp = client.put('/api/lotteries/'+idx+'/apply',
+    resp = client.post('/lotteries/'+idx,
                       headers={'Authorization': 'Bearer ' + token})
 
-    assert '' in resp.get_json().keys()  # not completed yet
+    assert resp.status_code == 403
+    assert 'no permission' in resp.get_json().keys()  # not completed yet
 
 
 def test_apply_invaild(client):
