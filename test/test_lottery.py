@@ -72,16 +72,16 @@ def test_get_alllotteries(client):
 
 def test_get_specific_lottery(client):
     """test proper infomation is returned from the API
-        target_url: /api/lotteries/<id>
+        target_url: /lotteries/<id>
     """
     idx = '1'  # lottery id to test
-    resp = client.get('/api/lotteries/'+idx)
+    resp = client.get('/lotteries/'+idx)
 
     with client.application.app_context():
         db_status = Lottery.query.filter_by(id=idx).first()
         lottery = lottery_schema.dump(db_status)[0]
 
-    assert resp.get_json()['lottery'] == lottery
+    assert resp.get_json() == lottery
 
 
 def test_get_specific_lottery_invaild_id(client):
