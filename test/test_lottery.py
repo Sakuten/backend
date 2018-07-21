@@ -270,22 +270,21 @@ def test_cancel_already_done(client):
 @pytest.mark.skip(reason='not implemented yet')
 def test_cancel_noperm(client):
     """attempt to cancel without permission
-
+        1. create new application.
+        2. attempt to cancel with other user's token
     """
     idx = '1'
+    owner = test_user
     user = {'username': 'hoge', 'password': 'hugo'}
-    token = login(client, user['username'], user['password'])['token']
+    owner_token = login(client, owner['username'], owner['password'])['token']
+    user_token = login(client, user['username'], user['password'])['token']
 
-    with client.application.app_context():
-        target_lottery = Lottery.query.filter_by(id=idx).first()
-        target_lottery.done = True
-        db.session.add(target_lottery)
-        db.session.commit()
 
-    resp = client.delete('/api/lotteries/' + idx + '/apply',
-                         headers={'Authorization': 'Bearer ' + token})
+    client.post('/lotteries/'+ idx, headers={'Authorization': 'Bearer' + owner_token})
+    resp = client.delete('/applications/' + idx,
+                         headers={'Authorization': 'Bearer ' + user_token})
 
-    assert resp.status_code == 400
+    assert resp.status_code == 403
     assert 'insufficient_scope' in resp.headers['WWW-Authenticate']
 
 
