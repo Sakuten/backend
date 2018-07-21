@@ -17,7 +17,7 @@ def test_login(client):
             * test_user('example1')     (with proper/wrong password)
             * non_exist_user('nonexist')
 
-        target_url: /auth/
+        target_url: /auth
     """
     resp = login(client, admin['username'], admin['password'])
     assert 'Login Successful' in resp['message']
@@ -38,7 +38,7 @@ def test_login_form(client):
             * test_user('example1')     (with proper/wrong password)
             * non_exist_user('nonexist')
         with Content-Type: application/x-www-form-urlencoded
-        target_url: /auth/
+        target_url: /auth
     """
     resp = login_with_form(client, admin['username'], admin['password'])
     assert 'Login Successful' in resp['message']
@@ -57,15 +57,15 @@ def test_login_form(client):
 def test_login_invalid(client):
     """logging in with invalid request params as
             * test_user
-        target_url: /auth/
+        target_url: /auth
     """
-    resp = client.post('/auth/', json={
+    resp = client.post('/auth', json={
         'username': test_user['username'],
     }, follow_redirects=True)
     assert resp.status_code == 400
     assert 'Invalid request' in resp.get_json()['message']
 
-    resp = client.post('/auth/', json={
+    resp = client.post('/auth', json={
         'username': test_user['username'],
         'password': test_user['password'],
     }, follow_redirects=True, content_type='application/xml')
@@ -78,7 +78,7 @@ def test_auth_token(client):
        1. test: token is contained in response
        2. test: token is vaild
 
-       target_url: /auth/
+       target_url: /auth
     """
     resp = login(client, admin['username'], admin['password'])
     assert 'token' in resp
