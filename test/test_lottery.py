@@ -358,7 +358,7 @@ def test_draw_invaild(client):
 
 
 def test_draw_already_done(client):
-    """attempt to draw previously drawn application.
+    """attempt to draw previously drawn lottery.
         1. test: error is returned
         target_url: /lotteries/<id>/draw [POST]
     """
