@@ -12,6 +12,7 @@ from api.models import Lottery, Classroom, User, Application, db
 from api.schemas import (
     classrooms_schema,
     classroom_schema,
+    application_schema,
     lotteries_schema,
     lottery_schema
 )
@@ -99,15 +100,13 @@ def test_apply(client):
     """attempt to apply new application.
         1. test: error isn't returned
         2. test: DB is changed
-        target_url: /api/lotteries/<id>/apply [PUT]
+        target_url: /lotteries/<id> [POST]
     """
     idx = '1'
     token = login(client, test_user['username'],
                   test_user['password'])['token']
-    resp = client.put('/api/lotteries/'+idx+'/apply',
+    resp = client.post('/lotteries/'+idx,
                       headers={'Authorization': 'Bearer ' + token})
-
-    assert 'id' in resp.get_json().keys()
 
     with client.application.app_context():
         # get needed objects
@@ -115,9 +114,10 @@ def test_apply(client):
         user = User.query.filter_by(username=test_user['username']).first()
         # this application should be added by previous 'client.put'
         application = Application.query.filter_by(
-            lottery=target_lottery, user_id=user.id)
+            lottery=target_lottery, user_id=user.id).first()
 
         assert application is not None
+        assert resp.get_json() ==  application_schema.dump(application)[0]
 
 
 @pytest.mark.skip(reason='not implemented yet')
