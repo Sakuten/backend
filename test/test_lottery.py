@@ -360,7 +360,7 @@ def test_draw_invaild(client):
 def test_draw_already_done(client):
     """attempt to draw previously drawn application.
         1. test: error is returned
-        target_url: /api/lotteries/<id>/draw [GET]
+        target_url: /lotteries/<id>/draw [POST]
     """
     idx = '1'
     token = login(client, admin['username'], admin['password'])['token']
@@ -371,7 +371,7 @@ def test_draw_already_done(client):
         db.session.add(target_lottery)
         db.session.commit()
 
-    resp = client.get('/api/lotteries/'+idx+'/draw',
+    resp = client.post('/lotteries/'+idx+'/draw',
                       headers={'Authorization': 'Bearer ' + token})
 
     assert resp.status_code == 400
