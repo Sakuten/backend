@@ -21,9 +21,9 @@ def list_classrooms():
     """
         return classroom list
     """
-# those two values will be used in the future. now, not used
-    filter = request.args.get('filter')
-    sort = request.args.get('sort')
+# those two values will be used in the future. now, not used. see issue #59 #60
+#     filter = request.args.get('filter')
+#     sort = request.args.get('sort')
 
     classrooms = Classroom.query.all()
     result = classrooms_schema.dump(classrooms)[0]
@@ -49,9 +49,9 @@ def list_lotteries():
     """
         return lotteries list.
     """
-# those two values will be used in the future. now, not used
-    filter = request.args.get('filter')
-    sort = request.args.get('sort')
+# those two values will be used in the future. now, not used. see issue #62 #63
+#     filter = request.args.get('filter')
+#     sort = request.args.get('sort')
 
     lotteries = Lottery.query.all()
     result = lotteries_schema.dump(lotteries)[0]
