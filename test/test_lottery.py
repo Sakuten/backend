@@ -376,3 +376,27 @@ def test_draw_already_done(client):
 
     assert resp.status_code == 400
     assert 'already done' in resp.get_json()['message']
+
+
+@pytest.mark.skip(reason='not implemented yet')
+def test_draw_nobody_apply(client):
+    """attempt to draw a lottery that nobody applying
+        1. make sure any application is applied to the lottery
+        2. attempt to draw it
+        target_url: /lotteries/<id>/draw [POST]
+    """
+
+    idx = '1'
+    token = login(client, admin['username'], admin['password'])['token']
+
+    with client.application.app_context():
+        target_applications = Application.query.filter_by(lottery_id=idx).all()
+        if target_applications is not None:
+            db.session.delete(target_applications)
+            db.session.commit()
+
+    resp = client.post('/lotteries/'+idx+'/draw',
+                      headers={'Authorization': 'Bearer ' + token})
+
+    assert resp.status_code == 400
+    assert 'nobody' in resp.get_json()['message']
