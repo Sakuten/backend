@@ -237,7 +237,7 @@ def test_cancel_invaild(client):
     resp = client.delete('/applications/' + lottery_id,
                          headers={'Authorization': 'Bearer ' + token})
 
-    assert resp.status_code == 400
+    assert resp.status_code == 404
     assert "You're not applying for this lottery" in resp.get_json()['message']
 
 
