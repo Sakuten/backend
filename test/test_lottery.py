@@ -241,12 +241,13 @@ def test_cancel_invaild(client):
     assert "You're not applying for this lottery" in resp.get_json()['message']
 
 
+@pytest.mark.skip(reason='will be repaced with "/application" endpoint')
 def test_cancel_already_done(client):
     """attempt to cancel application that already-done lottery
         1. create 'done' lottery
         2. add application to that lottery
         3. attempt to cancel that application
-        target_url: /api/lotteries/<id>/apply [DELETE]
+        target_url: /lotteries/<id> [DELETE]
     """
     idx = '1'
     user = test_user
@@ -258,11 +259,11 @@ def test_cancel_already_done(client):
         db.session.add(target_lottery)
         db.session.commit()
 
-    resp = client.delete('/api/lotteries/' + idx + '/apply',
+    resp = client.delete('/applications/' + idx,
                          headers={'Authorization': 'Bearer ' + token})
 
     assert resp.status_code == 400
-    assert 'This lottery has already done' in resp.get_json()['message']
+    assert 'The Application has already fullfilled' in resp.get_json()['message']
 
 
 @pytest.mark.skip(reason='not implemented yet')
