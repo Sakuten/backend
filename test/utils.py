@@ -17,7 +17,7 @@ def login(client, username, password):
         username (str): the username to login
         password (str): the password for the 'username'
     """
-    return client.post('/auth/', json={
+    return client.post('/auth', json={
         'username': username,
         'password': password
     }, follow_redirects=True).get_json()
@@ -30,7 +30,7 @@ def login_with_form(client, username, password):
         username (str): the username to login
         password (str): the password for the 'username'
     """
-    return client.post('/auth/', data={
+    return client.post('/auth', data={
         'username': username,
         'password': password
     }, follow_redirects=True).get_json()

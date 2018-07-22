@@ -65,7 +65,7 @@ def login_required(required_name=None):
                 return auth_error(401, 'realm="token_required"')
             auth = request.headers['Authorization'].split()
             if auth[0].lower() != 'bearer':
-                return auth_error(401, 'error="token_required"')
+                return auth_error(400, 'error="invalid_request"')
             elif len(auth) == 1:
                 return auth_error(400, 'error="invalid_request"')
             elif len(auth) > 2:

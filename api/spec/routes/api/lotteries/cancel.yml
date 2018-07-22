@@ -19,9 +19,19 @@ responses:
       type: object
   '400':
     description: >-
-      Not Found / Invalid Request / Lottery has already done / You're
+      Invalid Request / Lottery has already done / You're
       already applying to a lottery in this period / You're not applying
       for this lottery
+    headers:
+      WWW-Authenicate:
+        description: >-
+          Authenication Error Code. For details, please refer to RFC 6750
+          3. The WWW-Authenticate Response Header Field
+        type: string
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+  '404':
+    description: Not Found
     schema:
       $ref: '#/definitions/ErrorMessage'
   '401':
