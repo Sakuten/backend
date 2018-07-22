@@ -1,0 +1,33 @@
+Authenicate
+---
+  consumes:
+    - application/json
+  produces:
+    - application/json
+  parameters:
+    - description: Authenication Information
+      in: body
+      name: body
+      required: true
+      schema:
+        $ref: '#/definitions/Certificate'
+  responses:
+    '200':
+      description: Access Token
+      schema:
+        properties:
+          message:
+            example: Login Successful
+            type: string
+          token:
+            $ref: '#/definitions/Token'
+        type: object
+    '400':
+      description: Invalid Request / Login Unsuccessful / Unsupported content type
+      schema:
+        $ref: '#/definitions/ErrorMessage'
+  tags:
+    - user
+  description: ''
+  operationId: Authenicate
+  summary: Authenication

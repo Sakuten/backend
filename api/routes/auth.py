@@ -3,11 +3,13 @@ from urllib.request import urlopen
 import json
 from api.models import User
 from api.auth import generate_token
+from api.swagger import spec
 
 bp = Blueprint(__name__, 'auth')
 
 
 @bp.route('/', methods=['POST'])
+@spec('auth.yml')
 def home():
     """
         top page. Require/Check Login

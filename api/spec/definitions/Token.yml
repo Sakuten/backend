@@ -1,0 +1,6 @@
+Token
+---
+description: Access Token (fernet)
+example: >-
+  gAAAAABbKh479Z7Pb77oqmdAWBlgrjySjiKO51wvwWp3DvJFk-FfhuVhPPM1iFxNFgUR8WydJkZhV6WbTQP1Rny18ixAQtmicnVUy7tAyCkYq8U5etbuUsgkzv6YCcDph-1z6PXn01fM3AWbnNRvOHip2j-Nby21Gw==
+type: string

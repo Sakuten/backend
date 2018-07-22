@@ -1,0 +1,16 @@
+Get list of available classrooms
+---
+produces:
+  - application/json
+parameters: []
+responses:
+  '200':
+    description: List of Classrooms
+    schema:
+      items:
+        $ref: '#/definitions/Classroom'
+      type: array
+tags:
+  - lottery
+description: ''
+operationId: getClassrooms
