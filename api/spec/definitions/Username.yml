@@ -1,5 +1,0 @@
-Username
----
-description: Username (deprecated; will be replaced by id auth)
-example: example1
-type: string
