@@ -25,3 +25,4 @@ tags:
   - lottery
 description: ''
 operationId: getClassrooms
+summary: Get list of available classrooms
