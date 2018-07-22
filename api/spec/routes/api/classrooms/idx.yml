@@ -14,7 +14,7 @@ responses:
     description: Classroom Information
     schema:
       $ref: '#/definitions/Classroom'
-  '400':
+  '404':
     description: Not Found
     schema:
       $ref: '#/definitions/ErrorMessage'
