@@ -18,6 +18,12 @@ responses:
     description: >-
       Malformed Authenication Header has detected / Lottery has already
       done / You’re already applying to a lottery in this period
+    headers:
+      WWW-Authenicate:
+        description: >-
+          Authenication Error Code. For details, please refer to RFC 6750
+          3. The WWW-Authenticate Response Header Field
+        type: string
     schema:
       $ref: '#/definitions/ErrorMessage'
   '401':
