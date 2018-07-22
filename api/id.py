@@ -16,10 +16,10 @@ class IDServer:
         return self.unused_id_list.pop()
 
     def update_json_file(self):
-        writeJson(self.json_path, self.unused_id_list)
+        write_json(self.json_path, self.unused_id_list)
 
 
-def writeJson(json_path, ids):
+def write_json(json_path, ids):
     def id_list2json(ids):
         return json.dumps({"ids": ids}, indent=4)
 
@@ -27,6 +27,6 @@ def writeJson(json_path, ids):
         f.write(id_list2json(ids))
 
 
-def generateIDJsonFile(json_path, how_many):
+def generate_id_json_file(json_path, how_many):
     ids = random.sample(range(maximum_id), how_many)
-    writeJson(json_path, ids)
+    write_json(json_path, ids)
