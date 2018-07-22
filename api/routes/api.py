@@ -133,11 +133,9 @@ def draw_lottery(idx):
         return jsonify({"message": "Nobody is applying to this lottery"}), 400
     chosen = random.choice(applications)
     for application in applications:
-        if application.id == chosen.id:
-            application.status = "won"
-        else:
-            application.status = "lose"
+        application.status = "won" if application.id == chosen.id else application.status = "lose"
         db.session.add(application)
+
     lottery.done = True
     db.session.commit()
     winner = User.query.get(chosen.user_id)
