@@ -34,6 +34,7 @@ responses:
 security:
   - user_auth: []
   - admin_auth: []
+  - checker_auth: []
 tags:
   - user
 description: ''
