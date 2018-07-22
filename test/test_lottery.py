@@ -329,8 +329,8 @@ def test_draw(client):
         for user in users:
             application = Application.query.filter_by(
                 lottery=target_lottery, user_id=user.id).first()
-            is_won = 'won' if user.id == chosen_id else 'lose'
-            assert application.status == is_won
+            status = 'won' if user.id == chosen_id else 'lose'
+            assert application.status == staus
 
 
 def test_draw_noperm(client):
