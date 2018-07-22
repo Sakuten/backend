@@ -26,19 +26,22 @@ definitions:
     properties:
       id:
         $ref: '#/definitions/ApplicationID'
-      lottery_id:
-        $ref: '#/definitions/LotteryID'
+      lottery:
+        $ref: '#/definitions/Lottery'
       status:
-        description: 'true if won, false if not won. null means undrawn. (deprecated)'
-        example: true
-        type: boolean
-      user_id:
-        $ref: '#/definitions/SecretID'
+        $ref: '#/definitions/ApplicationStatus'
     type: object
   ApplicationID:
     description: Application Identifier
     example: 0
     type: integer
+  ApplicationStatus:
+    description: Application Status
+    enum:
+      - pending
+      - won
+      - lose
+    type: string
   Certificate:
     properties:
       password:
@@ -155,6 +158,10 @@ securityDefinitions:
     in: header
     name: Authorization
     type: apiKey
+  checker_auth:
+    in: header
+    name: Authorization
+    type: apiKey
   user_auth:
     in: header
     name: Authorization
@@ -164,11 +171,23 @@ tags:
     name: user
   - description: Lottery System APIs
     name: lottery
+  - description: Endpoints for checkers
+    name: checker
 externalDocs:
   description: GitHub
   url: 'https://github.com/Sakuten/'
 x-components:
   responses:
+    ApplicationInfo:
+      description: Application Information
+      schema:
+        $ref: '#/definitions/Application'
+    ApplicationList:
+      description: List of Applications
+      schema:
+        items:
+          $ref: '#/definitions/Application'
+        type: array
     Certificate:
       description: Access Token
       schema:
