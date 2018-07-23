@@ -142,3 +142,10 @@ tags
 
 # ignore them not to commit credentials
 instance/
+
+
+
+## user definitions
+
+cards-print/src/*
+
