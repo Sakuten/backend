@@ -1,3 +1,14 @@
+from api.models import Lottery, Classroom, User, Application, db
+from api.schemas import (
+    user_schema,
+    classrooms_schema,
+    classroom_schema,
+    application_schema,
+    applications_schema,
+    lotteries_schema,
+    lottery_schema
+)
+
 # --- variables
 
 admin = {'username': 'admin',
@@ -50,3 +61,18 @@ def as_user_get(client, username, password, url):
     header = 'Bearer ' + token
 
     return client.get(url, headers={'Authorization': header})
+
+def make_application(client, username, lottery_id):
+    """make an application with specified user and lottery id
+         client (class Flask.testing.FlaskClient): the client
+         username (str): the username to apply
+         lottery_id (int): the lottery id to create application from.
+         Return (int): The created application's id
+   """
+    with client.application.app_context():
+        user = User.query.filter_by(username=username).first()
+        newapplication = Application(
+            lottery_id=lottery_id, user_id=user.id, status="pending")
+        db.session.add(newapplication)
+        db.session.commit()
+        return newapplication.id
