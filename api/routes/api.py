@@ -6,6 +6,7 @@ from api.schemas import (
     classrooms_schema,
     classroom_schema,
     application_schema,
+    applications_schema,
     lotteries_schema,
     lottery_schema
 )
@@ -113,6 +114,67 @@ def apply_lottery(idx):
         else:
             return jsonify({"message":
                             "You're not applying for this lottery"}), 400
+
+@bp.route('/applications')
+@spec('api/applications.yml')
+@login_required()
+def list_applications():
+    """
+        return applications list.
+    """
+# those two values will be used in the future. now, not used. see issue #62 #63
+#     filter = request.args.get('filter')
+#     sort = request.args.get('sort')
+
+    user = User.query.filter_by(id=g.token_data['user_id']).first()
+    applications = Application.query.filter_by(user_id=user.id)
+    result = applications_schema.dump(applications)[0]
+    return jsonify(result)
+
+
+@bp.route('/applications/<int:idx>', methods=['GET'])
+@spec('api/applications/idx.yml')
+@login_required()
+def list_application(idx):
+    """
+        return infomation about specified application.
+    """
+    user = User.query.filter_by(id=g.token_data['user_id']).first()
+    application = Application.query.filter_by(user_id=user.id).get(idx)
+    if application is None:
+        return jsonify({"message": "Application could not be found."}), 404
+    result = application_schema.dump(application)[0]
+    return jsonify(result)
+
+
+@bp.route('/applications/<int:idx>', methods=['DELETE'])
+@spec('api/applications/cancel.yml')
+@login_required()
+def apply_application(idx):
+    """
+        apply/cancel applications.
+        specify the application id in the URL.
+    """
+    application = Application.query.get(idx)
+    if application is None:
+        return jsonify({"message": "Application could not be found."}), 404
+    if application.status != "pending":
+        return jsonify({"message": "This application has already done"}), 400
+    user = User.query.filter_by(id=g.token_data['user_id']).first()
+    previous = Application.query.filter_by(user_id=user.id)
+    if any(app.application.index == application.index and
+            app.application.id != application.id
+            for app in previous.all()):
+        msg = "You're already applying to a application in this period"
+        return jsonify({"message": msg}), 400
+    application = previous.filter_by(application_id=application.id).first()
+    if application:
+        db.session.delete(application)
+        db.session.commit()
+        return jsonify({"message": "Successful Operation"})
+    else:
+        return jsonify({"message":
+                        "You're not applying for this application"}), 400
 
 
 @bp.route('/lotteries/<int:idx>/draw', methods=['POST'])
