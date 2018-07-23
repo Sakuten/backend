@@ -286,7 +286,7 @@ def test_cancel(client):
 def test_cancel_already_done(client):
     """attempt to cancel application that already-done lottery
         1. create 'done' application
-        3. attempt to cancel that application
+        2. attempt to cancel that application
         target_url: /lotteries/<id> [DELETE]
     """
     token = login(client, test_user['username'],
