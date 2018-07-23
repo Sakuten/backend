@@ -26,9 +26,10 @@ for id_pair in id_pairs:
     cards.append(newcard)
 
 
+empty_card = card('','')
 env = Environment(loader=FileSystemLoader('./template'))
 template = env.get_template('cards.html.j2')
 
-html = template.render({'cards':cards, 'horizontal': horizontal})
+html = template.render({'cards':cards, 'empty_card': empty_card, 'horizontal': horizontal})
 with open('cards.html', 'w') as f:
     f.write(html)

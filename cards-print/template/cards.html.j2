@@ -5,7 +5,7 @@
         <tr>
           {% for column in range(1,horizontal +1) %}
             {% set card_index = (row * horizontal) + column  %}
-            {% set card = cards[card_index]|default(cards[-1]) %}
+            {% set card = cards[card_index]|default(empty_card) %}
               <td> <img src="{{ card.qr_path }}" > <br \>
                     確認用ID: {{ card.public_id }}
               </td>
