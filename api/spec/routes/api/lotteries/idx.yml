@@ -14,7 +14,7 @@ responses:
     description: Lottery Information
     schema:
       $ref: '#/definitions/Lottery'
-  '400':
+  '404':
     description: Not Found
     schema:
       $ref: '#/definitions/ErrorMessage'
