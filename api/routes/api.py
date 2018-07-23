@@ -162,12 +162,12 @@ def apply_application(idx):
         return jsonify({"message": "This application has already done"}), 400
     user = User.query.filter_by(id=g.token_data['user_id']).first()
     previous = Application.query.filter_by(user_id=user.id)
-    if any(app.application.index == application.index and
-            app.application.id != application.id
+    if any(app.lottery.index == application.lottery.index and
+            app.id != application.id
             for app in previous.all()):
         msg = "You're already applying to a application in this period"
         return jsonify({"message": msg}), 400
-    application = previous.filter_by(application_id=application.id).first()
+    application = previous.filter_by(id=application.id).first()
     if application:
         db.session.delete(application)
         db.session.commit()
