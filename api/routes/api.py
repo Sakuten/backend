@@ -1,5 +1,5 @@
 import random
-from flask import Blueprint, jsonify, request, g
+from flask import Blueprint, jsonify, g
 from api.models import Lottery, Classroom, User, Application, db
 from api.schemas import (
     user_schema,
@@ -105,6 +105,7 @@ def apply_lottery(idx):
         result = application_schema.dump(application)[0]
         return jsonify(result)
 
+
 @bp.route('/applications')
 @spec('api/applications.yml')
 @login_required()
@@ -130,7 +131,8 @@ def list_application(idx):
         return infomation about specified application.
     """
     user = User.query.filter_by(id=g.token_data['user_id']).first()
-    application = Application.query.filter_by(user_id=user.id).filter_by(id=idx).first()
+    application = Application.query.filter_by(
+        user_id=user.id).filter_by(id=idx).first()
     if application is None:
         return jsonify({"message": "Application could not be found."}), 404
     result = application_schema.dump(application)[0]
@@ -149,7 +151,8 @@ def apply_application(idx):
     if application is None:
         return jsonify({"message": "Application could not be found."}), 404
     if application.status != "pending":
-        return jsonify({"message": "The Application has already fullfilled"}), 400
+        resp = {"message": "The Application has already fullfilled"}
+        return jsonify(resp), 400
     user = User.query.filter_by(id=g.token_data['user_id']).first()
     previous = Application.query.filter_by(user_id=user.id)
     if any(app.lottery.index == application.lottery.index and

@@ -202,6 +202,7 @@ def test_apply_same_period(client):
     assert resp.status_code == 400
     assert 'already applying to a lottery in this period' in message
 
+
 def test_get_allapplications(client):
     """test proper infomation is returned from the API
         target_url: /applications
@@ -209,7 +210,8 @@ def test_get_allapplications(client):
     lottery_id = 1
     make_application(client, test_user['username'], lottery_id)
 
-    resp = as_user_get(client, test_user['username'], test_user['password'], f'/applications')
+    resp = as_user_get(
+        client, test_user['username'], test_user['password'], f'/applications')
 
     with client.application.app_context():
         db_status = Application.query.all()
@@ -223,9 +225,12 @@ def test_get_specific_application(client):
         target_url: /applications/<id>
     """
     lottery_id = 1
-    application_id = make_application(client, test_user['username'], lottery_id)
+    application_id = make_application(
+        client, test_user['username'], lottery_id)
 
-    resp = as_user_get(client, test_user['username'], test_user['password'], f'/applications/{application_id}')
+    resp = as_user_get(client,
+                       test_user['username'], test_user['password'],
+                       f'/applications/{application_id}')
 
     with client.application.app_context():
         db_status = Application.query.filter_by(id=application_id).first()
@@ -239,13 +244,18 @@ def test_get_specific_application_invaild_id(client):
         target_url: /classrooms/<id>
     """
     lottery_id = 1
-    application_id = make_application(client, test_user['username'], lottery_id)
+    application_id = make_application(
+        client, test_user['username'], lottery_id)
 
-    idx = application_id + 1  # application id to test
-    resp = as_user_get(client, test_user['username'], test_user['password'], f'/applications/{idx}')
+    # application id to test
+    idx = application_id + 1
+    resp = as_user_get(client,
+                       test_user['username'], test_user['password'],
+                       f'/applications/{idx}')
 
     assert resp.status_code == 404
     assert 'Application could not be found.' in resp.get_json()['message']
+
 
 def test_cancel(client):
     """test: cancel added application
@@ -255,7 +265,8 @@ def test_cancel(client):
         target_url: /applications/<id> [DELETE]
     """
     lottery_id = 1
-    application_id = make_application(client, test_user['username'], lottery_id)
+    application_id = make_application(
+        client, test_user['username'], lottery_id)
 
     token = login(client, test_user['username'],
                   test_user['password'])['token']
@@ -278,12 +289,15 @@ def test_cancel_already_done(client):
         3. attempt to cancel that application
         target_url: /lotteries/<id> [DELETE]
     """
-    token = login(client, test_user['username'], test_user['password'])['token']
+    token = login(client, test_user['username'],
+                  test_user['password'])['token']
     lottery_id = 1
-    application_id = make_application(client, test_user['username'], lottery_id)
+    application_id = make_application(
+        client, test_user['username'], lottery_id)
 
     with client.application.app_context():
-        target_application = Application.query.filter_by(id=application_id).first()
+        target_application = Application.query.filter_by(
+            id=application_id).first()
         target_application.status = 'lose'
         db.session.add(target_application)
         db.session.commit()

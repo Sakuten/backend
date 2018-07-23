@@ -1,13 +1,4 @@
-from api.models import Lottery, Classroom, User, Application, db
-from api.schemas import (
-    user_schema,
-    classrooms_schema,
-    classroom_schema,
-    application_schema,
-    applications_schema,
-    lotteries_schema,
-    lottery_schema
-)
+from api.models import User, Application, db
 
 # --- variables
 
@@ -61,6 +52,7 @@ def as_user_get(client, username, password, url):
     header = 'Bearer ' + token
 
     return client.get(url, headers={'Authorization': header})
+
 
 def make_application(client, username, lottery_id):
     """make an application with specified user and lottery id
