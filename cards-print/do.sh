@@ -4,6 +4,7 @@
 #
 # copyright (c) 2018 Sakutendev
 
+trap 'rm src/qr/*.png src/*.html' 2
 echo "Generating html..."
 python mkhtml.py
 echo "Done.\nGenerating PDF..."
