@@ -153,7 +153,6 @@ def cancel_application(idx):
     if application.status != "pending":
         resp = {"message": "The Application has already fullfilled"}
         return jsonify(resp), 400
-    user = User.query.filter_by(id=g.token_data['user_id']).first()
     db.session.delete(application)
     db.session.commit()
     return jsonify({"message": "Successful Operation"})
