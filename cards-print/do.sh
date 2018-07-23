@@ -4,9 +4,7 @@
 #
 # copyright (c) 2018 Sakutendev
 
-echo 'Generating QR codes...'
-python mkqr.py
-echo "Done.\nGenerating html..."
+echo "Generating html..."
 python mkhtml.py
 echo "Done.\nGenerating PDF..."
 html2pdf cards.html
