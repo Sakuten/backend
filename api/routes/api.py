@@ -140,7 +140,7 @@ def list_application(idx):
         return infomation about specified application.
     """
     user = User.query.filter_by(id=g.token_data['user_id']).first()
-    application = Application.query.filter_by(user_id=user.id).get(idx)
+    application = Application.query.filter_by(user_id=user.id).filter_by(id=idx).first()
     if application is None:
         return jsonify({"message": "Application could not be found."}), 404
     result = application_schema.dump(application)[0]
