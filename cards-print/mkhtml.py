@@ -19,7 +19,7 @@ with open(target_path, 'r') as f:
 qr_pathes = []
 cards = []
 for id_pair in id_pairs:
-    qr = gen_qr_code(qr_url, id_pair['secret_id'])
+    qr = gen_qr_code(base_url, id_pair['secret_id'])
     qr_pathes.append(qr)
 
     newcard = card(qr, id_pair['public_id'])
