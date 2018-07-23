@@ -1,12 +1,15 @@
 from marshmallow import Schema, fields
-from api.models import Application
+from api.models import Application, Lottery
 
 
 class ApplicationSchema(Schema):
     id = fields.Int(dump_only=True)
-    lottery_id = fields.Int()
-    user_id = fields.Int()
-    status = fields.Boolean()
+    status = fields.Str()
+    lottery = fields.Method("get_lottery", dump_only=True)
+
+    def get_lottery(self, application):
+        lottery = Lottery.query.get(application.lottery_id)
+        return lottery_schema.dump(lottery)[0]
 
 
 application_schema = ApplicationSchema()
@@ -16,7 +19,7 @@ applications_schema = ApplicationSchema(many=True)
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     username = fields.Str()
-    applications = fields.Method("get_applications", dump_only=True)
+    application_history = fields.Method("get_applications", dump_only=True)
 
     def get_applications(self, user):
         lotteries = Application.query.filter_by(user_id=user.id).all()
@@ -47,12 +50,21 @@ class LotterySchema(Schema):
     index = fields.Int()
     done = fields.Boolean()
     name = fields.Method("format_name", dump_only=True)
+    winners = fields.Method("get_winners", dump_only=True)
 
     def format_name(self, lottery):
         grade = lottery.classroom.grade
         name = lottery.classroom.get_classroom_name()
         index = lottery.index
         return f"{grade}{name}.{index}"
+
+    def get_winners(self, lottery):
+        winners = Application.query.filter_by(
+            lottery_id=lottery.id, status="won").all()
+        winners_id = []
+        for winner in winners:
+            winners_id.append(winner.user_id)
+        return winners_id
 
 
 lottery_schema = LotterySchema()

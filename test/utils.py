@@ -1,3 +1,5 @@
+from api.models import User, Application, db
+
 # --- variables
 
 admin = {'username': 'admin',
@@ -17,7 +19,7 @@ def login(client, username, rresp):
         username (str): the username to login
         rresp (str): the recapctha response code. can be empty in testing
     """
-    return client.post('/auth/', json={
+    return client.post('/auth', json={
         'username': username,
         'g-recaptcha-response': rresp
     }, follow_redirects=True).get_json()
@@ -30,7 +32,7 @@ def login_with_form(client, username, rresp):
         username (str): the username to login
         rresp (str): the recapctha response code. can be empty in testing
     """
-    return client.post('/auth/', data={
+    return client.post('/auth', data={
         'username': username,
         'g-recaptcha-response': rresp
     }, follow_redirects=True).get_json()
@@ -50,3 +52,19 @@ def as_user_get(client, username, rresp, url):
     header = 'Bearer ' + token
 
     return client.get(url, headers={'Authorization': header})
+
+
+def make_application(client, username, lottery_id):
+    """make an application with specified user and lottery id
+         client (class Flask.testing.FlaskClient): the client
+         username (str): the username to apply
+         lottery_id (int): the lottery id to create application from.
+         Return (int): The created application's id
+   """
+    with client.application.app_context():
+        user = User.query.filter_by(username=username).first()
+        newapplication = Application(
+            lottery_id=lottery_id, user_id=user.id, status="pending")
+        db.session.add(newapplication)
+        db.session.commit()
+        return newapplication.id
