@@ -1,0 +1,18 @@
+<HTML>
+  <body>
+    <table border="1">
+      {% for row in range(1,vertical) %}
+        <tr>
+          {% for column in range(1,horizontal) %}
+          {% set card_index = row * column -1 %}
+          {% set card = cards[card_index] %}
+            <td> <img src="{{ card.qr_path }}" > <br \>
+              index is {{ card_index }} <br \>
+                  {{ card.public_id }}
+            </td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+  </body>
+</HTML>
