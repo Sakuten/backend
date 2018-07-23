@@ -4,8 +4,8 @@ from jinja2 import Environment, FileSystemLoader
 import json
 
 from mkqr import gen_qr_code
-import card
-import config
+from cards import card
+from config import *
 
 
 # 1. Loads list of ids(secret_id, public_id) from json file
