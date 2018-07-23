@@ -305,18 +305,11 @@ def test_cancel_already_done(client):
         2. attempt to cancel that application
         target_url: /lotteries/<id> [DELETE]
     """
-<<<<<<< HEAD
-    idx = '1'
-    user = test_user
-    token = login(client, user['username'],
-                  user['g-recaptcha-response'])['token']
-=======
     token = login(client, test_user['username'],
-                  test_user['password'])['token']
+                  test_user['g-recaptcha-response'])['token']
     lottery_id = 1
     application_id = make_application(
         client, test_user['username'], lottery_id)
->>>>>>> develop
 
     with client.application.app_context():
         target_application = Application.query.filter_by(
