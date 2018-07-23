@@ -5,7 +5,6 @@
 # copyright (c) 2018 Sakutendev
 
 trap 'rm src/qr/*.png src/*.html' 2
-echo "Done.\nAll processes are done properly.exit."
 if ! [ -e src/cards.html ]; then
   echo "Generating html..."
   pipenv run python mkhtml.py
@@ -15,3 +14,5 @@ else
 fi
 echo "Generating PDF..."
 wkhtmltopdf --encoding 'utf-8' --lowquality cards.html cards.pdf
+echo -e "Done.\nAll processes are done properly.exit."
+
