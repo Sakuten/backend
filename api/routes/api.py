@@ -154,20 +154,9 @@ def cancel_application(idx):
         resp = {"message": "The Application has already fullfilled"}
         return jsonify(resp), 400
     user = User.query.filter_by(id=g.token_data['user_id']).first()
-    previous = Application.query.filter_by(user_id=user.id)
-    if any(app.lottery.index == application.lottery.index and
-            app.id != application.id
-            for app in previous.all()):
-        msg = "You're already applying to a application in this period"
-        return jsonify({"message": msg}), 400
-    application = previous.filter_by(id=application.id).first()
-    if application:
-        db.session.delete(application)
-        db.session.commit()
-        return jsonify({"message": "Successful Operation"})
-    else:
-        return jsonify({"message":
-                        "You're not applying for this application"}), 400
+    db.session.delete(application)
+    db.session.commit()
+    return jsonify({"message": "Successful Operation"})
 
 
 @bp.route('/lotteries/<int:idx>/draw', methods=['POST'])
