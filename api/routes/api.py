@@ -72,13 +72,12 @@ def list_lottery(idx):
     return jsonify(result)
 
 
-@bp.route('/lotteries/<int:idx>', methods=['POST', 'DELETE'])
-@spec('api/lotteries/apply.yml', methods=['POST'])
-@spec('api/lotteries/cancel.yml', methods=['DELETE'])
+@bp.route('/lotteries/<int:idx>', methods=['POST'])
+@spec('api/lotteries/apply.yml')
 @login_required()
 def apply_lottery(idx):
     """
-        apply/cancel applications.
+        apply to the lottery.
         specify the lottery id in the URL.
     """
     lottery = Lottery.query.get(idx)
@@ -95,25 +94,16 @@ def apply_lottery(idx):
         return jsonify({"message": msg}), 400
     application = previous.filter_by(lottery_id=lottery.id).first()
     # access DB
-    if request.method == 'POST':
-        if not application:
-            newapplication = Application(
-                lottery_id=lottery.id, user_id=user.id, status="pending")
-            db.session.add(newapplication)
-            db.session.commit()
-            result = application_schema.dump(newapplication)[0]
-            return jsonify(result)
-        else:
-            result = application_schema.dump(application)[0]
-            return jsonify(result)
+    if not application:
+        newapplication = Application(
+            lottery_id=lottery.id, user_id=user.id, status="pending")
+        db.session.add(newapplication)
+        db.session.commit()
+        result = application_schema.dump(newapplication)[0]
+        return jsonify(result)
     else:
-        if application:
-            db.session.delete(application)
-            db.session.commit()
-            return jsonify({"message": "Successful Operation"})
-        else:
-            return jsonify({"message":
-                            "You're not applying for this lottery"}), 400
+        result = application_schema.dump(application)[0]
+        return jsonify(result)
 
 @bp.route('/applications')
 @spec('api/applications.yml')
