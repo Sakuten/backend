@@ -142,7 +142,7 @@ def list_application(idx):
 @bp.route('/applications/<int:idx>', methods=['DELETE'])
 @spec('api/applications/cancel.yml')
 @login_required()
-def apply_application(idx):
+def cancel_application(idx):
     """
         cancel the application.
         specify the application id in the URL.
