@@ -1,15 +1,14 @@
 <HTML>
   <body>
     <table border="1">
-      {% for row in range(1,vertical) %}
+      {% for row in range(cards|length // horizontal) %}
         <tr>
-          {% for column in range(1,horizontal) %}
-          {% set card_index = row * column -1 %}
-          {% set card = cards[card_index] %}
-            <td> <img src="{{ card.qr_path }}" > <br \>
-              index is {{ card_index }} <br \>
-                  {{ card.public_id }}
-            </td>
+          {% for column in range(1,horizontal +1) %}
+            {% set card_index = (row * horizontal) + column  %}
+            {% set card = cards[card_index]|default(cards[-1]) %}
+              <td> <img src="{{ card.qr_path }}" > <br \>
+                    確認用ID: {{ card.public_id }}
+              </td>
           {% endfor %}
         </tr>
       {% endfor %}
