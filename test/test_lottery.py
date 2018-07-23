@@ -4,8 +4,10 @@ from utils import (
     login,
     admin,
     test_user,
+    as_user_get,
     invalid_classroom_id,
-    invalid_lottery_id
+    invalid_lottery_id,
+    make_application
 )
 
 from api.models import Lottery, Classroom, User, Application, db
@@ -14,6 +16,7 @@ from api.schemas import (
     classrooms_schema,
     classroom_schema,
     application_schema,
+    applications_schema,
     lotteries_schema,
     lottery_schema
 )
@@ -200,28 +203,79 @@ def test_apply_same_period(client):
     assert 'already applying to a lottery in this period' in message
 
 
-@pytest.mark.skip(reason='will be repaced with "/application" endpoint')
+def test_get_allapplications(client):
+    """test proper infomation is returned from the API
+        target_url: /applications
+    """
+    lottery_id = 1
+    make_application(client, test_user['username'], lottery_id)
+
+    resp = as_user_get(
+        client, test_user['username'], test_user['password'], f'/applications')
+
+    with client.application.app_context():
+        db_status = Application.query.all()
+        application_list = applications_schema.dump(db_status)[0]
+
+    assert resp.get_json() == application_list
+
+
+def test_get_specific_application(client):
+    """test proper infomation is returned from the API
+        target_url: /applications/<id>
+    """
+    lottery_id = 1
+    application_id = make_application(
+        client, test_user['username'], lottery_id)
+
+    resp = as_user_get(client,
+                       test_user['username'], test_user['password'],
+                       f'/applications/{application_id}')
+
+    with client.application.app_context():
+        db_status = Application.query.filter_by(id=application_id).first()
+        application = application_schema.dump(db_status)[0]
+
+    assert resp.get_json() == application
+
+
+def test_get_specific_application_invaild_id(client):
+    """test proper errpr is returned from the API
+        target_url: /classrooms/<id>
+    """
+    lottery_id = 1
+    application_id = make_application(
+        client, test_user['username'], lottery_id)
+
+    # application id to test
+    idx = application_id + 1
+    resp = as_user_get(client,
+                       test_user['username'], test_user['password'],
+                       f'/applications/{idx}')
+
+    assert resp.status_code == 404
+    assert 'Application could not be found.' in resp.get_json()['message']
+
+
 def test_cancel(client):
     """test: cancel added application
         1. add new application to db
         2. send request to cancel
         3. check response's status_code and db status
-        target_url: /lotteries/<id> [DELETE]
+        target_url: /applications/<id> [DELETE]
     """
-    lottery_id = '1'
+    lottery_id = 1
+    application_id = make_application(
+        client, test_user['username'], lottery_id)
+
     token = login(client, test_user['username'],
                   test_user['password'])['token']
     user_resp = client.get('/status',
                            headers={'Authorization': 'Bearer ' + token})
     user_id = user_resp.get_json()['id']
+    resp = client.delete(f'/applications/{application_id}',
+                         headers={'Authorization': 'Bearer ' + token})
     with client.application.app_context():
-        newapplication = Application(
-            lottery_id=lottery_id, user_id=user_id, status='pending')
-        db.session.add(newapplication)
-        db.session.commit()
-
-        resp = client.delete('/applications/' + lottery_id,
-                             headers={'Authorization': 'Bearer ' + token})
         application = Application.query.filter_by(
             lottery_id=lottery_id, user_id=user_id).first()
 
@@ -229,41 +283,26 @@ def test_cancel(client):
     assert application is None
 
 
-@pytest.mark.skip(reason='will be repaced with "/application" endpoint')
-def test_cancel_invaild(client):
-    """attempt to cancel non-applied application.
-        target_url: /lotteries/<id> [DELETE]
-    """
-
-    lottery_id = '1'
-    token = login(client, test_user['username'],
-                  test_user['password'])['token']
-    resp = client.delete('/applications/' + lottery_id,
-                         headers={'Authorization': 'Bearer ' + token})
-
-    assert resp.status_code == 404
-    assert "You're not applying for this lottery" in resp.get_json()['message']
-
-
-@pytest.mark.skip(reason='will be repaced with "/application" endpoint')
 def test_cancel_already_done(client):
     """attempt to cancel application that already-done lottery
-        1. create 'done' lottery
-        2. add application to that lottery
-        3. attempt to cancel that application
+        1. create 'done' application
+        2. attempt to cancel that application
         target_url: /lotteries/<id> [DELETE]
     """
-    idx = '1'
-    user = test_user
-    token = login(client, user['username'], user['password'])['token']
+    token = login(client, test_user['username'],
+                  test_user['password'])['token']
+    lottery_id = 1
+    application_id = make_application(
+        client, test_user['username'], lottery_id)
 
     with client.application.app_context():
-        target_lottery = Lottery.query.filter_by(id=idx).first()
-        target_lottery.done = True
-        db.session.add(target_lottery)
+        target_application = Application.query.filter_by(
+            id=application_id).first()
+        target_application.status = 'lose'
+        db.session.add(target_application)
         db.session.commit()
 
-    resp = client.delete('/applications/' + idx,
+    resp = client.delete(f'/applications/{application_id}',
                          headers={'Authorization': 'Bearer ' + token})
 
     assert resp.status_code == 400
