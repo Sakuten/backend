@@ -142,14 +142,14 @@ def list_application(idx):
 @login_required()
 def apply_application(idx):
     """
-        apply/cancel applications.
+        cancel the application.
         specify the application id in the URL.
     """
     application = Application.query.get(idx)
     if application is None:
         return jsonify({"message": "Application could not be found."}), 404
     if application.status != "pending":
-        return jsonify({"message": "This application has already done"}), 400
+        return jsonify({"message": "The Application has already fullfilled"}), 400
     user = User.query.filter_by(id=g.token_data['user_id']).first()
     previous = Application.query.filter_by(user_id=user.id)
     if any(app.lottery.index == application.lottery.index and
