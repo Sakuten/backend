@@ -6,6 +6,15 @@ db = SQLAlchemy()
 
 
 class User(db.Model):
+    """
+        User model for DB
+        Args:
+            username (str): user name.
+            passhash (str): password hash.
+        DB contents:
+            username (str): user name.
+            passhash (str): password hash.
+    """
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(40), unique=True)
     passhash = db.Column(db.String(128))
@@ -14,13 +23,33 @@ class User(db.Model):
         return '<User %r>' % self.username
 
     def get_user_id(self):
+        """
+            return user id.
+        """
         return self.id
 
     def check_password(self, password):
+        """
+            check given password is correct or not.
+            Args:
+                password (str): string to check
+            Return:
+                return (bool): True -> correct, False -> incorrect
+        """
         return check_password_hash(self.passhash, password)
 
 
 class Classroom(db.Model):
+    """
+        Classroom model for DB
+        Args:
+            grade (int): grade of the classroom
+            index (int): class number(0->A,1->B,2->C,3->D)
+        DB contents:
+            id (int): classroom unique id
+            grade (int): grade of the classroom
+            index (int): class number(0->A,1->B,2->C,3->D)
+    """
     id = db.Column(db.Integer, primary_key=True)
     grade = db.Column(db.Integer)
     index = db.Column(db.Integer)
@@ -29,12 +58,28 @@ class Classroom(db.Model):
         return "<Classroom %r%r>".format(self.grade, self.get_classroom_name)
 
     def get_classroom_name(self):
+        """
+            return class  number in Alphabet
+        """
         names = ['A', 'B', 'C', 'D', 'E']
         return names[self.index]
 
 
 class Lottery(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    """
+        Lottery model for DB
+        Args:
+            classroom_id (int): classroom id(unique id)
+            index (int): class number(0->A,1->B,2->C,3->D)
+            done (bool): whether the lottery is done or not
+        DB contents:
+            id (int): lottery unique id
+            classroom_id (int): associated classroom id
+            classroom (relationship): associated classroom
+            index (int): class number(0->A,1->B,2->C,3->D)
+            done (bool): whether it's done or not
+    """
+    id = db.Column(db.Integer, primary_key=True)  # 'id' should be defined,
     classroom_id = db.Column(db.Integer, db.ForeignKey(
         'classroom.id', ondelete='CASCADE'))
     classroom = db.relationship('Classroom')
@@ -47,6 +92,13 @@ class Lottery(db.Model):
 
 
 class Application(db.Model):
+    """application model for DB
+        DB contents:
+            id (int): application unique id
+            lottery_id (int): lottery id this application linked to
+            user_id (int): user id of this application
+            status (Boolen): whether chosen or not. initalized with None
+    """
     __table_args__ = (UniqueConstraint(
         "lottery_id", "user_id", name="unique_idx_lottery_user"),)
 
@@ -57,7 +109,7 @@ class Application(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(
         'user.id', ondelete='CASCADE'))
     user = db.relationship('User')
-    status = db.Column(db.Boolean)
+    status = db.Column(db.String)  # [ pending, won, lose ]
 
     def __repr__(self):
         return "<Application {}{}>".format(self.lottery, self.user)

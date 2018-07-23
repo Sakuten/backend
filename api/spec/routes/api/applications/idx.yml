@@ -1,0 +1,37 @@
+Get the application information
+---
+parameters:
+  - description: ID of the application
+    in: path
+    name: applicationId
+    required: true
+    type: integer
+    x-example: 0
+responses:
+  '200':
+    description: Application Information
+    schema:
+      $ref: '#/definitions/Application'
+  '400':
+    description: Malformed Authenication Header has detected
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+  '401':
+    description: Authorization Failed
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+  '403':
+    description: You have no permission to perform the action
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+  '404':
+    description: Not Found
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+security:
+  - user_auth: []
+tags:
+  - lottery
+description: ''
+operationId: getApplicationById
+summary: Get the application information
