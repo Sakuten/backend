@@ -183,7 +183,7 @@ def draw_lottery(idx):
                 chosens.remove(chosen) # remove checked ID. for performance
                 break
             else:
-                application.status =  "lose" if application.status = "pending"
+                application.status =  "lose"
 
         db.session.add(application)
 
