@@ -5,3 +5,6 @@ src/cards.html: template/cards.html.j2 test.json
 cards.pdf: src/cards.html
 	wkhtmltopdf --encoding 'utf-8' --lowquality src/cards.html cards.pdf
 
+.PHONY: clean
+clean:
+	-rm -r src/
