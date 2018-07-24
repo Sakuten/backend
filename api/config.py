@@ -1,8 +1,6 @@
 from cryptography.fernet import Fernet
 import os
 
-# =========== value configs ==========
-WINNERS_NUM = 90 # default: 90
 
 
 class BaseConfig(object):

@@ -12,9 +12,11 @@ from api.schemas import (
 )
 from api.auth import login_required
 from api.swagger import spec
-from config import WINNERS_NUM
 
 bp = Blueprint(__name__, 'api')
+
+# =========== value configs ==========
+WINNERS_NUM = 90 # default: 90
 
 
 @bp.route('/classrooms')
