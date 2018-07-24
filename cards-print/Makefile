@@ -7,4 +7,4 @@ src/cards.html: template/cards.html.j2 test.json
 
 .PHONY: clean
 clean:
-	-rm -r src/
+	-rm -r src/ cards.pdf
