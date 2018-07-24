@@ -13,6 +13,7 @@ from utils import (
 from api.models import Lottery, Classroom, User, Application, db
 from api.schemas import (
     user_schema,
+    users_schema,
     classrooms_schema,
     classroom_schema,
     application_schema,
@@ -357,10 +358,13 @@ def test_draw(client):
 
     chosens = resp.get_json()[0]
     with client.application.app_context():
-        user = User.query.filter_by(id=chosen_id).first()
+        chosen_ids = []
+        for chosen in chosens:
+            chosen_id = User.query.filter_by(id=chosen.id).first()
+            chosen_ids.append(chosen_id)
 
-        assert user is not None
-        assert resp.get_json()[0] == user_schema.dump(user)[0]
+        assert users is not None
+        assert resp.get_json()[0] == users_schema.dump(users)[0]
 
         target_lottery = Lottery.query.filter_by(id=idx).first()
         assert target_lottery.done
