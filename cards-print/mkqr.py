@@ -16,6 +16,6 @@ def gen_qr_code(base_url, secret_id):
 
     img = qrcode.make(final_url)
     qr_path = 'qr/' + secret_id + '.png'
-    img.save('src/'+ qr_path)
+    img.save('dist/'+ qr_path)
 
     return qr_path

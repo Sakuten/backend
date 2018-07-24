@@ -31,5 +31,5 @@ env = Environment(loader=FileSystemLoader('./template'))
 template = env.get_template('cards.html.j2')
 
 html = template.render({'cards':cards, 'empty_card': empty_card, 'horizontal': horizontal})
-with open('src/cards.html', 'w') as f:
+with open('dist/cards.html', 'w') as f:
     f.write(html)
