@@ -3,6 +3,7 @@ from flask import Blueprint, jsonify, g
 from api.models import Lottery, Classroom, User, Application, db
 from api.schemas import (
     user_schema,
+    users_schema,
     classrooms_schema,
     classroom_schema,
     application_schema,
@@ -191,8 +192,10 @@ def draw_lottery(idx):
 
     lottery.done = True
     db.session.commit()
-    winner = User.query.get(chosen.user_id)
-    result = user_schema.dump(winner)
+    winners = []
+    for chosen in chosens:
+        winners.append(User.query.get(chosen.user_id))
+    result = users_schema.dump(winners)
     return jsonify(result)
 
 
