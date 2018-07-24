@@ -13,6 +13,6 @@ else
   echo "html file detected. Skip generating HTML"
 fi
 echo "Generating PDF..."
-wkhtmltopdf --encoding 'utf-8' --lowquality cards.html cards.pdf
+wkhtmltopdf --encoding 'utf-8' --lowquality src/cards.html cards.pdf
 echo -e "Done.\nAll processes are done properly.exit."
 
