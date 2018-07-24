@@ -12,6 +12,7 @@ from api.schemas import (
 )
 from api.auth import login_required
 from api.swagger import spec
+from config import WINNERS_NUM
 
 bp = Blueprint(__name__, 'api')
 
@@ -174,7 +175,7 @@ def draw_lottery(idx):
     applications = Application.query.filter_by(lottery_id=idx).all()
     if len(applications) == 0:
         return jsonify({"message": "Nobody is applying to this lottery"}), 400
-    chosen = random.choice(applications)
+    chosens = random.sample(applications, WINNERS_NUM)
     for application in applications:
         application.status = "won" if application.id == chosen.id else "lose"
         db.session.add(application)
