@@ -355,7 +355,7 @@ def test_draw(client):
 
     assert resp.status_code == 200
 
-    chosen_id = resp.get_json()[0]['id']
+    chosens = resp.get_json()[0]
     with client.application.app_context():
         user = User.query.filter_by(id=chosen_id).first()
 
