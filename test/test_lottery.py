@@ -372,7 +372,7 @@ def test_draw(client):
         for user in users:
             application = Application.query.filter_by(
                 lottery=target_lottery, user_id=user.id).first()
-            status = 'won' if user.id == chosen_id else 'lose'
+            status = 'won' if user.id in chosen_id else 'lose'
             assert application.status == status
 
 
