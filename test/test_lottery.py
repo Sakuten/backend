@@ -212,7 +212,7 @@ def test_get_allapplications(client):
     make_application(client, test_user['username'], lottery_id)
 
     resp = as_user_get(
-        client, test_user['username'], test_user['password'], f'/applications')
+        client, test_user['username'], test_user['g-recaptcha-response'], f'/applications')
 
     with client.application.app_context():
         db_status = Application.query.all()
@@ -230,7 +230,7 @@ def test_get_specific_application(client):
         client, test_user['username'], lottery_id)
 
     resp = as_user_get(client,
-                       test_user['username'], test_user['password'],
+                       test_user['username'], test_user['g-recaptcha-response'],
                        f'/applications/{application_id}')
 
     with client.application.app_context():
@@ -251,7 +251,7 @@ def test_get_specific_application_invaild_id(client):
     # application id to test
     idx = application_id + 1
     resp = as_user_get(client,
-                       test_user['username'], test_user['password'],
+                       test_user['username'], test_user['g-recaptcha-response'],
                        f'/applications/{idx}')
 
     assert resp.status_code == 404
@@ -282,21 +282,6 @@ def test_cancel(client):
 
     assert resp.status_code == 200
     assert application is None
-
-
-def test_cancel_invaild(client):
-    """attempt to cancel non-applied application.
-        target_url: /applications/<id> [DELETE]
-    """
-
-    lottery_id = '1'
-    token = login(client, test_user['username'],
-                  test_user['g-recaptcha-response'])['token']
-    resp = client.delete('/applications/' + lottery_id,
-                         headers={'Authorization': 'Bearer ' + token})
-
-    assert resp.status_code == 404
-    assert "You're not applying for this lottery" in resp.get_json()['message']
 
 
 def test_cancel_already_done(client):
@@ -450,7 +435,7 @@ def test_draw_nobody_apply(client):
     """
 
     idx = '1'
-    token = login(client, admin['username'], admin['password'])['token']
+    token = login(client, admin['username'], admin['g-recaptcha-response'])['token']
 
     with client.application.app_context():
         target_applications = Application.query.filter_by(lottery_id=idx).all()
