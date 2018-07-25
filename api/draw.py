@@ -11,6 +11,15 @@ class NobodyIsApplyingError(Exception):
 
 
 def draw_one(lottery):
+    """
+        Draw the specified lottery
+        Args:
+          lottery(Lottery): The lottery to be drawn
+        Return:
+          winners([User]): The list of users who won
+        Raises:
+            NobodyIsApplyingError
+    """
     idx = lottery.id
     applications = Application.query.filter_by(lottery_id=idx).all()
     if len(applications) == 0:
