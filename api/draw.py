@@ -42,7 +42,7 @@ def draw_one(lottery):
     return winners
 
 
-def draw_all(index):
+def draw_all_at_index(index):
     """
         Draw all lotteries in the specific index
         Args:
