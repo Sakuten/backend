@@ -178,13 +178,7 @@ def draw_lottery(idx):
         return jsonify({"message": "Nobody is applying to this lottery"}), 400
     winner_apps = random.sample(applications, current_app.config['WINNERS_NUM'])
     for application in applications:
-        for winner_app in winner_apps:
-            if application.id == winner_app.id:
-                application.status = "won"
-                break
-            else:
-                application.status = "lose"
-
+        application.status = "won" if application in winner_apps else "lose"
         db.session.add(application)
 
     lottery.done = True
