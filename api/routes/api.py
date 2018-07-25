@@ -179,7 +179,7 @@ def draw_lottery(idx):
         winner_apps = random.sample(
             applications, current_app.config['WINNERS_NUM'])
     except ValueError:
-        # when applications are less than WINNER_NUM, all applications are chosen
+        # if applications are less than WINNER_NUM, all applications are chosen
         winner_apps = applications
     for application in applications:
         application.status = "won" if application in winner_apps else "lose"
