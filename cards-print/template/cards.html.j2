@@ -3,17 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <title></title>
-  <style type="text/css">
-    .container {
-      display: inline-flex;
-      flex-direction: row-reverse;
-    }
-    img {
-      width: 50%;
-      height: auto;
-      vertical-align: middle;
-    }
-
+  <style>
+  img {
+    width: 100%;
+  }
+  .image {
+    float: left;
+    width: 50%;
+  }
+  .description {
+    float: left;
+    width: 50%;
+  }
   </style>
 </head>
 <body>
@@ -31,7 +32,7 @@
           確認用ID: {{ card.public_id }}
         </div>
       </td>
-        {% endfor %}
+      {% endfor %}
     </tr>
     {% endfor %}
   </table>
