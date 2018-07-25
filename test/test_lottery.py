@@ -350,29 +350,20 @@ def test_draw(client):
             db.session.add(application)
         db.session.commit()
 
-    token = login(client, admin['username'], admin['password'])['token']
-    resp = client.post('/lotteries/'+idx+'/draw',
-                       headers={'Authorization': 'Bearer ' + token})
+        token = login(client, admin['username'], admin['password'])['token']
+        resp = client.post('/lotteries/'+idx+'/draw',
+                           headers={'Authorization': 'Bearer ' + token})
 
-    assert resp.status_code == 200
+        assert resp.status_code == 200
 
-    chosens = resp.get_json()[0]
-    with client.application.app_context():
-        chosen_ids = []
-        for chosen in chosens:
-            chosen_id = User.query.filter_by(id=chosen.id).first()
-            chosen_ids.append(chosen_id)
-
-        assert users is not None
-        assert resp.get_json()[0] == users_schema.dump(users)[0]
-
+        users = User.query.all()
         target_lottery = Lottery.query.filter_by(id=idx).first()
         assert target_lottery.done
-        users = User.query.all()
         for user in users:
             application = Application.query.filter_by(
                 lottery=target_lottery, user_id=user.id).first()
-            status = 'won' if user.id in chosen_id else 'lose'
+            if application:
+                status = 'won' if user.id in chosen_id else 'lose'
             assert application.status == status
 
 
