@@ -1,6 +1,6 @@
 import random
 from flask import current_app
-from api.models import User, Application, db
+from api.models import User, Lottery, Application, db
 
 
 class NobodyIsApplyingError(Exception):
@@ -10,7 +10,7 @@ class NobodyIsApplyingError(Exception):
     pass
 
 
-def draw_one(lottery):
+def draw_one(lottery, raise_on_nobody=True):
     """
         Draw the specified lottery
         Args:
@@ -23,7 +23,10 @@ def draw_one(lottery):
     idx = lottery.id
     applications = Application.query.filter_by(lottery_id=idx).all()
     if len(applications) == 0:
-        raise ValueError({"message": "Nobody is applying to this lottery"})
+        if raise_on_nobody:
+            raise NobodyIsApplyingError()
+        else:
+            return []
     try:
         winner_apps = random.sample(
             applications, current_app.config['WINNERS_NUM'])
@@ -53,5 +56,9 @@ def draw_all_at_index(index):
             NobodyIsApplyingError
     """
     lotteries = Lottery.query.filter_by(index=index)
-    winners = [draw_one(lottery) for lottery in lotteries]
+    winners = [draw_one(lottery, raise_on_nobody=False)
+               for lottery in lotteries]
+    if len(winners) == 0:
+        raise NobodyIsApplyingError()
+
     return winners
