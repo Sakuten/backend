@@ -452,44 +452,58 @@ def test_draw_nobody_apply(client):
     assert resp.status_code == 400
     assert 'nobody' in resp.get_json()['message']
 
-@pytest.mark.skip()
 def test_draw_all(client):
     """attempt to draw all lotteries
-        1. make some applications to one lottery
-        2. draws the lottery
+        1. make some applications to some lotteries
+        2. draws all the lotteries in one time index
         3. test: status code
-        4. test: DB is changed
-        target_url: /lotteries/<id>/apply [PUT]
+        4. test: DB is properly changed
+        target_url: /draw_all [POST]
     """
-    idx = '1'
+    time_index = 1
 
     with client.application.app_context():
-        target_lottery = Lottery.query.filter_by(id=idx).first()
+        target_lotteries = Lottery.query.filter_by(index=time_index)
+        non_target_lotteries = Lottery.query.filter_by(index=time_index+1)
         users = User.query.all()
-        for user in users:
-            application = Application(lottery=target_lottery, user_id=user.id)
-            db.session.add(application)
+        for i, user in enumerate(users):
+            target_lottery = target_lotteries[i % len(list(target_lotteries))]
+            non_target_lottery = non_target_lotteries[i % len(list(non_target_lotteries))]
+            application1 = Application(lottery=target_lottery, user_id=user.id)
+            application2 = Application(lottery=non_target_lottery, user_id=user.id)
+            db.session.add(application1)
+            db.session.add(application2)
         db.session.commit()
 
         token = login(client,
                       admin['username'],
                       admin['g-recaptcha-response'])['token']
-        resp = client.post('/lotteries/'+idx+'/draw',
-                           headers={'Authorization': 'Bearer ' + token})
+        draw_time = client.application.config['TIMEPOINTS'][time_index][0]
+        with mock.patch('api.time_management.get_current_datetime',
+                return_value=draw_time):
+            resp = client.post('/draw_all',
+                               headers={'Authorization': 'Bearer ' + token})
 
         assert resp.status_code == 200
 
         winners_id = [winner['id'] for winner in resp.get_json()[0]]
-        users = User.query.all()
-        target_lottery = Lottery.query.filter_by(id=idx).first()
-        assert target_lottery.done
-        for user in users:
-            application = Application.query.filter_by(
-                lottery=target_lottery, user_id=user.id).first()
-            if application:
-                status = 'won' if user.id in winners_id else 'lose'
-            assert application.status == status
+        assert all(lottery.done for lottery in target_lotteries)
+        assert all(not lottery.done for lottery in non_target_lotteries)
 
+        # users = User.query.all()
+        for user in users:
+            for lottery in target_lotteries:
+                application = Application.query.filter_by(
+                    lottery=lottery, user_id=user.id).first()
+                if application:
+                    status = 'won' if user.id in winners_id else 'lose'
+                    assert application.status == status
+
+            for lottery in non_target_lotteries:
+                application = Application.query.filter_by(
+                    lottery=lottery, user_id=user.id).first()
+                if application:
+                    assert application.status == "pending"
 
 def test_draw_all_noperm(client):
     """attempt to draw without proper permission.
