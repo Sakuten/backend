@@ -17,7 +17,6 @@ from api.swagger import spec
 bp = Blueprint(__name__, 'api')
 
 
-
 @bp.route('/classrooms')
 @spec('api/classrooms.yml')
 def list_classrooms():
@@ -176,14 +175,16 @@ def draw_lottery(idx):
     applications = Application.query.filter_by(lottery_id=idx).all()
     if len(applications) == 0:
         return jsonify({"message": "Nobody is applying to this lottery"}), 400
-    winner_apps = random.sample(applications, current_app.config['WINNERS_NUM'])
+    winner_apps = random.sample(
+        applications, current_app.config['WINNERS_NUM'])
     for application in applications:
         application.status = "won" if application in winner_apps else "lose"
         db.session.add(application)
 
     lottery.done = True
     db.session.commit()
-    winners = [ User.query.get(winner_app.user_id) for winner_app in winner_apps ]
+    winners = [User.query.get(winner_app.user_id)
+               for winner_app in winner_apps]
     result = users_schema.dump(winners)
     return jsonify(result)
 
