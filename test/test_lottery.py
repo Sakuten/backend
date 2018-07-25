@@ -466,7 +466,7 @@ def test_draw_all(client):
         target_lotteries = Lottery.query.filter_by(index=time_index)
         non_target_lotteries = Lottery.query.filter_by(index=time_index+1)
         users = User.query.all()
-        for i, user in enumerate(users):
+        for i, user in enumerate(user for user in users if user.username != "admin"):
             target_lottery = target_lotteries[i % len(list(target_lotteries))]
             non_target_lottery = non_target_lotteries[i % len(list(non_target_lotteries))]
             application1 = Application(lottery=target_lottery, user_id=user.id)
