@@ -23,8 +23,13 @@
       {% for column in range(1,horizontal +1) %}
       {% set card_index = (row * horizontal) + column  %}
       {% set card = cards[card_index -1]|default(empty_card) %}
-      <td class="container"> <img src="{{ card.qr_path }}">
-        確認用ID: {{ card.public_id }}
+      <td class="container">
+        <div class="image">
+          <img src="{{ card.qr_path }}">
+        </div>
+        <div class="description">
+          確認用ID: {{ card.public_id }}
+        </div>
       </td>
         {% endfor %}
     </tr>
