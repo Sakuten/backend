@@ -12,8 +12,6 @@ from utils import (
 
 from api.models import Lottery, Classroom, User, Application, db
 from api.schemas import (
-    user_schema,
-    users_schema,
     classrooms_schema,
     classroom_schema,
     application_schema,
