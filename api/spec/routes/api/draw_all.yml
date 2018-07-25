@@ -9,7 +9,7 @@ responses:
         $ref: '#/definitions/User'
       type: array
   '400':
-    description: Malformed Authenication Header has detected
+    description: Malformed Authenication Header has detected / Not acceptable time / Nobody is applying to this lottery
     schema:
       $ref: '#/definitions/ErrorMessage'
   '401':
