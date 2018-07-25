@@ -337,7 +337,6 @@ def test_draw(client):
         1. make some applications to one lottery
         2. draws the lottery
         3. test: status code
-        4. test: winners are in applicant
         4. test: DB is changed
         target_url: /lotteries/<id>/apply [PUT]
     """
