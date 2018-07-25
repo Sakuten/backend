@@ -1,4 +1,3 @@
-from datetime import datetime
 from itertools import chain
 
 from flask import Blueprint, jsonify, g
@@ -192,7 +191,8 @@ def draw_all_lotteries():
         draw all available lotteries as adminstrator
     """
     try:
-        index = get_time_index(datetime.now())
+        # Get time index with current datetime
+        index = get_time_index()
     except (OutOfHoursError, OutOfAcceptingHoursError):
         return jsonify({"message": "Not accepting"}), 400
 

@@ -8,6 +8,7 @@ class OutOfHoursError(Exception):
     """
     pass
 
+
 class OutOfAcceptingHoursError(Exception):
     """
         The Exception that indicates the time is in festival but not accepting time
@@ -15,7 +16,17 @@ class OutOfAcceptingHoursError(Exception):
     pass
 
 
-def get_time_index(time):
+def get_current_datetime():
+    """
+        Get the current datetime.
+        Note: This function is intended to be mocked in testing
+        Return:
+          time(datetime.datetime): current datetime
+    """
+    return datetime.datetime.now()
+
+
+def get_time_index(time=None):
     """
         Get the lottery index from the time
         Args:
@@ -25,6 +36,9 @@ def get_time_index(time):
         Raises:
           OutOfHoursError, OutOfAcceptingHoursError
     """
+    if time is None:
+        time = get_current_datetime()
+
     if isinstance(time, datetime.datetime):
         start = current_app.config['START_DATETIME']
         end = current_app.config['END_DATETIME']
