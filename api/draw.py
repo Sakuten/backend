@@ -40,3 +40,18 @@ def draw_one(lottery):
     winners = [User.query.get(winner_app.user_id)
                for winner_app in winner_apps]
     return winners
+
+
+def draw_all(index):
+    """
+        Draw all lotteries in the specific index
+        Args:
+          index(int): zero-based index that indicates the time of lottery
+        Return:
+          winners([[User]]): The list of list of users who won
+        Raises:
+            NobodyIsApplyingError
+    """
+    lotteries = Lottery.query.filter_by(index=index)
+    winners = [draw_one(lottery) for lottery in lotteries]
+    return winners
