@@ -3,10 +3,20 @@ import datetime
 
 
 class OutOfHourError(Exception):
+    """
+        The Exception that indicates the time was out of festival
+    """
     pass
 
 
 def get_time_index(time):
+    """
+        Get the lottery index from the time
+        Args:
+          time(datetime.time|datetime.datetime): The Time
+        Return:
+          i(int): The lottery index
+    """
     if isinstance(time, datetime.datetime):
         start = current_app.config['START_DATETIME']
         end = current_app.config['END_DATETIME']
