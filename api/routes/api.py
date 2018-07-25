@@ -1,5 +1,5 @@
 import random
-from flask import Blueprint, jsonify, g
+from flask import Blueprint, jsonify, g, current_app
 from api.models import Lottery, Classroom, User, Application, db
 from api.schemas import (
     user_schema,
@@ -176,7 +176,7 @@ def draw_lottery(idx):
     applications = Application.query.filter_by(lottery_id=idx).all()
     if len(applications) == 0:
         return jsonify({"message": "Nobody is applying to this lottery"}), 400
-    winner_apps = random.sample(applications, WINNERS_NUM)
+    winner_apps = random.sample(applications, current_app.config['WINNERS_NUM'])
     for application in applications:
         for winner_app in winner_apps:
             if application.id == winner_app.id:
