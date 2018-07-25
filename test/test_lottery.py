@@ -12,7 +12,6 @@ from utils import (
 
 from api.models import Lottery, Classroom, User, Application, db
 from api.schemas import (
-    user_schema,
     classrooms_schema,
     classroom_schema,
     application_schema,
@@ -342,7 +341,7 @@ def test_draw(client):
     """attempt to draw a lottery
         1. make some applications to one lottery
         2. draws the lottery
-        3. test: status code, whether winner status is returned
+        3. test: status code
         4. test: DB is changed
         target_url: /lotteries/<id>/apply [PUT]
     """
@@ -356,27 +355,23 @@ def test_draw(client):
             db.session.add(application)
         db.session.commit()
 
-    token = login(client, admin['username'],
-                  admin['g-recaptcha-response'])['token']
-    resp = client.post('/lotteries/'+idx+'/draw',
-                       headers={'Authorization': 'Bearer ' + token})
+        token = login(client,
+                      admin['username'],
+                      admin['g-recaptcha-response'])['token']
+        resp = client.post('/lotteries/'+idx+'/draw',
+                           headers={'Authorization': 'Bearer ' + token})
 
-    assert resp.status_code == 200
+        assert resp.status_code == 200
 
-    chosen_id = resp.get_json()[0]['id']
-    with client.application.app_context():
-        user = User.query.filter_by(id=chosen_id).first()
-
-        assert user is not None
-        assert resp.get_json()[0] == user_schema.dump(user)[0]
-
+        winners_id = [winner['id'] for winner in resp.get_json()[0]]
+        users = User.query.all()
         target_lottery = Lottery.query.filter_by(id=idx).first()
         assert target_lottery.done
-        users = User.query.all()
         for user in users:
             application = Application.query.filter_by(
                 lottery=target_lottery, user_id=user.id).first()
-            status = 'won' if user.id == chosen_id else 'lose'
+            if application:
+                status = 'won' if user.id in winners_id else 'lose'
             assert application.status == status
 
 
