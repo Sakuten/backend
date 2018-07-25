@@ -1,4 +1,6 @@
+from unittest import mock
 import pytest
+import datetime
 
 from utils import (
     login,
@@ -7,7 +9,8 @@ from utils import (
     as_user_get,
     invalid_classroom_id,
     invalid_lottery_id,
-    make_application
+    make_application,
+    mod_time
 )
 
 from api.models import Lottery, Classroom, User, Application, db
@@ -448,3 +451,81 @@ def test_draw_nobody_apply(client):
 
     assert resp.status_code == 400
     assert 'nobody' in resp.get_json()['message']
+
+@pytest.mark.skip()
+def test_draw_all(client):
+    """attempt to draw all lotteries
+        1. make some applications to one lottery
+        2. draws the lottery
+        3. test: status code
+        4. test: DB is changed
+        target_url: /lotteries/<id>/apply [PUT]
+    """
+    idx = '1'
+
+    with client.application.app_context():
+        target_lottery = Lottery.query.filter_by(id=idx).first()
+        users = User.query.all()
+        for user in users:
+            application = Application(lottery=target_lottery, user_id=user.id)
+            db.session.add(application)
+        db.session.commit()
+
+        token = login(client,
+                      admin['username'],
+                      admin['g-recaptcha-response'])['token']
+        resp = client.post('/lotteries/'+idx+'/draw',
+                           headers={'Authorization': 'Bearer ' + token})
+
+        assert resp.status_code == 200
+
+        winners_id = [winner['id'] for winner in resp.get_json()[0]]
+        users = User.query.all()
+        target_lottery = Lottery.query.filter_by(id=idx).first()
+        assert target_lottery.done
+        for user in users:
+            application = Application.query.filter_by(
+                lottery=target_lottery, user_id=user.id).first()
+            if application:
+                status = 'won' if user.id in winners_id else 'lose'
+            assert application.status == status
+
+
+def test_draw_all_noperm(client):
+    """attempt to draw without proper permission.
+        target_url: /draw_all [POST]
+    """
+    token = login(client, test_user['username'],
+                  test_user['g-recaptcha-response'])['token']
+    resp = client.post('/draw_all',
+                       headers={'Authorization': 'Bearer ' + token})
+
+    assert resp.status_code == 403
+    assert 'Forbidden' in resp.get_json()['message']
+
+
+def test_draw_all_invaild(client):
+    """attempt to draw in not acceptable time
+        target_url: /draw_all [POST]
+    """
+    def try_with_datetime(t):
+        with mock.patch('api.time_management.get_current_datetime',
+                return_value=t):
+            resp = client.post('/draw_all',
+                               headers={'Authorization': 'Bearer ' + token})
+
+            assert resp.status_code == 400
+            assert 'Not acceptable' in resp.get_json()['message']
+
+    token = login(client, admin['username'],
+                  admin['g-recaptcha-response'])['token']
+    outofhours1 = client.application.config['START_DATETIME']-datetime.timedelta.resolution
+    try_with_datetime(outofhours1)
+    outofhours2 = client.application.config['END_DATETIME']+datetime.timedelta.resolution
+    try_with_datetime(outofhours2)
+
+    timepoints = client.application.config['TIMEPOINTS']
+    for i, point in enumerate(timepoints):
+        res = datetime.timedelta.resolution
+        try_with_datetime(mod_time(point[0], -res))
+        try_with_datetime(mod_time(point[1], +res))
