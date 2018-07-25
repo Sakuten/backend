@@ -8,6 +8,7 @@ class BaseConfig(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:password@db/postgres'
     SECRET_KEY = Fernet.generate_key()
+    WINNERS_NUM = 3  # default: 90
 
 
 class DevelopmentConfig(BaseConfig):
