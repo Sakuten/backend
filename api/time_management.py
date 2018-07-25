@@ -8,6 +8,12 @@ class OutOfHoursError(Exception):
     """
     pass
 
+class OutOfAcceptingHoursError(Exception):
+    """
+        The Exception that indicates the time is in festival but not accepting time
+    """
+    pass
+
 
 def get_time_index(time):
     """
@@ -28,3 +34,5 @@ def get_time_index(time):
     for i, (st, en) in enumerate(current_app.config['TIMEPOINTS']):
         if st <= time <= en:
             return i
+
+    raise OutOfAcceptingHoursError()
