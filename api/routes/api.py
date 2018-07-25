@@ -178,10 +178,10 @@ def draw_lottery(idx):
     applications = Application.query.filter_by(lottery_id=idx).all()
     if len(applications) == 0:
         return jsonify({"message": "Nobody is applying to this lottery"}), 400
-    chosens = random.sample(applications, WINNERS_NUM)
+    winner_apps = random.sample(applications, WINNERS_NUM)
     for application in applications:
-        for chosen in chosens:
-            if application.id == chosen.id:
+        for winner_app in winner_apps:
+            if application.id == winner_app.id:
                 application.status = "won"
                 chosens.remove(chosen) # remove checked ID. for performance
                 break
@@ -193,8 +193,8 @@ def draw_lottery(idx):
     lottery.done = True
     db.session.commit()
     winners = []
-    for chosen in chosens:
-        winners.append(User.query.get(chosen.user_id))
+    for winner_app in winner_apps:
+        winners.append(User.query.get(winner_app.user_id))
     result = users_schema.dump(winners)
     return jsonify(result)
 
