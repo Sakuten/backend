@@ -355,7 +355,9 @@ def test_draw(client):
             db.session.add(application)
         db.session.commit()
 
-        token = login(client, admin['username'], admin['g-recaptcha-response'])['token']
+        token = login(client,
+                      admin['username'],
+                      admin['g-recaptcha-response'])['token']
         resp = client.post('/lotteries/'+idx+'/draw',
                            headers={'Authorization': 'Bearer ' + token})
 
