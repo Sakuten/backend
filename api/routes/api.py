@@ -194,7 +194,7 @@ def draw_all_lotteries():
         # Get time index with current datetime
         index = get_time_index()
     except (OutOfHoursError, OutOfAcceptingHoursError):
-        return jsonify({"message": "Not accepting"}), 400
+        return jsonify({"message": "Not acceptable time"}), 400
 
     try:
         winners = draw_all_at_index(index)
