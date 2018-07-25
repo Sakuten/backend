@@ -1,4 +1,5 @@
 from datetime import datetime
+from itertools import chain
 
 from flask import Blueprint, jsonify, g
 from api.models import Lottery, Classroom, User, Application, db
@@ -14,7 +15,7 @@ from api.schemas import (
 )
 from api.auth import login_required
 from api.swagger import spec
-from api.time_management import get_time_index
+from api.time_management import get_time_index, OutOfHoursError, OutOfAcceptingHoursError
 from api.draw import draw_one, draw_all_at_index, NobodyIsApplyingError
 
 bp = Blueprint(__name__, 'api')
@@ -190,8 +191,16 @@ def draw_all_lotteries():
     """
         draw all available lotteries as adminstrator
     """
-    index = get_time_index(datetime.now())
-    winners = draw_all_at_index(index)
+    try:
+        index = get_time_index(datetime.now())
+    except (OutOfHoursError, OutOfAcceptingHoursError):
+        return jsonify({"message": "Not accepting"}), 400
+
+    try:
+        winners = draw_all_at_index(index)
+    except NobodyIsApplyingError:
+        return jsonify({"message": "Nobody is applying to this lottery"}), 400
+
     flattened = list(chain.from_iterable(winners))
     result = users_schema.dump(flattened)
     return jsonify(result)
