@@ -2,7 +2,6 @@ from cryptography.fernet import Fernet
 import os
 
 
-
 class BaseConfig(object):
     DEBUG = False
     TESTING = False

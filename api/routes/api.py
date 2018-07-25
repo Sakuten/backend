@@ -17,7 +17,7 @@ from api.swagger import spec
 bp = Blueprint(__name__, 'api')
 
 # =========== value configs ==========
-WINNERS_NUM = 3 # default: 90
+WINNERS_NUM = 3  # default: 90
 
 
 @bp.route('/classrooms')
@@ -185,7 +185,7 @@ def draw_lottery(idx):
                 application.status = "won"
                 break
             else:
-                application.status =  "lose"
+                application.status = "lose"
 
         db.session.add(application)
 
