@@ -356,6 +356,9 @@ def test_draw(client):
 
         assert resp.status_code == 200
 
+        winners_id = []
+        for winner in resp.get_json()[0]:
+            winners_id.append(winner['id'])
         users = User.query.all()
         target_lottery = Lottery.query.filter_by(id=idx).first()
         assert target_lottery.done
@@ -363,7 +366,7 @@ def test_draw(client):
             application = Application.query.filter_by(
                 lottery=target_lottery, user_id=user.id).first()
             if application:
-                status = 'won' if user.id in chosen_id else 'lose'
+                status = 'won' if user.id in winners_id else 'lose'
             assert application.status == status
 
 
