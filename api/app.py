@@ -93,7 +93,6 @@ def generate():
             no-return given
     """
     from .models import Lottery, Classroom, User, db
-    from werkzeug.security import generate_password_hash
     total_index = 4
     grades = [5, 6]
 
@@ -120,7 +119,7 @@ def generate():
     db.session.commit()
 
     def make_debug_user(name):
-        user = User(username=name, passhash=generate_password_hash(name))
+        user = User(username=name)
         db.session.add(user)
         db.session.commit()
         return user

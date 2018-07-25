@@ -1,6 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.schema import UniqueConstraint
-from werkzeug.security import check_password_hash
 
 db = SQLAlchemy()
 
@@ -10,14 +9,11 @@ class User(db.Model):
         User model for DB
         Args:
             username (str): user name.
-            passhash (str): password hash.
         DB contents:
             username (str): user name.
-            passhash (str): password hash.
     """
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(40), unique=True)
-    passhash = db.Column(db.String(128))
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -27,16 +23,6 @@ class User(db.Model):
             return user id.
         """
         return self.id
-
-    def check_password(self, password):
-        """
-            check given password is correct or not.
-            Args:
-                password (str): string to check
-            Return:
-                return (bool): True -> correct, False -> incorrect
-        """
-        return check_password_hash(self.passhash, password)
 
 
 class Classroom(db.Model):

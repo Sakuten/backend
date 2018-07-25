@@ -44,13 +44,14 @@ definitions:
     type: string
   Certificate:
     properties:
-      password:
-        $ref: '#/definitions/Password'
-      username:
-        $ref: '#/definitions/Username'
+      g-recaptcha-response:
+        description: Google reCAPTCHA response
+        type: string
+      id:
+        $ref: '#/definitions/SecretID'
     required:
-      - username
-      - password
+      - id
+      - g-recaptcha-response
     type: object
   Classroom:
     properties:
@@ -125,14 +126,14 @@ definitions:
     required:
       - message
     type: object
-  Password:
-    description: Password (deprecated; will be replaced by id auth)
-    example: example1
+  PublicID:
+    description: User Public ID written in the user card
+    example: ab10
     type: string
   SecretID:
-    description: User ID number (not secret but named secret for future compatibility)
-    example: 1
-    type: integer
+    description: User Secret ID scanned from QR Code
+    example: ZXhhbXBsZV92aXNpdG9yXzAwX0EK
+    type: string
   Token:
     description: Access Token (fernet)
     example: >-
