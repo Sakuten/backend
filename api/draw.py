@@ -58,6 +58,12 @@ def draw_all_at_index(index):
     lotteries = Lottery.query.filter_by(index=index)
     winners = [draw_one(lottery, raise_on_nobody=False)
                for lottery in lotteries]
+
+    for lottery in lotteries:
+        lottery.done = True
+        db.session.add(lottery)
+        db.session.commit()
+
     if len(winners) == 0:
         raise NobodyIsApplyingError()
 
