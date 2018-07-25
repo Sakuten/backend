@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Blueprint, jsonify, g
 from api.models import Lottery, Classroom, User, Application, db
 from api.schemas import (
@@ -12,7 +14,8 @@ from api.schemas import (
 )
 from api.auth import login_required
 from api.swagger import spec
-from api.draw import draw_one, NobodyIsApplyingError
+from api.time_management import get_time_index
+from api.draw import draw_one, draw_all_at_index, NobodyIsApplyingError
 
 bp = Blueprint(__name__, 'api')
 
@@ -177,6 +180,20 @@ def draw_lottery(idx):
     except NobodyIsApplyingError:
         return jsonify({"message": "Nobody is applying to this lottery"}), 400
     result = users_schema.dump(winners)
+    return jsonify(result)
+
+
+@bp.route('/draw_all', methods=['POST'])
+@spec('api/draw_all.yml')
+@login_required('admin')
+def draw_all_lotteries():
+    """
+        draw all available lotteries as adminstrator
+    """
+    index = get_time_index(datetime.now())
+    winners = draw_all_at_index(index)
+    flattened = list(chain.from_iterable(winners))
+    result = users_schema.dump(flattened)
     return jsonify(result)
 
 
