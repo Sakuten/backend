@@ -22,6 +22,8 @@ def get_time_index(time):
           time(datetime.time|datetime.datetime): The Time
         Return:
           i(int): The lottery index
+        Raises:
+          OutOfHoursError, OutOfAcceptingHoursError
     """
     if isinstance(time, datetime.datetime):
         start = current_app.config['START_DATETIME']
