@@ -8,7 +8,7 @@ QR_BASE_URL:=https://hoge
 ID_LIST_FILE:=test.json
 
 ${OUT_PDF_FILE}: ${OUT_HTML_FILE}
-	wkhtmltopdf --encoding 'utf-8' --lowquality ${OUT_HTML_FILE} ${OUT_PDF_FILE}
+	wkhtmltopdf --encoding 'utf-8' ${OUT_HTML_FILE} ${OUT_PDF_FILE}
 
 ${OUT_HTML_FILE}: ${TEMPLATE_FILE} ${ID_LIST_FILE}
 	mkdir -p ${DIST_DIR} ${QR_DIR}
