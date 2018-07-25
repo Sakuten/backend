@@ -1,0 +1,42 @@
+Get the list of applications
+---
+produces:
+  - application/json
+parameters:
+  - description: Specify the method to sort the list
+    in: query
+    name: sort
+    required: false
+    type: string
+  - description: Specify the filter
+    in: query
+    name: filter
+    required: false
+    type: string
+    x-example: available
+responses:
+  '200':
+    description: List of Applications
+    schema:
+      items:
+        $ref: '#/definitions/Application'
+      type: array
+  '400':
+    description: Malformed Authenication Header has detected
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+  '401':
+    description: Authorization Failed
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+  '403':
+    description: You have no permission to perform the action
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+security:
+  - user_auth: []
+tags:
+  - lottery
+description: ''
+operationId: getApplications
+summary: Get the list of applications

@@ -1,11 +1,12 @@
 import random
-from flask import Blueprint, jsonify, request, g
+from flask import Blueprint, jsonify, g
 from api.models import Lottery, Classroom, User, Application, db
 from api.schemas import (
     user_schema,
     classrooms_schema,
     classroom_schema,
     application_schema,
+    applications_schema,
     lotteries_schema,
     lottery_schema
 )
@@ -71,13 +72,12 @@ def list_lottery(idx):
     return jsonify(result)
 
 
-@bp.route('/lotteries/<int:idx>', methods=['POST', 'DELETE'])
-@spec('api/lotteries/apply.yml', methods=['POST'])
-@spec('api/lotteries/cancel.yml', methods=['DELETE'])
+@bp.route('/lotteries/<int:idx>', methods=['POST'])
+@spec('api/lotteries/apply.yml')
 @login_required()
 def apply_lottery(idx):
     """
-        apply/cancel applications.
+        apply to the lottery.
         specify the lottery id in the URL.
     """
     lottery = Lottery.query.get(idx)
@@ -94,25 +94,68 @@ def apply_lottery(idx):
         return jsonify({"message": msg}), 400
     application = previous.filter_by(lottery_id=lottery.id).first()
     # access DB
-    if request.method == 'POST':
-        if not application:
-            newapplication = Application(
-                lottery_id=lottery.id, user_id=user.id, status="pending")
-            db.session.add(newapplication)
-            db.session.commit()
-            result = application_schema.dump(newapplication)[0]
-            return jsonify(result)
-        else:
-            result = application_schema.dump(application)[0]
-            return jsonify(result)
+    if not application:
+        newapplication = Application(
+            lottery_id=lottery.id, user_id=user.id, status="pending")
+        db.session.add(newapplication)
+        db.session.commit()
+        result = application_schema.dump(newapplication)[0]
+        return jsonify(result)
     else:
-        if application:
-            db.session.delete(application)
-            db.session.commit()
-            return jsonify({"message": "Successful Operation"})
-        else:
-            return jsonify({"message":
-                            "You're not applying for this lottery"}), 400
+        result = application_schema.dump(application)[0]
+        return jsonify(result)
+
+
+@bp.route('/applications')
+@spec('api/applications.yml')
+@login_required()
+def list_applications():
+    """
+        return applications list.
+    """
+# those two values will be used in the future. now, not used. see issue #62 #63
+#     filter = request.args.get('filter')
+#     sort = request.args.get('sort')
+
+    user = User.query.filter_by(id=g.token_data['user_id']).first()
+    applications = Application.query.filter_by(user_id=user.id)
+    result = applications_schema.dump(applications)[0]
+    return jsonify(result)
+
+
+@bp.route('/applications/<int:idx>', methods=['GET'])
+@spec('api/applications/idx.yml')
+@login_required()
+def list_application(idx):
+    """
+        return infomation about specified application.
+    """
+    user = User.query.filter_by(id=g.token_data['user_id']).first()
+    application = Application.query.filter_by(
+        user_id=user.id).filter_by(id=idx).first()
+    if application is None:
+        return jsonify({"message": "Application could not be found."}), 404
+    result = application_schema.dump(application)[0]
+    return jsonify(result)
+
+
+@bp.route('/applications/<int:idx>', methods=['DELETE'])
+@spec('api/applications/cancel.yml')
+@login_required()
+def cancel_application(idx):
+    """
+        cancel the application.
+        specify the application id in the URL.
+    """
+    application = Application.query.get(idx)
+    if application is None:
+        return jsonify({"message": "Application could not be found."}), 404
+    if application.status != "pending":
+        resp = {"message": "The Application has already fullfilled"}
+        return jsonify(resp), 400
+    db.session.delete(application)
+    db.session.commit()
+    return jsonify({"message": "Successful Operation"})
 
 
 @bp.route('/lotteries/<int:idx>/draw', methods=['POST'])
