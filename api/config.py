@@ -22,7 +22,7 @@ class TestingConfig(BaseConfig):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite://'
     ENV = 'development'
-    WINNERS_NUM = 3 # just small value
+    WINNERS_NUM = 3  # just small value
 
 
 class PreviewDeploymentConfig(BaseConfig):

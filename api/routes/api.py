@@ -175,7 +175,7 @@ def draw_lottery(idx):
     applications = Application.query.filter_by(lottery_id=idx).all()
     if len(applications) == 0:
         return jsonify({"message": "Nobody is applying to this lottery"}), 400
-    try: # when applications are less than WINNER_NUM, all applications are chosen
+    try:  # when applications are less than WINNER_NUM, all applications are chosen
         winner_apps = random.sample(
             applications, current_app.config['WINNERS_NUM'])
     except ValueError:
