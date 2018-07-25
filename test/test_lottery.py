@@ -336,9 +336,9 @@ def test_cancel_noperm(client):
     owner = test_user
     user = {'username': 'hoge', 'g-recaptcha-response': 'hugo'}
     owner_token = login(client, owner['username'],
-                          owner['g-recaptcha-response'])['token']
+                        owner['g-recaptcha-response'])['token']
     user_token = login(client, user['username'],
-                          user['g-recaptcha-response'])['token']
+                       user['g-recaptcha-response'])['token']
 
     client.post('/lotteries/' + idx,
                 headers={'Authorization': 'Bearer' + owner_token})
