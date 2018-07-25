@@ -1,11 +1,27 @@
+import pytest
+
 import datetime
 from api.time_management import get_time_index, OutOfHoursError
 
+def mod_time(t, dt):
+    if isinstance(t, datetime.time):
+        t = datetime.datetime.combine(datetime.date(2000, 1, 1), t)
+        return (t + dt).time()
+    else:
+        return t + dt
+
+def test_time_index_ooh(client):
+    with client.application.app_context():
+        start = client.application.config['START_DATETIME']
+        end = client.application.config['END_DATETIME']
+        res = datetime.timedelta.resolution
+        with pytest.raises(OutOfHoursError):
+            get_time_index(mod_time(start, -res))
+        with pytest.raises(OutOfHoursError):
+            get_time_index(mod_time(end, +res))
+
 def test_time_index_lim(client):
     with client.application.app_context():
-        def mod_time(t, dt):
-            datet = datetime.datetime.combine(datetime.date(2000, 1, 1), t)
-            return (datet + dt).time()
         timepoints = client.application.config['TIMEPOINTS']
         for i, point in enumerate(timepoints):
             res = datetime.timedelta.resolution
