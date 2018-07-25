@@ -183,7 +183,6 @@ def draw_lottery(idx):
         for winner_app in winner_apps:
             if application.id == winner_app.id:
                 application.status = "won"
-                chosens.remove(chosen) # remove checked ID. for performance
                 break
             else:
                 application.status =  "lose"
