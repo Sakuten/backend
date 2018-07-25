@@ -10,10 +10,10 @@ from cards import card
 from config import *
 
 parser = argparse.ArgumentParser(description='Generate HTML from template')
-parser.add_argument("-i", "--input", type=str, help="Input json file path")
+parser.add_argument("-i", "--input", type=str, required=True, help="Input json file path")
 parser.add_argument("-t", "--template", type=str, default="./template/cards.html.j2", help="Template file path")
 parser.add_argument("--horizontal", type=int, default=3, help="How many cards listed in horizontal line")
-parser.add_argument("-o", "--output", type=str, help="Output html file path")
+parser.add_argument("-o", "--output", type=str, required=True, help="Output html file path")
 args = parser.parse_args()
 
 # 1. Loads list of ids(secret_id, public_id) from json file
