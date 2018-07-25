@@ -13,6 +13,8 @@ invalid_classroom_id = '999999999999'
 invalid_lottery_id = '9999999999'
 
 # --- methods
+
+
 def mod_time(t, dt):
     """
         Modify the supplied time with timedelta
@@ -27,6 +29,7 @@ def mod_time(t, dt):
         return (t + dt).time()
     else:
         return t + dt
+
 
 def login(client, username, rresp):
     """logging in as 'username' with 'g-recaptcha-response'

@@ -14,8 +14,16 @@ from api.schemas import (
 )
 from api.auth import login_required
 from api.swagger import spec
-from api.time_management import get_time_index, OutOfHoursError, OutOfAcceptingHoursError
-from api.draw import draw_one, draw_all_at_index, NobodyIsApplyingError
+from api.time_management import (
+    get_time_index,
+    OutOfHoursError,
+    OutOfAcceptingHoursError
+)
+from api.draw import (
+    draw_one,
+    draw_all_at_index,
+    NobodyIsApplyingError
+)
 
 bp = Blueprint(__name__, 'api')
 

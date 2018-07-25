@@ -452,6 +452,7 @@ def test_draw_nobody_apply(client):
     assert resp.status_code == 400
     assert 'nobody' in resp.get_json()['message']
 
+
 def test_draw_all(client):
     """attempt to draw all lotteries
         1. make some applications to some lotteries
@@ -465,12 +466,14 @@ def test_draw_all(client):
     with client.application.app_context():
         target_lotteries = Lottery.query.filter_by(index=time_index)
         non_target_lotteries = Lottery.query.filter_by(index=time_index+1)
-        users = User.query.all()
-        for i, user in enumerate(user for user in users if user.username != "admin"):
+        users = (user for user in User.query.all() if user.username != "admin")
+        for i, user in enumerate(users):
             target_lottery = target_lotteries[i % len(list(target_lotteries))]
-            non_target_lottery = non_target_lotteries[i % len(list(non_target_lotteries))]
+            non_target_lottery = non_target_lotteries[i % len(
+                list(non_target_lotteries))]
             application1 = Application(lottery=target_lottery, user_id=user.id)
-            application2 = Application(lottery=non_target_lottery, user_id=user.id)
+            application2 = Application(
+                lottery=non_target_lottery, user_id=user.id)
             db.session.add(application1)
             db.session.add(application2)
         db.session.commit()
@@ -480,7 +483,7 @@ def test_draw_all(client):
                   admin['g-recaptcha-response'])['token']
     draw_time = client.application.config['TIMEPOINTS'][time_index][0]
     with mock.patch('api.time_management.get_current_datetime',
-            return_value=draw_time):
+                    return_value=draw_time):
         resp = client.post('/draw_all',
                            headers={'Authorization': 'Bearer ' + token})
 
@@ -506,6 +509,7 @@ def test_draw_all(client):
                 if application:
                     assert application.status == "pending"
 
+
 def test_draw_all_noperm(client):
     """attempt to draw without proper permission.
         target_url: /draw_all [POST]
@@ -525,7 +529,7 @@ def test_draw_all_invaild(client):
     """
     def try_with_datetime(t):
         with mock.patch('api.time_management.get_current_datetime',
-                return_value=t):
+                        return_value=t):
             resp = client.post('/draw_all',
                                headers={'Authorization': 'Bearer ' + token})
 
@@ -534,9 +538,11 @@ def test_draw_all_invaild(client):
 
     token = login(client, admin['username'],
                   admin['g-recaptcha-response'])['token']
-    outofhours1 = client.application.config['START_DATETIME']-datetime.timedelta.resolution
+    outofhours1 = client.application.config['START_DATETIME'] - \
+        datetime.timedelta.resolution
     try_with_datetime(outofhours1)
-    outofhours2 = client.application.config['END_DATETIME']+datetime.timedelta.resolution
+    outofhours2 = client.application.config['END_DATETIME'] + \
+        datetime.timedelta.resolution
     try_with_datetime(outofhours2)
 
     timepoints = client.application.config['TIMEPOINTS']

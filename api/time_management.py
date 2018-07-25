@@ -11,7 +11,8 @@ class OutOfHoursError(Exception):
 
 class OutOfAcceptingHoursError(Exception):
     """
-        The Exception that indicates the time is in festival but not accepting time
+        The Exception that indicates the time is in festival,
+        but not in accepting time
     """
     pass
 
