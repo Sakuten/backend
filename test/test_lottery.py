@@ -354,9 +354,7 @@ def test_draw(client):
 
         assert resp.status_code == 200
 
-        winners_id = []
-        for winner in resp.get_json()[0]:
-            winners_id.append(winner['id'])
+        winners_id = [winner['id'] for winner in resp.get_json()[0]]
         users = User.query.all()
         target_lottery = Lottery.query.filter_by(id=idx).first()
         assert target_lottery.done
