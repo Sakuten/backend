@@ -28,6 +28,7 @@
       {% set card_index = (row * horizontal) + column  %}
       {% set card = cards[card_index -1]|default(empty_card) %}
       <td class="container">
+        <h2 class="header">抽選カード</h2>
         <div class="image">
           <img src="{{ card.qr_path }}">
         </div>
