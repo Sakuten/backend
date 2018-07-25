@@ -2,6 +2,7 @@
 
 import qrcode
 
+
 def gen_qr_code(base_url, secret_id):
     """generate QR code from URL and secret key
         Parameters:
@@ -16,6 +17,6 @@ def gen_qr_code(base_url, secret_id):
 
     img = qrcode.make(final_url)
     qr_path = 'qr/' + secret_id + '.png'
-    img.save('dist/'+ qr_path)
+    img.save('dist/' + qr_path)
 
     return qr_path
