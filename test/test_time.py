@@ -1,7 +1,7 @@
 import pytest
 
 import datetime
-from api.time_management import get_time_index, OutOfHoursError
+from api.time_management import get_time_index, OutOfHoursError, OutOfAcceptingHoursError
 
 def mod_time(t, dt):
     if isinstance(t, datetime.time):
@@ -19,6 +19,16 @@ def test_time_index_ooh(client):
             get_time_index(mod_time(start, -res))
         with pytest.raises(OutOfHoursError):
             get_time_index(mod_time(end, +res))
+
+def test_time_index_ooa(client):
+    with client.application.app_context():
+        timepoints = client.application.config['TIMEPOINTS']
+        for i, point in enumerate(timepoints):
+            res = datetime.timedelta.resolution
+            with pytest.raises(OutOfAcceptingHoursError):
+                get_time_index(mod_time(point[0], -res))
+            with pytest.raises(OutOfAcceptingHoursError):
+                get_time_index(mod_time(point[1], +res))
 
 def test_time_index_lim(client):
     with client.application.app_context():
