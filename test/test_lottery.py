@@ -211,8 +211,10 @@ def test_get_allapplications(client):
     lottery_id = 1
     make_application(client, test_user['username'], lottery_id)
 
-    resp = as_user_get(
-        client, test_user['username'], test_user['g-recaptcha-response'], f'/applications')
+    resp = as_user_get(client,
+                       test_user['username'],
+                       test_user['g-recaptcha-response'],
+                       '/applications')
 
     with client.application.app_context():
         db_status = Application.query.all()
@@ -230,7 +232,8 @@ def test_get_specific_application(client):
         client, test_user['username'], lottery_id)
 
     resp = as_user_get(client,
-                       test_user['username'], test_user['g-recaptcha-response'],
+                       test_user['username'],
+                       test_user['g-recaptcha-response'],
                        f'/applications/{application_id}')
 
     with client.application.app_context():
@@ -251,7 +254,8 @@ def test_get_specific_application_invaild_id(client):
     # application id to test
     idx = application_id + 1
     resp = as_user_get(client,
-                       test_user['username'], test_user['g-recaptcha-response'],
+                       test_user['username'],
+                       test_user['g-recaptcha-response'],
                        f'/applications/{idx}')
 
     assert resp.status_code == 404
@@ -435,7 +439,8 @@ def test_draw_nobody_apply(client):
     """
 
     idx = '1'
-    token = login(client, admin['username'], admin['g-recaptcha-response'])['token']
+    token = login(client, admin['username'],
+                  admin['g-recaptcha-response'])['token']
 
     with client.application.app_context():
         target_applications = Application.query.filter_by(lottery_id=idx).all()
