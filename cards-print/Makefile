@@ -11,7 +11,7 @@ ${OUT_PDF_FILE}: ${OUT_HTML_FILE}
 
 ${OUT_HTML_FILE}: ${TEMPLATE_FILE} ${ID_LIST_FILE}
 	mkdir -p ${DIST_DIR} ${QR_DIR}
-	pipenv run python mkhtml.py
+	pipenv run python mkhtml.py -i ${ID_LIST_FILE} -o ${OUT_HTML_FILE}
 
 .PHONY: clean
 clean:
