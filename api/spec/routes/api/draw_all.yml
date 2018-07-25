@@ -1,0 +1,29 @@
+Draw all of the available lotteries
+---
+parameters: []
+responses:
+  '200':
+    description: List of Users
+    schema:
+      items:
+        $ref: '#/definitions/User'
+      type: array
+  '400':
+    description: Malformed Authenication Header has detected
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+  '401':
+    description: Authorization Failed
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+  '403':
+    description: You have no permission to perform the action
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+security:
+  - admin_auth: []
+tags:
+  - lottery
+description: Draw all of the available lotteries and return the list of winners
+operationId: drawAll
+summary: Draw all of the available lotteries
