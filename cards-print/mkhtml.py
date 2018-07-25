@@ -14,7 +14,8 @@ parser.add_argument("-i", "--input", type=str,
 parser.add_argument("-b", "--base-url", type=str,
                     required=True, help="Base URL in the QR code")
 parser.add_argument("-t", "--template", type=str,
-                    default="./template/cards.html.j2", help="Template file path")
+                    default="./template/cards.html.j2",
+                    help="Template file path")
 parser.add_argument("--horizontal", type=int, default=3,
                     help="How many cards listed in horizontal line")
 parser.add_argument("-o", "--output", type=str,
