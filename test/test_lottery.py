@@ -475,22 +475,23 @@ def test_draw_all(client):
             db.session.add(application2)
         db.session.commit()
 
-        token = login(client,
-                      admin['username'],
-                      admin['g-recaptcha-response'])['token']
-        draw_time = client.application.config['TIMEPOINTS'][time_index][0]
-        with mock.patch('api.time_management.get_current_datetime',
-                return_value=draw_time):
-            resp = client.post('/draw_all',
-                               headers={'Authorization': 'Bearer ' + token})
+    token = login(client,
+                  admin['username'],
+                  admin['g-recaptcha-response'])['token']
+    draw_time = client.application.config['TIMEPOINTS'][time_index][0]
+    with mock.patch('api.time_management.get_current_datetime',
+            return_value=draw_time):
+        resp = client.post('/draw_all',
+                           headers={'Authorization': 'Bearer ' + token})
 
-        assert resp.status_code == 200
+    assert resp.status_code == 200
 
-        winners_id = [winner['id'] for winner in resp.get_json()[0]]
-        assert all(lottery.done for lottery in target_lotteries)
-        assert all(not lottery.done for lottery in non_target_lotteries)
+    winners_id = [winner['id'] for winner in resp.get_json()[0]]
+    assert all(lottery.done for lottery in target_lotteries)
+    assert all(not lottery.done for lottery in non_target_lotteries)
 
-        # users = User.query.all()
+    with client.application.app_context():
+        users = User.query.all()
         for user in users:
             for lottery in target_lotteries:
                 application = Application.query.filter_by(
