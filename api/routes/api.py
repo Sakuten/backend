@@ -189,9 +189,7 @@ def draw_lottery(idx):
 
     lottery.done = True
     db.session.commit()
-    winners = []
-    for winner_app in winner_apps:
-        winners.append(User.query.get(winner_app.user_id))
+    winners = [ User.query.get(winner_app.user_id) for winner_app in winner_apps ]
     result = users_schema.dump(winners)
     return jsonify(result)
 
