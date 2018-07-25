@@ -2,7 +2,7 @@ from flask import current_app
 import datetime
 
 
-class OutOfHourError(Exception):
+class OutOfHoursError(Exception):
     """
         The Exception that indicates the time was out of festival
     """
