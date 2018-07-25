@@ -7,10 +7,10 @@ import json
 
 from mkqr import gen_qr_code
 from cards import card
-from config import *
 
 parser = argparse.ArgumentParser(description='Generate HTML from template')
 parser.add_argument("-i", "--input", type=str, required=True, help="Input json file path")
+parser.add_argument("-b", "--base-url", type=str, required=True, help="Base URL in the QR code")
 parser.add_argument("-t", "--template", type=str, default="./template/cards.html.j2", help="Template file path")
 parser.add_argument("--horizontal", type=int, default=3, help="How many cards listed in horizontal line")
 parser.add_argument("-o", "--output", type=str, required=True, help="Output html file path")
@@ -26,7 +26,7 @@ with open(args.input, 'r') as f:
 qr_pathes = []
 cards = []
 for id_pair in id_pairs:
-    qr = gen_qr_code(base_url, id_pair['secret_id'])
+    qr = gen_qr_code(args.base_url, id_pair['secret_id'])
     qr_pathes.append(qr)
 
     newcard = card(qr, id_pair['public_id'])
