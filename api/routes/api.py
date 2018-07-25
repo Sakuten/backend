@@ -1,5 +1,4 @@
-import random
-from flask import Blueprint, jsonify, g, current_app
+from flask import Blueprint, jsonify, g
 from api.models import Lottery, Classroom, User, Application, db
 from api.schemas import (
     user_schema,
@@ -13,6 +12,7 @@ from api.schemas import (
 )
 from api.auth import login_required
 from api.swagger import spec
+from api.draw import draw_one, NobodyIsApplyingError
 
 bp = Blueprint(__name__, 'api')
 
@@ -172,23 +172,10 @@ def draw_lottery(idx):
     if lottery.done:
         return jsonify({"message": "This lottery is already done "
                         "and cannot be undone"}), 400
-    applications = Application.query.filter_by(lottery_id=idx).all()
-    if len(applications) == 0:
-        return jsonify({"message": "Nobody is applying to this lottery"}), 400
     try:
-        winner_apps = random.sample(
-            applications, current_app.config['WINNERS_NUM'])
-    except ValueError:
-        # if applications are less than WINNER_NUM, all applications are chosen
-        winner_apps = applications
-    for application in applications:
-        application.status = "won" if application in winner_apps else "lose"
-        db.session.add(application)
-
-    lottery.done = True
-    db.session.commit()
-    winners = [User.query.get(winner_app.user_id)
-               for winner_app in winner_apps]
+        winners = draw_one(lottery)
+    except NobodyIsApplyingError:
+        return jsonify({"message": "Nobody is applying to this lottery"}), 400
     result = users_schema.dump(winners)
     return jsonify(result)
 
