@@ -11,6 +11,8 @@ from config import *
 
 parser = argparse.ArgumentParser(description='Generate HTML from template')
 parser.add_argument("-i", "--input", type=str, help="Input json file path")
+parser.add_argument("-t", "--template", type=str, default="./template/cards.html.j2", help="Template file path")
+parser.add_argument("--horizontal", type=int, default=3, help="How many cards listed in horizontal line")
 parser.add_argument("-o", "--output", type=str, help="Output html file path")
 args = parser.parse_args()
 
@@ -32,9 +34,9 @@ for id_pair in id_pairs:
 
 
 empty_card = card('','')
-env = Environment(loader=FileSystemLoader('./template'))
-template = env.get_template('cards.html.j2')
+env = Environment(loader=FileSystemLoader('.'))
+template = env.get_template(args.template)
 
-html = template.render({'cards':cards, 'empty_card': empty_card, 'horizontal': horizontal})
+html = template.render({'cards':cards, 'empty_card': empty_card, 'horizontal': args.horizontal})
 with open(args.output, 'w') as f:
     f.write(html)
