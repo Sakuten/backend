@@ -3,7 +3,7 @@ import random
 from secrets import token_urlsafe
 
 
-max_public_id = 34991
+max_public_id = 34991   # 6 ([3-79]) * 18 ([AC-HJ-NPRTW-Y]) * 18 * 18
 
 
 encoder = "ACDEFGHJKLMNPRTWXY"
@@ -27,10 +27,10 @@ def encode_public_id(num_id):
     letters = []
     for i in range(1, 4):
         data = num_id % (18**i) // 18**(i-1)
-        letters = [data] + letters
+        letters.insert(0, data)
         sub = data * (18**(i-1))
         num_id -= sub
-    return one_digit(latter_3_num) + ''.join([one_alpha(n) for n in letters])
+    return one_digit(latter_3_num) + ''.join(one_alpha(n) for n in letters)
 
 
 def decode_public_id(str_id):
@@ -49,7 +49,7 @@ def decode_public_id(str_id):
 
     alphas = [alpha2num(c) for c in str_id[1:]]
     alphas.insert(0, num2num(str_id[0]))
-    return sum([alphas[i] * 18**(3-i) for i in range(4)])
+    return sum(alphas[i] * 18**(3-i) for i in range(4))
 
 
 def find_public_id(ids, secret_id):
@@ -107,7 +107,7 @@ def save_id_json_file(json_path, id_dicts):
             json_path (str): where to create a JSON file
     """
     with open(json_path, 'w') as f:
-        f.write(json.dumps(id_dicts, indent=4))
+        json.dump(id_dicts, f, indent=4)
 
 
 def load_id_json_file(json_path):
