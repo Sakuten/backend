@@ -191,7 +191,7 @@ def draw_lottery(idx):
                         "and cannot be undone"}), 400
 
     result = users_schema.dump(winners)
-    return jsonify(result)
+    return jsonify(result[0])
 
 
 @bp.route('/draw_all', methods=['POST'])
@@ -217,7 +217,7 @@ def draw_all_lotteries():
 
     flattened = list(chain.from_iterable(winners))
     result = users_schema.dump(flattened)
-    return jsonify(result)
+    return jsonify(result[0])
 
 
 @bp.route('/status', methods=['GET'])

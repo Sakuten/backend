@@ -366,7 +366,7 @@ def test_draw(client):
 
         assert resp.status_code == 200
 
-        winners_id = [winner['id'] for winner in resp.get_json()[0]]
+        winners_id = [winner['id'] for winner in resp.get_json()]
         users = User.query.all()
         target_lottery = Lottery.query.filter_by(id=idx).first()
         assert target_lottery.done
@@ -489,7 +489,7 @@ def test_draw_all(client):
 
     assert resp.status_code == 200
 
-    winners_id = [winner['id'] for winner in resp.get_json()[0]]
+    winners_id = [winner['id'] for winner in resp.get_json()]
     assert all(lottery.done for lottery in target_lotteries)
     assert all(not lottery.done for lottery in non_target_lotteries)
 
