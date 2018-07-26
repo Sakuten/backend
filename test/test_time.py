@@ -2,12 +2,11 @@ import pytest
 
 import datetime
 from api.time_management import (
+    mod_time,
     get_time_index,
     OutOfHoursError,
     OutOfAcceptingHoursError
 )
-
-from utils import mod_time
 
 
 def test_time_index_ooh(client):

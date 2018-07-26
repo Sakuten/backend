@@ -1,5 +1,3 @@
-import datetime
-
 from api.models import User, Application, db
 
 # --- variables
@@ -13,22 +11,6 @@ invalid_classroom_id = '999999999999'
 invalid_lottery_id = '9999999999'
 
 # --- methods
-
-
-def mod_time(t, dt):
-    """
-        Modify the supplied time with timedelta
-        Args:
-            t(datetime.time|datetime.datetime): The Time to modify
-            dt(datetime.timedelta): Difference
-        Returns:
-            time(datetime.time|datetime.datetime): The modified time
-    """
-    if isinstance(t, datetime.time):
-        t = datetime.datetime.combine(datetime.date(2000, 1, 1), t)
-        return (t + dt).time()
-    else:
-        return t + dt
 
 
 def login(client, username, rresp):

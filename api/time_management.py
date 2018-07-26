@@ -2,6 +2,22 @@ from flask import current_app
 import datetime
 
 
+def mod_time(t, dt):
+    """
+        Modify the supplied time with timedelta
+        Args:
+            t(datetime.time|datetime.datetime): The Time to modify
+            dt(datetime.timedelta): Difference
+        Returns:
+            time(datetime.time|datetime.datetime): The modified time
+    """
+    if isinstance(t, datetime.time):
+        t = datetime.datetime.combine(datetime.date(2000, 1, 1), t)
+        return (t + dt).time()
+    else:
+        return t + dt
+
+
 class OutOfHoursError(Exception):
     """
         The Exception that indicates the time was out of festival
