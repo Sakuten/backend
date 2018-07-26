@@ -100,6 +100,16 @@ def generate_ids(how_many):
     return id_dicts
 
 
+def save_id_json_file(json_path, id_dicts):
+    """
+        create a new JSON file and save the given IDs
+        Args:
+            json_path (str): where to create a JSON file
+    """
+    with open(json_path, 'w') as f:
+        f.write(json.dumps(id_dicts, indent=4))
+
+
 def load_id_json_file(json_path):
     """
         load the JSON file and get the data inside
