@@ -15,7 +15,7 @@ from api.schemas import (
 from api.auth import login_required
 from api.swagger import spec
 from api.time_management import (
-    get_time_index,
+    get_draw_time_index,
     OutOfHoursError,
     OutOfAcceptingHoursError
 )
@@ -200,7 +200,7 @@ def draw_all_lotteries():
     """
     try:
         # Get time index with current datetime
-        index = get_time_index()
+        index = get_draw_time_index()
     except (OutOfHoursError, OutOfAcceptingHoursError):
         return jsonify({"message": "Not acceptable time"}), 400
 

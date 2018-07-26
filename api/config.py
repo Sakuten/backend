@@ -1,6 +1,6 @@
 from cryptography.fernet import Fernet
 import os
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 
 
 class BaseConfig(object):
@@ -13,6 +13,7 @@ class BaseConfig(object):
     RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY')
     START_DATETIME = datetime(2018, 9, 16, 8,  40, 0)
     END_DATETIME = datetime(2018, 9, 17, 16, 00, 0)
+    DRAWING_TIME_EXTENSION = timedelta(minutes=10)
     TIMEPOINTS = [
         (time(9,  20), time(9,  50)),
         (time(10, 45), time(11, 15)),
