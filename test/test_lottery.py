@@ -108,7 +108,7 @@ def test_apply(client):
         target_url: /lotteries/<id> [POST]
     """
     idx = '1'
-    token = login(client, test_user['username'],
+    token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
     resp = client.post('/lotteries/'+idx,
                        headers={'Authorization': 'Bearer ' + token})
@@ -116,7 +116,7 @@ def test_apply(client):
     with client.application.app_context():
         # get needed objects
         target_lottery = Lottery.query.filter_by(id=idx).first()
-        user = User.query.filter_by(username=test_user['username']).first()
+        user = User.query.filter_by(secret_id=test_user['secret_id']).first()
         # this application should be added by previous 'client.put'
         application = Application.query.filter_by(
             lottery=target_lottery, user_id=user.id).first()
@@ -131,7 +131,7 @@ def test_apply_noperm(client):
         target_url: /lotteries/<id>/apply [POST]
     """
     idx = '1'
-    token = login(client, admin['username'],
+    token = login(client, admin['secret_id'],
                   admin['g-recaptcha-response'])['token']
     resp = client.post('/lotteries/'+idx,
                        headers={'Authorization': 'Bearer ' + token})
@@ -145,7 +145,7 @@ def test_apply_invaild(client):
         target_url: /lotteries/<id> [PUT]
     """
     idx = invalid_lottery_id
-    token = login(client, test_user['username'],
+    token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
     resp = client.post('/lotteries/'+idx,
                        headers={'Authorization': 'Bearer ' + token})
@@ -160,7 +160,7 @@ def test_apply_already_done(client):
         target_url: /lotteries/<id> [POST]
     """
     idx = '1'
-    token = login(client, test_user['username'],
+    token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
 
     with client.application.app_context():
@@ -182,14 +182,14 @@ def test_apply_same_period(client):
         target_url: /lotteries/<id> [POST]
     """
     idx = '1'
-    token = login(client, test_user['username'],
+    token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
 
     with client.application.app_context():
         target_lottery = Lottery.query.filter_by(id=idx).first()
         booking_lottery = Lottery.query.filter_by(
             index=target_lottery.index).filter(Lottery.id != idx).first()
-        user = User.query.filter_by(username=test_user['username']).first()
+        user = User.query.filter_by(secret_id=test_user['secret_id']).first()
         application = Application(lottery=booking_lottery, user_id=user.id)
         db.session.add(application)
         db.session.commit()
@@ -208,10 +208,10 @@ def test_get_allapplications(client):
         target_url: /applications
     """
     lottery_id = 1
-    make_application(client, test_user['username'], lottery_id)
+    make_application(client, test_user['secret_id'], lottery_id)
 
     resp = as_user_get(client,
-                       test_user['username'],
+                       test_user['secret_id'],
                        test_user['g-recaptcha-response'],
                        '/applications')
 
@@ -228,10 +228,10 @@ def test_get_specific_application(client):
     """
     lottery_id = 1
     application_id = make_application(
-        client, test_user['username'], lottery_id)
+        client, test_user['secret_id'], lottery_id)
 
     resp = as_user_get(client,
-                       test_user['username'],
+                       test_user['secret_id'],
                        test_user['g-recaptcha-response'],
                        f'/applications/{application_id}')
 
@@ -248,12 +248,12 @@ def test_get_specific_application_invaild_id(client):
     """
     lottery_id = 1
     application_id = make_application(
-        client, test_user['username'], lottery_id)
+        client, test_user['secret_id'], lottery_id)
 
     # application id to test
     idx = application_id + 1
     resp = as_user_get(client,
-                       test_user['username'],
+                       test_user['secret_id'],
                        test_user['g-recaptcha-response'],
                        f'/applications/{idx}')
 
@@ -270,9 +270,9 @@ def test_cancel(client):
     """
     lottery_id = 1
     application_id = make_application(
-        client, test_user['username'], lottery_id)
+        client, test_user['secret_id'], lottery_id)
 
-    token = login(client, test_user['username'],
+    token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
     user_resp = client.get('/status',
                            headers={'Authorization': 'Bearer ' + token})
@@ -293,11 +293,11 @@ def test_cancel_already_done(client):
         2. attempt to cancel that application
         target_url: /lotteries/<id> [DELETE]
     """
-    token = login(client, test_user['username'],
+    token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
     lottery_id = 1
     application_id = make_application(
-        client, test_user['username'], lottery_id)
+        client, test_user['secret_id'], lottery_id)
 
     with client.application.app_context():
         target_application = Application.query.filter_by(
@@ -322,10 +322,10 @@ def test_cancel_noperm(client):
     """
     idx = '1'
     owner = test_user
-    user = {'username': 'hoge', 'g-recaptcha-response': 'hugo'}
-    owner_token = login(client, owner['username'],
+    user = {'secret_id': 'hoge', 'g-recaptcha-response': 'hugo'}
+    owner_token = login(client, owner['secret_id'],
                         owner['g-recaptcha-response'])['token']
-    user_token = login(client, user['username'],
+    user_token = login(client, user['secret_id'],
                        user['g-recaptcha-response'])['token']
 
     client.post('/lotteries/' + idx,
@@ -356,7 +356,7 @@ def test_draw(client):
         db.session.commit()
 
         token = login(client,
-                      admin['username'],
+                      admin['secret_id'],
                       admin['g-recaptcha-response'])['token']
         resp = client.post('/lotteries/'+idx+'/draw',
                            headers={'Authorization': 'Bearer ' + token})
@@ -380,7 +380,7 @@ def test_draw_noperm(client):
         target_url: /lotteries/<id>/draw [POST]
     """
     idx = '1'
-    token = login(client, test_user['username'],
+    token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
     resp = client.post('/lotteries/'+idx+'/draw',
                        headers={'Authorization': 'Bearer ' + token})
@@ -394,7 +394,7 @@ def test_draw_invaild(client):
         target_url: /lotteries/<id>/draw [POST]
     """
     idx = invalid_lottery_id
-    token = login(client, admin['username'],
+    token = login(client, admin['secret_id'],
                   admin['g-recaptcha-response'])['token']
     resp = client.post('/lotteries/'+idx+'/draw',
                        headers={'Authorization': 'Bearer ' + token})
@@ -409,7 +409,7 @@ def test_draw_already_done(client):
         target_url: /lotteries/<id>/draw [POST]
     """
     idx = '1'
-    token = login(client, admin['username'],
+    token = login(client, admin['secret_id'],
                   admin['g-recaptcha-response'])['token']
 
     with client.application.app_context():
@@ -434,7 +434,7 @@ def test_draw_nobody_apply(client):
     """
 
     idx = '1'
-    token = login(client, admin['username'],
+    token = login(client, admin['secret_id'],
                   admin['g-recaptcha-response'])['token']
 
     with client.application.app_context():
