@@ -1,8 +1,10 @@
-import random
+from itertools import chain
+
 from flask import Blueprint, jsonify, g
 from api.models import Lottery, Classroom, User, Application, db
 from api.schemas import (
     user_schema,
+    users_schema,
     classrooms_schema,
     classroom_schema,
     application_schema,
@@ -12,6 +14,17 @@ from api.schemas import (
 )
 from api.auth import login_required
 from api.swagger import spec
+from api.time_management import (
+    get_draw_time_index,
+    OutOfHoursError,
+    OutOfAcceptingHoursError
+)
+from api.draw import (
+    draw_one,
+    draw_all_at_index,
+    NobodyIsApplyingError,
+    AlreadyDoneError
+)
 
 bp = Blueprint(__name__, 'api')
 
@@ -168,22 +181,53 @@ def draw_lottery(idx):
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 404
-    if lottery.done:
+
+    not_acceptable_resp = jsonify({"message": "Not acceptable time"})
+    try:
+        # Get time index with current datetime
+        index = get_draw_time_index()
+    except (OutOfHoursError, OutOfAcceptingHoursError):
+        return not_acceptable_resp, 400
+
+    if index != idx:
+        return not_acceptable_resp, 400
+
+    try:
+        winners = draw_one(lottery)
+    except NobodyIsApplyingError:
+        return jsonify({"message": "Nobody is applying to this lottery"}), 400
+    except AlreadyDoneError:
         return jsonify({"message": "This lottery is already done "
                         "and cannot be undone"}), 400
-    applications = Application.query.filter_by(lottery_id=idx).all()
-    if len(applications) == 0:
-        return jsonify({"message": "Nobody is applying to this lottery"}), 400
-    chosen = random.choice(applications)
-    for application in applications:
-        application.status = "won" if application.id == chosen.id else "lose"
-        db.session.add(application)
 
-    lottery.done = True
-    db.session.commit()
-    winner = User.query.get(chosen.user_id)
-    result = user_schema.dump(winner)
-    return jsonify(result)
+    result = users_schema.dump(winners)
+    return jsonify(result[0])
+
+
+@bp.route('/draw_all', methods=['POST'])
+@spec('api/draw_all.yml')
+@login_required('admin')
+def draw_all_lotteries():
+    """
+        draw all available lotteries as adminstrator
+    """
+    try:
+        # Get time index with current datetime
+        index = get_draw_time_index()
+    except (OutOfHoursError, OutOfAcceptingHoursError):
+        return jsonify({"message": "Not acceptable time"}), 400
+
+    try:
+        winners = draw_all_at_index(index)
+    except NobodyIsApplyingError:
+        return jsonify({"message": "Nobody is applying to this lottery"}), 400
+    except AlreadyDoneError:
+        return jsonify({"message": "This lottery is already done "
+                        "and cannot be undone"}), 400
+
+    flattened = list(chain.from_iterable(winners))
+    result = users_schema.dump(flattened)
+    return jsonify(result[0])
 
 
 @bp.route('/status', methods=['GET'])
