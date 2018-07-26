@@ -9,8 +9,7 @@ from utils import (
     as_user_get,
     invalid_classroom_id,
     invalid_lottery_id,
-    make_application,
-    mod_time
+    make_application
 )
 
 from api.models import Lottery, Classroom, User, Application, db
@@ -22,6 +21,7 @@ from api.schemas import (
     lotteries_schema,
     lottery_schema
 )
+from api.time_management import mod_time
 
 
 # ---------- Lottery API
@@ -481,7 +481,7 @@ def test_draw_all(client):
     token = login(client,
                   admin['username'],
                   admin['g-recaptcha-response'])['token']
-    draw_time = client.application.config['TIMEPOINTS'][time_index][0]
+    draw_time = client.application.config['TIMEPOINTS'][time_index][1]
     with mock.patch('api.time_management.get_current_datetime',
                     return_value=draw_time):
         resp = client.post('/draw_all',
@@ -546,7 +546,8 @@ def test_draw_all_invaild(client):
     try_with_datetime(outofhours2)
 
     timepoints = client.application.config['TIMEPOINTS']
-    for i, point in enumerate(timepoints):
+    ext = client.application.config['DRAWING_TIME_EXTENSION']
+    for i, (_, en) in enumerate(timepoints):
         res = datetime.timedelta.resolution
-        try_with_datetime(mod_time(point[0], -res))
-        try_with_datetime(mod_time(point[1], +res))
+        try_with_datetime(mod_time(en, -res))
+        try_with_datetime(mod_time(en, +ext+res))
