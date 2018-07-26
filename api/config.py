@@ -8,7 +8,7 @@ class BaseConfig(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:password@db/postgres'
     SECRET_KEY = Fernet.generate_key()
-    ID_LIST_FILE = '/code/cards/ids.json'
+    ID_LIST_FILE = os.path.join(api.__path__, 'cards/ids.json')
     WINNERS_NUM = 90
     RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY')
 
