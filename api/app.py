@@ -4,7 +4,7 @@ import sqlalchemy
 from .routes import auth, api
 from .swagger import swag
 from .models import db
-from cards.id import load_id_json_file
+from cards.id import load_id_json_file, decode_public_id
 import os
 import sys
 
@@ -123,12 +123,12 @@ def generate():
     id_list = load_id_json_file(json_path)
     for ids in id_list[:-1]:
         user = User(secret_id=ids['secret_id'],
-                    public_id=ids['public_id'])
+                    public_id=decode_public_id(ids['public_id']))
         db.session.add(user)
 
     admin_data = id_list[-1]
     user = User(secret_id=admin_data['secret_id'],
-                public_id=admin_data['public_id'],
+                public_id=decode_public_id(admin_data['public_id']),
                 authority="admin")
     db.session.add(user)
 
