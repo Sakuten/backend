@@ -60,7 +60,7 @@ def login_required(required_name=None):
                     resp.headers['WWW-Authenticate'] = 'Bearer ' + headm
                 return resp
 
-            time = datetime.now()
+            time = datetime.now(current_app.config['TIMEZONE'])
             end = current_app.config['END_DATETIME']
             if end <= time:
                 return auth_error(403)
