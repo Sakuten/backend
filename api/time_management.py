@@ -43,6 +43,20 @@ def get_current_datetime():
     return datetime.datetime.now()
 
 
+def _validate_and_get_time(time):
+    if time is None:
+        time = get_current_datetime()
+
+    if isinstance(time, datetime.datetime):
+        start = current_app.config['START_DATETIME']
+        end = current_app.config['END_DATETIME']
+        if not (start <= time <= end):
+            raise OutOfHoursError()
+        # extract datetime.time instance from datetime.datetime
+        return time.time()
+    return time
+
+
 def get_time_index(time=None):
     """
         get the lottery index from the drawing time
@@ -53,16 +67,7 @@ def get_time_index(time=None):
         raises:
           OutOfHoursError, OutOfAcceptingHoursError
     """
-    if time is None:
-        time = get_current_datetime()
-
-    if isinstance(time, datetime.datetime):
-        start = current_app.config['START_DATETIME']
-        end = current_app.config['END_DATETIME']
-        if not (start <= time <= end):
-            raise OutOfHoursError()
-        # extract datetime.time instance from datetime.datetime
-        time = time.time()
+    time = _validate_and_get_time(time)
 
     for i, (st, en) in enumerate(current_app.config['TIMEPOINTS']):
         if en <= time <= mod_time(en, current_app.config['DRAWING_TIME_EXTENSION']):
@@ -81,16 +86,7 @@ def get_draw_time_index(time=None):
         raises:
           OutOfHoursError, OutOfAcceptingHoursError
     """
-    if time is None:
-        time = get_current_datetime()
-
-    if isinstance(time, datetime.datetime):
-        start = current_app.config['START_DATETIME']
-        end = current_app.config['END_DATETIME']
-        if not (start <= time <= end):
-            raise OutOfHoursError()
-        # extract datetime.time instance from datetime.datetime
-        time = time.time()
+    time = _validate_and_get_time(time)
 
     for i, (st, en) in enumerate(current_app.config['TIMEPOINTS']):
         if st <= time <= en:
