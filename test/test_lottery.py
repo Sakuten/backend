@@ -404,11 +404,8 @@ def test_draw_invaild(client):
     token = login(client, admin['username'],
                   admin['g-recaptcha-response'])['token']
 
-    _, end = client.application.config['TIMEPOINTS'][idx]
-    with mock.patch('api.time_management.get_current_datetime',
-                    return_value=end):
-        resp = client.post('/lotteries/'+idx+'/draw',
-                           headers={'Authorization': 'Bearer ' + token})
+    resp = client.post('/lotteries/'+idx+'/draw',
+                       headers={'Authorization': 'Bearer ' + token})
 
     assert resp.status_code == 404
     assert 'Lottery could not be found.' in resp.get_json()['message']
