@@ -75,7 +75,7 @@ def login_required(required_name=None):
             if not data:
                 return auth_error(401, 'error="invalid_token"')
             user = User.query.filter_by(id=data['data']['user_id']).first()
-            if required_name is not None and user.username != required_name:
+            if required_id is not None and user.public_id != required_id:
                 return auth_error(403, 'error="insufficient_scope"')
             g.token_data = data['data']
 

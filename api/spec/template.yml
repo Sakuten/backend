@@ -141,18 +141,18 @@ definitions:
     type: string
   User:
     properties:
-      applications:
+      application_history:
         items:
           $ref: '#/definitions/Application'
         type: array
-      id:
+      secret_id:
         $ref: '#/definitions/SecretID'
-      username:
-        $ref: '#/definitions/Username'
+      public_id:
+        $ref: '#/definitions/PublicID'
     type: object
-  Username:
-    description: Username (deprecated; will be replaced by id auth)
-    example: example1
+  PublicID:
+    description: Public ID
+    example: 3ABC
     type: string
 securityDefinitions:
   admin_auth:
