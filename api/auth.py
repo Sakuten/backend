@@ -60,6 +60,11 @@ def login_required(required_name=None):
                     resp.headers['WWW-Authenticate'] = 'Bearer ' + headm
                 return resp
 
+            time = datetime.datetime.now()
+            end = current_app.config['END_DATETIME']
+            if end <= time:
+                return auth_error(403)
+
             # check form of request header
             if 'Authorization' not in request.headers:
                 return auth_error(401, 'realm="token_required"')
