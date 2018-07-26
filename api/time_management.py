@@ -57,7 +57,7 @@ def _validate_and_get_time(time):
     return time
 
 
-def get_time_index(time=None):
+def get_draw_time_index(time=None):
     """
         get the lottery index from the drawing time
         args:
@@ -77,7 +77,7 @@ def get_time_index(time=None):
     raise OutOfAcceptingHoursError()
 
 
-def get_draw_time_index(time=None):
+def get_time_index(time=None):
     """
         get the lottery index from the time
         args:
