@@ -69,8 +69,9 @@ def get_time_index(time=None):
     """
     time = _validate_and_get_time(time)
 
-    for i, (st, en) in enumerate(current_app.config['TIMEPOINTS']):
-        if en <= time <= mod_time(en, current_app.config['DRAWING_TIME_EXTENSION']):
+    for i, (_, en) in enumerate(current_app.config['TIMEPOINTS']):
+        ext = current_app.config['DRAWING_TIME_EXTENSION']
+        if en <= time <= mod_time(en, ext):
             return i
 
     raise OutOfAcceptingHoursError()
