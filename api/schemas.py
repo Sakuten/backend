@@ -2,6 +2,7 @@ from marshmallow import Schema, fields
 from api.models import Application, Lottery
 from cards.id import encode_public_id
 
+
 class ApplicationSchema(Schema):
     id = fields.Int(dump_only=True)
     status = fields.Str()
@@ -28,6 +29,7 @@ class UserSchema(Schema):
 
     def get_public_id_str(self, user):
         return encode_public_id(user.public_id)
+
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
