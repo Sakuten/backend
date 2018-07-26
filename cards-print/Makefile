@@ -3,7 +3,7 @@ QR_DIR:=${DIST_DIR}/qr
 TEMPLATE_FILE:=./template/cards.html.j2
 OUT_HTML_FILE:=${DIST_DIR}/cards.html
 OUT_PDF_FILE:=${DIST_DIR}/cards.pdf
-QR_BASE_URL:=https://hoge
+QR_BASE_URL:=https://sakuten.jp/lottery/login?sid=
 
 ID_LIST_FILE:=test.json
 
