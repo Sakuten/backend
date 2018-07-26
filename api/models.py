@@ -95,7 +95,10 @@ class Application(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(
         'user.id', ondelete='CASCADE'))
     user = db.relationship('User')
-    status = db.Column(db.String)  # [ pending, won, lose ]
+    # status: [ pending, won, lose ]
+    status = db.Column(db.String,
+                       default="pending",
+                       nullable=False)
 
     def __repr__(self):
         return "<Application {}{}>".format(self.lottery, self.user)
