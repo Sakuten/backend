@@ -4,6 +4,7 @@ import sqlalchemy
 from .routes import auth, api
 from .swagger import swag
 from .models import db
+from cards.id import load_id_json_file
 import os
 import sys
 
@@ -118,14 +119,16 @@ def generate():
     classloop(create_lotteries)
     db.session.commit()
 
-    def make_debug_user(name):
-        user = User(username=name)
+    id_list = load_id_json_file("ids.json")
+    for ids in id_list[:-1]:
+        user = User(secret_id=ids['secret_id'],
+                    public_id=ids['public_id'])
         db.session.add(user)
-        db.session.commit()
-        return user
 
-    make_debug_user('admin')
-    for i in range(5):
-        make_debug_user(f"example{i}")
+    admin_data = id_list[-1]
+    user = User(secret_id=admin_data['secret_id'],
+                public_id=admin_data['public_id'],
+                authority="admin")
+    db.session.add(user)
 
     db.session.commit()
