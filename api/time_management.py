@@ -40,7 +40,7 @@ def get_current_datetime():
         Return:
           time(datetime.datetime): current datetime
     """
-    return datetime.datetime.now()
+    return datetime.datetime.now(current_app.config['TIMEZONE'])
 
 
 def _validate_and_get_time(time):
