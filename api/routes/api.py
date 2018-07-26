@@ -178,7 +178,7 @@ def draw_lottery(idx):
     """
         draw lottery as adminstrator
     """
-    not_accetable_resp = jsonify({"message": "Not acceptable time"})
+    not_acceptable_resp = jsonify({"message": "Not acceptable time"})
     try:
         # Get time index with current datetime
         index = get_draw_time_index()
