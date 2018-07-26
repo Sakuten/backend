@@ -399,11 +399,48 @@ def test_draw_invaild(client):
     idx = invalid_lottery_id
     token = login(client, admin['username'],
                   admin['g-recaptcha-response'])['token']
-    resp = client.post('/lotteries/'+idx+'/draw',
-                       headers={'Authorization': 'Bearer ' + token})
+
+    _, end = client.application.config['TIMEPOINTS'][idx]
+    with mock.patch('api.time_management.get_current_datetime',
+                    return_value=end):
+        resp = client.post('/lotteries/'+idx+'/draw',
+                           headers={'Authorization': 'Bearer ' + token})
 
     assert resp.status_code == 404
     assert 'Lottery could not be found.' in resp.get_json()['message']
+
+
+def test_draw_time_invaild(client):
+    """attempt to draw in not acceptable time
+        target_url: /draw_all [POST]
+    """
+    with client.application.app_context():
+        target_lottery = Lottery.query.filter_by(id=1).first()
+
+    def try_with_datetime(t):
+        with mock.patch('api.time_management.get_current_datetime',
+                        return_value=t):
+            resp = client.post(f'/lotteries/{target_lottery.id}/draw',
+                               headers={'Authorization': 'Bearer ' + token})
+
+            assert resp.status_code == 400
+            assert 'Not acceptable' in resp.get_json()['message']
+
+    token = login(client, admin['username'],
+                  admin['g-recaptcha-response'])['token']
+    outofhours1 = client.application.config['START_DATETIME'] - \
+        datetime.timedelta.resolution
+    try_with_datetime(outofhours1)
+    outofhours2 = client.application.config['END_DATETIME'] + \
+        datetime.timedelta.resolution
+    try_with_datetime(outofhours2)
+
+    timepoints = client.application.config['TIMEPOINTS']
+    ext = client.application.config['DRAWING_TIME_EXTENSION']
+    _, en = timepoints[target_lottery.index]
+    res = datetime.timedelta.resolution
+    try_with_datetime(mod_time(en, -res))
+    try_with_datetime(mod_time(en, +ext+res))
 
 
 def test_draw_already_done(client):
