@@ -22,7 +22,8 @@ from api.time_management import (
 from api.draw import (
     draw_one,
     draw_all_at_index,
-    NobodyIsApplyingError
+    NobodyIsApplyingError,
+    AlreadyDoneError
 )
 
 bp = Blueprint(__name__, 'api')
@@ -180,13 +181,15 @@ def draw_lottery(idx):
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 404
-    if lottery.done:
-        return jsonify({"message": "This lottery is already done "
-                        "and cannot be undone"}), 400
+
     try:
         winners = draw_one(lottery)
     except NobodyIsApplyingError:
         return jsonify({"message": "Nobody is applying to this lottery"}), 400
+    except AlreadyDoneError:
+        return jsonify({"message": "This lottery is already done "
+                        "and cannot be undone"}), 400
+
     result = users_schema.dump(winners)
     return jsonify(result)
 
@@ -208,6 +211,9 @@ def draw_all_lotteries():
         winners = draw_all_at_index(index)
     except NobodyIsApplyingError:
         return jsonify({"message": "Nobody is applying to this lottery"}), 400
+    except AlreadyDoneError:
+        return jsonify({"message": "This lottery is already done "
+                        "and cannot be undone"}), 400
 
     flattened = list(chain.from_iterable(winners))
     result = users_schema.dump(flattened)

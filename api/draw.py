@@ -2,6 +2,11 @@ import random
 from flask import current_app
 from api.models import User, Lottery, Application, db
 
+class AlreadyDoneError(Exception):
+    """
+        The Exception that indicates the lottery has already done
+    """
+    pass
 
 class NobodyIsApplyingError(Exception):
     """
@@ -18,8 +23,11 @@ def draw_one(lottery, raise_on_nobody=True):
         Return:
           winners([User]): The list of users who won
         Raises:
-            NobodyIsApplyingError
+            NobodyIsApplyingError, AlreadyDoneError
     """
+    if lottery.done:
+        raise AlreadyDoneError()
+
     idx = lottery.id
     applications = Application.query.filter_by(lottery_id=idx).all()
     if len(applications) == 0:
@@ -53,9 +61,12 @@ def draw_all_at_index(index):
         Return:
           winners([[User]]): The list of list of users who won
         Raises:
-            NobodyIsApplyingError
+            NobodyIsApplyingError, AlreadyDoneError
     """
     lotteries = Lottery.query.filter_by(index=index)
+    if any(lottery.done for lottery in lotteries):
+        raise AlreadyDoneError()
+
     winners = [draw_one(lottery, raise_on_nobody=False)
                for lottery in lotteries]
 
