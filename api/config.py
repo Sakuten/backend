@@ -1,6 +1,6 @@
 from cryptography.fernet import Fernet
 import os
-
+import api
 
 class BaseConfig(object):
     DEBUG = False
@@ -24,6 +24,7 @@ class TestingConfig(BaseConfig):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite://'
     ENV = 'development'
+    ID_LIST_FILE = os.path.join(api.__path__, 'cards/test_users.json')
     WINNERS_NUM = 3  # just small value
     # Recaptcha test key for automated testing.
     # https://developers.google.com/recaptcha/docs/faq#id-like-to-run-automated-tests-with-recaptcha-v2-what-should-i-do
