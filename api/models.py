@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.schema import UniqueConstraint
+from cards.id import encode_public_id
 
 db = SQLAlchemy()
 
@@ -19,7 +20,7 @@ class User(db.Model):
     secret_id = db.Column(db.String(40), unique=True)
 
     def __repr__(self):
-        return '<User %r>' % self.public_id
+        return f'<User {encode_public_id(self.public_id)}>'
 
 
 class Classroom(db.Model):
