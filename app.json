@@ -9,6 +9,10 @@
     "SECRET_KEY": {
       "description": "The encryption key to use in authenication (DON'T USE THIS IN PRODUCTION)",
       "value": "my4ViaJb4rek9YIRLFS_3E0fT88QiRhdK8uKOjHXhrA="
+    },
+    "RECAPTCHA_SECRET_KEY": {
+      "description": "The secret key to use in reCAPTCHA validation (DON'T USE THIS IN PRODUCTION)",
+      "value": "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
     }
   },
   "formation": {},

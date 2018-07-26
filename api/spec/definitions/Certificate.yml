@@ -1,11 +1,12 @@
 The Login Certificate
 ---
 properties:
-  password:
-    $ref: '#/definitions/Password'
-  username:
-    $ref: '#/definitions/Username'
+  g-recaptcha-response:
+    description: Google reCAPTCHA response
+    type: string
+  id:
+    $ref: '#/definitions/SecretID'
 required:
-  - username
-  - password
+  - id
+  - g-recaptcha-response
 type: object
