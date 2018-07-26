@@ -8,21 +8,18 @@ class User(db.Model):
     """
         User model for DB
         Args:
-            username (str): user name.
+            public_id (int): public id.
+            secret_id (int): secret id.
         DB contents:
-            username (str): user name.
+            public_id (int): public id.
+            secret_id (int): secret id.
     """
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(40), unique=True)
+    public_id = db.Column(db.Integer, unique=True)
+    secret_id = db.Column(db.String(40), unique=True)
 
     def __repr__(self):
-        return '<User %r>' % self.username
-
-    def get_user_id(self):
-        """
-            return user id.
-        """
-        return self.id
+        return '<User %r>' % self.public_id
 
 
 class Classroom(db.Model):
