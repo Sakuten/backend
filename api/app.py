@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, current_app
 from flask_cors import CORS
 import sqlalchemy
 from .routes import auth, api
@@ -119,7 +119,8 @@ def generate():
     classloop(create_lotteries)
     db.session.commit()
 
-    id_list = load_id_json_file("ids.json")
+    json_path = current_app.config['ID_LIST_FILE']
+    id_list = load_id_json_file(json_path)
     for ids in id_list[:-1]:
         user = User(secret_id=ids['secret_id'],
                     public_id=ids['public_id'])
