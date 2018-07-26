@@ -178,6 +178,16 @@ def draw_lottery(idx):
     """
         draw lottery as adminstrator
     """
+    not_accetable_resp = jsonify({"message": "Not acceptable time"})
+    try:
+        # Get time index with current datetime
+        index = get_draw_time_index()
+    except (OutOfHoursError, OutOfAcceptingHoursError):
+        return not_acceptable_resp, 400
+
+    if index != idx:
+        return not_acceptable_resp, 400
+
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 404
