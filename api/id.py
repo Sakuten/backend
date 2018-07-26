@@ -22,6 +22,7 @@ def encode_public_id(num_id):
 
     def one_digit(num):
         return '9' if num == 5 else str(num + 3)
+
     latter_3_num = num_id // (18**3)
     letters = []
     for i in range(1, 4):
@@ -45,6 +46,7 @@ def decode_public_id(str_id):
 
     def num2num(c):
         return 5 if c == '9' else int(c) - 3
+
     alphas = [alpha2num(c) for c in str_id[1:]]
     alphas.insert(0, num2num(str_id[0]))
     return sum([alphas[i] * 18**(3-i) for i in range(4)])
@@ -78,17 +80,16 @@ def find_secret_id(ids, public_id):
             return id_dict["secret_id"]
 
 
-def generate_id_json_file(json_path, how_many):
+def generate_ids(how_many):
     """
-        generate JSON list of dictionaries that have a pair of
-        secret ID and public ID and save it in a JSON file
-        return the generated secret ID for the use in making
+        generate a list of dictionaries that have a pair of
+        secret ID and public ID
+        return the generated IDs for the use in making
         QR codes
         Args:
-            json_path (str): path to make JSON file
             how_many (int): how many pairs of IDs are needed
         Return:
-            secret_ids (list): all generated secret IDs
+            secret_ids (list): all generated IDs
     """
     public_raw_ids = random.sample(range(max_public_id + 1), how_many)
     secret_ids = [token_urlsafe(24) for _ in range(how_many)]
@@ -96,10 +97,7 @@ def generate_id_json_file(json_path, how_many):
     id_dicts = [{"secret_id": secret, "public_id": encode_public_id(public)}
                 for (secret, public) in zip(secret_ids, public_raw_ids)]
 
-    with open(json_path, 'w') as f:
-        f.write(json.dumps(id_dicts, indent=4))
-
-    return secret_ids
+    return id_dicts
 
 
 def load_id_json_file(json_path):
