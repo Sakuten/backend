@@ -2,11 +2,13 @@ import random
 from flask import current_app
 from api.models import User, Lottery, Application, db
 
+
 class AlreadyDoneError(Exception):
     """
         The Exception that indicates the lottery has already done
     """
     pass
+
 
 class NobodyIsApplyingError(Exception):
     """
