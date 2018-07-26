@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import api
 
+
 class BaseConfig(object):
     DEBUG = False
     TESTING = False
