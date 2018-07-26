@@ -66,10 +66,7 @@ class LotterySchema(Schema):
     def get_winners(self, lottery):
         winners = Application.query.filter_by(
             lottery_id=lottery.id, status="won").all()
-        winners_id = []
-        for winner in winners:
-            winners_id.append(winner.user_id)
-        return winners_id
+        return [winner.public_id for winner in winners]
 
 
 lottery_schema = LotterySchema()
