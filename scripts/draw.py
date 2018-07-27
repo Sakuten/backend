@@ -17,6 +17,8 @@ parser.add_argument("-l", "--list", type=str,
                     required=True, help="ID list json file path")
 parser.add_argument("-a", "--host", type=str,
                     default="localhost", help="API hostname")
+parser.add_argument("-p", "--protocol", type=str,
+                    default="http", help="The protocol to use")
 parser.add_argument("-y", "--yes", action='store_true',
                     help="Don't confirm before drawing")
 args = parser.parse_args()
@@ -36,7 +38,7 @@ def post_json(url, data=None, token=None):
     if token:
         headers['Authorization'] = f'Bearer {token}'
     json_data = json.dumps(data).encode("utf-8") if data else None
-    request = Request(f'{args.host}/{url}', data=json_data,
+    request = Request(f'{args.protocol}://{args.host}/{url}', data=json_data,
                       headers=headers, method='POST')
     with urlopen(request) as response:
         response_body = response.read().decode("utf-8")
@@ -44,7 +46,7 @@ def post_json(url, data=None, token=None):
 
 
 # Login as admin
-response = post_json('/auth', admin_cred)
+response = post_json('auth', admin_cred)
 token = response['token']
 
 if not args.yes:
@@ -56,7 +58,7 @@ if not args.yes:
         sys.exit(-1)
 
 # POST /draw_all
-response_draw = post_json('/draw_all', None, token)
+response_draw = post_json('draw_all', None, token)
 
 # Print the result
 print(response_draw)
