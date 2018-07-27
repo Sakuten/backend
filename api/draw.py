@@ -9,14 +9,6 @@ class AlreadyDoneError(Exception):
     """
     pass
 
-
-class NobodyIsApplyingError(Exception):
-    """
-        The Exception that indicates nobody is applying to the lottery
-    """
-    pass
-
-
 def draw_one(lottery):
     """
         Draw the specified lottery

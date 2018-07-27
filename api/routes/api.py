@@ -22,7 +22,6 @@ from api.time_management import (
 from api.draw import (
     draw_one,
     draw_all_at_index,
-    NobodyIsApplyingError,
     AlreadyDoneError
 )
 
