@@ -26,9 +26,8 @@ def test_token_revoke(client):
     user = test_user
     with client.application.app_context():
         end = current_app.config['END_DATETIME']
-    delta = datetime.timedelta(minutes=10)
-    before_end = end - delta
-    after_end = end + delta
+    before_end = end - datetime.timedelta.resolution
+    after_end = end + datetime.timedelta.resolution
     with mock.patch('api.time_management.get_current_datetime',
                     return_value=before_end):
         resp = as_user_get(client, user['username'],
