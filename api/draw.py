@@ -9,6 +9,7 @@ class AlreadyDoneError(Exception):
     """
     pass
 
+
 def draw_one(lottery):
     """
         Draw the specified lottery
@@ -38,7 +39,6 @@ def draw_one(lottery):
     for application in applications:
         application.status = "won" if application in winner_apps else "lose"
         db.session.add(application)
-
 
     db.session.add(lottery)
     db.session.commit()

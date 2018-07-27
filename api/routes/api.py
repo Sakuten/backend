@@ -193,8 +193,9 @@ def draw_lottery(idx):
 
     try:
         winners = draw_one(lottery)
-    except NobodyIsApplyingError:
-        return jsonify({"message": "Nobody is applying to this lottery"}), 400
+    except AlreadyDoneError:
+        return jsonify({"message": "This lottery is already done "
+                        "and cannot be undone"}), 400
 
     result = users_schema.dump(winners)
     return jsonify(result[0])
