@@ -63,21 +63,18 @@ def draw_all_at_index(index):
         Return:
           winners([[User]]): The list of list of users who won
         Raises:
-            NobodyIsApplyingError, AlreadyDoneError
+            AlreadyDoneError
     """
     lotteries = Lottery.query.filter_by(index=index)
     if any(lottery.done for lottery in lotteries):
         raise AlreadyDoneError()
 
-    winners = [draw_one(lottery, raise_on_nobody=False)
+    winners = [draw_one(lottery)
                for lottery in lotteries]
 
     for lottery in lotteries:
         lottery.done = True
         db.session.add(lottery)
         db.session.commit()
-
-    if len(winners) == 0:
-        raise NobodyIsApplyingError()
 
     return winners
