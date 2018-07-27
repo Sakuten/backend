@@ -63,6 +63,8 @@ def login_required(required_name=None):
 
             time = get_current_datetime()
             end = current_app.config['END_DATETIME']
+            print(f'time: {time}') # debug
+            print(f'end: {end}') # debug
             if end <= time:
                 return auth_error(403)
 

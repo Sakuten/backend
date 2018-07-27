@@ -29,6 +29,8 @@ def test_token_revoke(client):
         end = current_app.config['END_DATETIME']
     before_end = end - datetime.timedelta.resolution
     after_end = end + datetime.timedelta.resolution
+    print(f'before_end: {before_end}')
+    print(f'after_end: {after_end}')
     with mock.patch('api.time_management.get_current_datetime',
                     return_value=before_end):
         resp = client.get('/status',headers={'Authorization': 'Bearer '+ token})
