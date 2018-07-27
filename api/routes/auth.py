@@ -23,13 +23,13 @@ def home():
     else:
         return jsonify({"message": "Unsupported content type"}), 400
 
-    if 'username' not in data or 'g-recaptcha-response' not in data:
+    if 'id' not in data or 'g-recaptcha-response' not in data:
         return jsonify({"message": "Invalid request"}), 400
 
     # login flow
-    username = data.get('username')
+    secret_id = data.get('id')
     recaptcha_code = data.get('g-recaptcha-response')
-    user = User.query.filter_by(username=username).first()
+    user = User.query.filter_by(secret_id=secret_id).first()
     if user:
         secret_key = current_app.config['RECAPTCHA_SECRET_KEY']
         request_uri = f'https://www.google.com/recaptcha/api/siteverify?secret={secret_key}&response={recaptcha_code}'  # noqa: E501
