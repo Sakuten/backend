@@ -24,7 +24,7 @@ def test_token_revoke(client):
         2. test: wheter user cannot use token after the end
     """
     user = test_user
-    token = login(client, user['username'],
+    token = login(client, user['secret_id'],
                   user['g-recaptcha-response'])['token']
     with client.application.app_context():
         end = current_app.config['END_DATETIME']
