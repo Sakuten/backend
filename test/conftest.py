@@ -26,10 +26,13 @@ def client():
     # set app config to 'testing'.
     os.environ['FLASK_CONFIGURATION'] = 'testing'
     client = app.create_app()
+
     json_path = client.config['ID_LIST_FILE']
     id_list = load_id_json_file(json_path)
-    admin['secret_id'] = next(i for i in id_list if i['authority'] == 'admin')['secret_id']
-    test_user['secret_id'] = next(i for i in id_list if i['authority'] != 'admin')['secret_id']
+    admin_cred = next(i for i in id_list if i['authority'] == 'admin')
+    admin['secret_id'] = admin_cred['secret_id']
+    test_cred = next(i for i in id_list if i['authority'] != 'admin')
+    test_user['secret_id'] = test_cred['secret_id']
 
     test_client = client.test_client()
 
