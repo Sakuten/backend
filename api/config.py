@@ -1,6 +1,7 @@
 from cryptography.fernet import Fernet
 import os
 from pathlib import Path
+from datetime import datetime, time, timedelta, timezone
 import api
 
 
@@ -14,6 +15,16 @@ class BaseConfig(object):
     ID_LIST_FILE = ROOT_DIR / Path('cards/ids.json')
     WINNERS_NUM = 90
     RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY')
+    TIMEZONE = timezone(timedelta(hours=+9), 'JST')
+    START_DATETIME = datetime(2018, 9, 16, 8,  40, 0, tzinfo=TIMEZONE)
+    END_DATETIME = datetime(2018, 9, 17, 16, 00, 0, tzinfo=TIMEZONE)
+    DRAWING_TIME_EXTENSION = timedelta(minutes=10)
+    TIMEPOINTS = [
+        (time(9,  20), time(9,  50)),
+        (time(10, 45), time(11, 15)),
+        (time(12, 10), time(12, 40)),
+        (time(13, 35), time(14,  5)),
+    ]
 
 
 class DevelopmentConfig(BaseConfig):
