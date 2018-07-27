@@ -94,7 +94,7 @@ def generate_ids(how_many):
     public_raw_ids = random.sample(range(max_public_id + 1), how_many)
     secret_ids = [token_urlsafe(24) for _ in range(how_many)]
 
-    id_dicts = [{"secret_id": secret, "public_id": encode_public_id(public)}
+    id_dicts = [{"secret_id": secret, "public_id": encode_public_id(public), "authority": ""}
                 for (secret, public) in zip(secret_ids, public_raw_ids)]
 
     return id_dicts
