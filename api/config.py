@@ -1,6 +1,8 @@
 from cryptography.fernet import Fernet
 import os
+from pathlib import Path
 from datetime import datetime, time, timedelta, timezone
+import api
 
 
 class BaseConfig(object):
@@ -9,6 +11,8 @@ class BaseConfig(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:password@db/postgres'
     SECRET_KEY = Fernet.generate_key()
+    ROOT_DIR = Path(api.__file__).parent.parent
+    ID_LIST_FILE = ROOT_DIR / Path('cards/ids.json')
     WINNERS_NUM = 90
     RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY')
     TIMEZONE = timezone(timedelta(hours=+9), 'JST')
@@ -34,6 +38,7 @@ class TestingConfig(BaseConfig):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite://'
     ENV = 'development'
+    ID_LIST_FILE = BaseConfig.ROOT_DIR / 'cards/test_users.json'
     WINNERS_NUM = 3  # just small value
     # Recaptcha test key for automated testing.
     # https://developers.google.com/recaptcha/docs/faq#id-like-to-run-automated-tests-with-recaptcha-v2-what-should-i-do

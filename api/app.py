@@ -1,9 +1,10 @@
-from flask import Flask
+from flask import Flask, current_app
 from flask_cors import CORS
 import sqlalchemy
 from .routes import auth, api
 from .swagger import swag
 from .models import db
+from cards.id import load_id_json_file, decode_public_id
 import os
 import sys
 
@@ -118,14 +119,12 @@ def generate():
     classloop(create_lotteries)
     db.session.commit()
 
-    def make_debug_user(name):
-        user = User(username=name)
+    json_path = current_app.config['ID_LIST_FILE']
+    id_list = load_id_json_file(json_path)
+    for ids in id_list:
+        user = User(secret_id=ids['secret_id'],
+                    public_id=decode_public_id(ids['public_id']),
+                    authority=ids['authority'])
         db.session.add(user)
-        db.session.commit()
-        return user
-
-    make_debug_user('admin')
-    for i in range(5):
-        make_debug_user(f"example{i}")
 
     db.session.commit()

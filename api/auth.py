@@ -39,7 +39,7 @@ def decrypt_token(token):
     return json.loads(decrypted.decode())
 
 
-def login_required(required_name=None):
+def login_required(required_authority=None):
     """
         a decorder to require login
     """
@@ -75,7 +75,8 @@ def login_required(required_name=None):
             if not data:
                 return auth_error(401, 'error="invalid_token"')
             user = User.query.filter_by(id=data['data']['user_id']).first()
-            if required_name is not None and user.username != required_name:
+            if required_authority is not None \
+                    and user.authority != required_authority:
                 return auth_error(403, 'error="insufficient_scope"')
             g.token_data = data['data']
 
