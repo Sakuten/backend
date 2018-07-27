@@ -33,14 +33,14 @@ admin_ids = next(cred for cred in id_list if cred['authority'] == 'admin')
 def post_json(url, data=None, token=None):
     headers = {"Content-Type": "application/json"}
     if token:
-        headers['Authorization'] = f'Bearer {token}'
+        headers['Authorization'] = 'Bearer ' + token
     json_data = json.dumps(data).encode("utf-8") if data else None
-    request = Request(f'{args.protocol}://{args.host}/{url}', data=json_data,
+    request = Request('{}://{}/{}'.format(args.protocol, args.host, url), data=json_data,
                       headers=headers, method='POST')
     try:
         response = urlopen(request)
     except HTTPError as e:
-        print(f'Error: {e.read()}', file=sys.stderr)
+        print('Error: {}'.format(e.read()), file=sys.stderr)
         sys.exit(-1)
     else:
         response_body = response.read().decode("utf-8")
