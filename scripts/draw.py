@@ -10,6 +10,7 @@ import json
 import sys
 import argparse
 from urllib.request import Request, urlopen
+from urllib.error import HTTPError
 
 parser = argparse.ArgumentParser(
     description='Draw currently available lotteries')
@@ -37,9 +38,15 @@ def post_json(url, data=None, token=None):
     json_data = json.dumps(data).encode("utf-8") if data else None
     request = Request(f'{args.protocol}://{args.host}/{url}', data=json_data,
                       headers=headers, method='POST')
-    with urlopen(request) as response:
+    try:
+        response = urlopen(request)
+    except HTTPError as e:
+        print(f'Error: {e.read()}', file=sys.stderr)
+        sys.exit(-1)
+    else:
         response_body = response.read().decode("utf-8")
-    return json.loads(response_body)
+        response.close()
+        return json.loads(response_body)
 
 
 # Login as admin
