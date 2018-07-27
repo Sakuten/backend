@@ -38,7 +38,8 @@ def home():
             recaptcha_auth = urlopen(request_uri).read()
             success = json.loads(recaptcha_auth)['success']
         else:
-            current_app.logger.warn(f'Skipping request from {request.remote_addr}')
+            current_app.logger.warn(
+                f'Skipping request from {request.remote_addr}')
             success = True
 
         if success:

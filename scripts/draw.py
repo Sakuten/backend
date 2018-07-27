@@ -29,6 +29,7 @@ with open(args.list, 'r') as f:
 # Take one 'admin' user from list
 admin_ids = next(cred for cred in id_list if cred['authority'] == 'admin')
 
+
 def post_json(url, data=None, token=None):
     headers = {"Content-Type": "application/json"}
     if token:
