@@ -2,9 +2,10 @@ from api.models import User, Application, db
 
 # --- variables
 
-admin = {'secret_id': 'JXcOhvdomhIXEtBzSXmPUntvPywOb3QL',
+# secret_id is to be set in the fixture
+admin = {'secret_id': '',
          'g-recaptcha-response': ''}
-test_user = {'secret_id': 'dJzhZrMRSmvXxpK_YffOEWGH8_VqyCOe',
+test_user = {'secret_id': '',
              'g-recaptcha-response': ''}
 
 invalid_classroom_id = '999999999999'
