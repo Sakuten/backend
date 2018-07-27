@@ -30,7 +30,6 @@ with open(args.list, 'r') as f:
 # Take one 'admin' user from list
 admin_ids = next(cred for cred in id_list if cred['authority'] == 'admin')
 
-
 def post_json(url, data=None, token=None):
     headers = {"Content-Type": "application/json"}
     if token:
@@ -63,7 +62,7 @@ if not args.yes:
     print('Proceed? [ny] >', end='')
     ans = input()
     if ans != 'y':
-        print('Abort.')
+        print('Abort.', file=sys.stderr)
         sys.exit(-1)
 
 # POST /draw_all
