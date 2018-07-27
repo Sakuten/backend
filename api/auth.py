@@ -4,6 +4,7 @@ from api.models import User
 from datetime import datetime
 from functools import wraps
 import json
+from api.time_management import get_current_datetime
 
 
 def generate_token(obj):
@@ -59,6 +60,11 @@ def login_required(required_authority=None):
                 if headm:
                     resp.headers['WWW-Authenticate'] = 'Bearer ' + headm
                 return resp
+
+            time = get_current_datetime()
+            end = current_app.config['END_DATETIME']
+            if end <= time:
+                return auth_error(403, 'realm="not acceptable"')
 
             # check form of request header
             if 'Authorization' not in request.headers:
