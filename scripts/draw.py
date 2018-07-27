@@ -27,11 +27,7 @@ with open(args.list, 'r') as f:
     id_list = json.load(f)
 
 # Take one 'admin' user from list
-admin_cred = next(cred for cred in id_list if cred['authority'] == 'admin')
-
-# exclude 'authority' key & value from credential
-admin_cred = {k: v for k, v in admin_cred.items() if k != 'authority'}
-
+admin_ids = next(cred for cred in id_list if cred['authority'] == 'admin')
 
 def post_json(url, data=None, token=None):
     headers = {"Content-Type": "application/json"}
@@ -46,6 +42,11 @@ def post_json(url, data=None, token=None):
 
 
 # Login as admin
+admin_cred = {
+    'id': admin_ids['secret_id'],
+    'g-recaptcha-response': ''
+}
+
 response = post_json('auth', admin_cred)
 token = response['token']
 
