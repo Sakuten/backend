@@ -12,7 +12,8 @@ from urllib.request import Request, urlopen
 ID_LIST_PATH = ""
 API_HOST = ""
 
-id_list = json.load()
+with open(ID_LIST_PATH, 'r') as f:
+    id_list = json.load(f)
 
 # Take one 'admin' user from list
 admin_cred = next(cred for cred in id_list if cred['authority'] == 'admin')
