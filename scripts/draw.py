@@ -30,12 +30,14 @@ with open(args.list, 'r') as f:
 # Take one 'admin' user from list
 admin_ids = next(cred for cred in id_list if cred['authority'] == 'admin')
 
-def post_json(url, data=None, token=None):
+
+def post_json(path, data=None, token=None):
     headers = {"Content-Type": "application/json"}
     if token:
         headers['Authorization'] = 'Bearer ' + token
     json_data = json.dumps(data).encode("utf-8") if data else None
-    request = Request('{}://{}/{}'.format(args.protocol, args.host, url), data=json_data,
+    url = '{}://{}/{}'.format(args.protocol, args.host, path)
+    request = Request(url, data=json_data,
                       headers=headers, method='POST')
     try:
         response = urlopen(request)
