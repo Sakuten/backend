@@ -6,12 +6,8 @@
 # Also this is intended to be run not in virtualenv
 # but in systemd-timer or cron, etc...
 
-import sys
-
-if sys.version_info[0] < 3:
-    raise Exception("Must be using Python 3")
-
 import json
+import sys
 import argparse
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
