@@ -64,7 +64,7 @@ def login_required(required_name=None):
             time = get_current_datetime()
             end = current_app.config['END_DATETIME']
             if end <= time:
-                return auth_error(403)
+                return auth_error(403, 'realm="not acceptable"')
 
             # check form of request header
             if 'Authorization' not in request.headers:
