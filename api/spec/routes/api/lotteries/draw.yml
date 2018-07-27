@@ -15,7 +15,7 @@ responses:
     schema:
       $ref: '#/definitions/User'
   '400':
-    description: Malformed Authenication Header has detected / Not acceptable time / Nobody is applying to this lottery / This lottery has already done
+    description: Malformed Authenication Header has detected / Not acceptable time / This lottery has already done
     schema:
       $ref: '#/definitions/ErrorMessage'
   '401':
