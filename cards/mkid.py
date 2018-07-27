@@ -5,7 +5,7 @@ import argparse
 from id import generate_ids, save_id_json_file
 
 parser = argparse.ArgumentParser(description='Generate Id list')
-parser.add_argument("-n", "--number", type=int, requied=True,
+parser.add_argument("-n", "--number", type=int, required=True,
                     help="The number of ids (actually +1 output with admin)")
 parser.add_argument("-o", "--output", type=str, required=True,
                     help="Output id list path")
