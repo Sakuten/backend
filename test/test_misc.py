@@ -1,7 +1,7 @@
 from flask import current_app
 import datetime
 from unittest import mock
-from utils import as_user_get, test_user
+from utils import login, test_user
 
 
 def test_trailing_slash(client):
@@ -24,20 +24,17 @@ def test_token_revoke(client):
         2. test: wheter user cannot use token after the end
     """
     user = test_user
+    token = login(client,user['username'], user['g-recaptcha-response'])['token']
     with client.application.app_context():
         end = current_app.config['END_DATETIME']
     before_end = end - datetime.timedelta.resolution
     after_end = end + datetime.timedelta.resolution
     with mock.patch('api.time_management.get_current_datetime',
                     return_value=before_end):
-        resp = as_user_get(client, user['username'],
-                           user['g-recaptcha-response'], '/status')
-
+        resp = client.get('/status',headers={'Authorization': 'Bearer '+ token})
         assert resp.status_code == 200
 
     with mock.patch('api.time_management.get_current_datetime',
                     return_value=after_end):
-        resp = as_user_get(client, user['username'],
-                           user['g-recaptcha-response'], '/status')
-
+        resp = client.get('/status',headers={'Authorization': 'Bearer '+ token})
         assert resp.status_code == 403
