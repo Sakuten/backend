@@ -7,12 +7,18 @@
 # but in systemd-timer or cron, etc...
 
 import json
+import argparse
 from urllib.request import Request, urlopen
 
-ID_LIST_PATH = ""
-API_HOST = ""
+parser = argparse.ArgumentParser(
+    description='Draw currently available lotteries')
+parser.add_argument("-l", "--list", type=str,
+                    required=True, help="ID list json file path")
+parser.add_argument("-h", "--host", type=str,
+                    default="localhost", help="API hostname")
+args = parser.parse_args()
 
-with open(ID_LIST_PATH, 'r') as f:
+with open(args.list, 'r') as f:
     id_list = json.load(f)
 
 # Take one 'admin' user from list
@@ -27,7 +33,7 @@ def post_json(url, data=None, token=None):
     if token:
         headers['Authorization'] = f'Bearer {token}'
     json_data = json.dumps(data).encode("utf-8") if data else None
-    request = Request(f'{API_HOST}/{url}', data=json_data,
+    request = Request(f'{args.host}/{url}', data=json_data,
                       headers=headers, method='POST')
     with urlopen(request) as response:
         response_body = response.read().decode("utf-8")
