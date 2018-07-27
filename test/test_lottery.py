@@ -427,7 +427,7 @@ def test_draw_time_invaild(client):
             assert resp.status_code == 400
             assert 'Not acceptable' in resp.get_json()['message']
 
-    token = login(client, admin['username'],
+    token = login(client, admin['secret_id'],
                   admin['g-recaptcha-response'])['token']
     outofhours1 = client.application.config['START_DATETIME'] - \
         datetime.timedelta.resolution
@@ -507,7 +507,8 @@ def test_draw_all(client):
     with client.application.app_context():
         target_lotteries = Lottery.query.filter_by(index=time_index)
         non_target_lotteries = Lottery.query.filter_by(index=time_index+1)
-        users = (user for user in User.query.all() if user.username != "admin")
+        users = (user for user in User.query.all()
+                 if user.authority != "admin")
         for i, user in enumerate(users):
             target_lottery = target_lotteries[i % len(list(target_lotteries))]
             non_target_lottery = non_target_lotteries[i % len(
@@ -520,7 +521,7 @@ def test_draw_all(client):
         db.session.commit()
 
     token = login(client,
-                  admin['username'],
+                  admin['secret_id'],
                   admin['g-recaptcha-response'])['token']
     draw_time = client.application.config['TIMEPOINTS'][time_index][1]
     with mock.patch('api.time_management.get_current_datetime',
@@ -555,7 +556,7 @@ def test_draw_all_noperm(client):
     """attempt to draw without proper permission.
         target_url: /draw_all [POST]
     """
-    token = login(client, test_user['username'],
+    token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
     resp = client.post('/draw_all',
                        headers={'Authorization': 'Bearer ' + token})
@@ -577,7 +578,7 @@ def test_draw_all_invaild(client):
             assert resp.status_code == 400
             assert 'Not acceptable' in resp.get_json()['message']
 
-    token = login(client, admin['username'],
+    token = login(client, admin['secret_id'],
                   admin['g-recaptcha-response'])['token']
     outofhours1 = client.application.config['START_DATETIME'] - \
         datetime.timedelta.resolution
