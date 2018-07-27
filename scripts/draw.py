@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser(
     description='Draw currently available lotteries')
 parser.add_argument("-l", "--list", type=str,
                     required=True, help="ID list json file path")
-parser.add_argument("-h", "--host", type=str,
+parser.add_argument("-a", "--host", type=str,
                     default="localhost", help="API hostname")
 parser.add_argument("-y", "--yes", action='store_true',
                     help="Don't confirm before drawing")
