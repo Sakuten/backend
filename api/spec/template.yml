@@ -107,11 +107,16 @@ definitions:
         description: Display name of the lottery
         example: 5A.0
         type: string
+      winners:
+        type: array
+        items:
+          $ref: '#/definitions/User'
     required:
       - id
       - done
       - classroom_id
       - index
+      - winners
     type: object
   LotteryID:
     description: Lottery Identifier
@@ -128,11 +133,11 @@ definitions:
     type: object
   PublicID:
     description: User Public ID written in the user card
-    example: ab10
+    example: 6ENR
     type: string
   SecretID:
     description: User Secret ID scanned from QR Code
-    example: ZXhhbXBsZV92aXNpdG9yXzAwX0EK
+    example: dJzhZrMRSmvXxpK_YffOEWGH8_VqyCOe
     type: string
   Token:
     description: Access Token (fernet)
@@ -141,19 +146,15 @@ definitions:
     type: string
   User:
     properties:
-      applications:
+      application_history:
         items:
           $ref: '#/definitions/Application'
         type: array
-      id:
+      secret_id:
         $ref: '#/definitions/SecretID'
-      username:
-        $ref: '#/definitions/Username'
+      public_id:
+        $ref: '#/definitions/PublicID'
     type: object
-  Username:
-    description: Username (deprecated; will be replaced by id auth)
-    example: example1
-    type: string
 securityDefinitions:
   admin_auth:
     in: header

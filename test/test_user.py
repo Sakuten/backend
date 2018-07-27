@@ -19,9 +19,9 @@ def test_login(client):
 
         target_url: /auth
     """
-    resp = login(client, admin['username'], admin['g-recaptcha-response'])
+    resp = login(client, admin['secret_id'], admin['g-recaptcha-response'])
     assert 'Login Successful' in resp['message']
-    resp = login(client, test_user['username'],
+    resp = login(client, test_user['secret_id'],
                  test_user['g-recaptcha-response'])
     assert 'Login Successful' in resp['message']
     resp = login(client, 'notexist', 'notexist')
@@ -37,10 +37,10 @@ def test_login_form(client):
         target_url: /auth
     """
     resp = login_with_form(
-        client, admin['username'], admin['g-recaptcha-response'])
+        client, admin['secret_id'], admin['g-recaptcha-response'])
     assert 'Login Successful' in resp['message']
     resp = login_with_form(
-        client, test_user['username'], test_user['g-recaptcha-response'])
+        client, test_user['secret_id'], test_user['g-recaptcha-response'])
     assert 'Login Successful' in resp['message']
     resp = login_with_form(client, 'notexist', 'notexist')
     assert 'Login Unsuccessful' in resp['message']
@@ -52,13 +52,13 @@ def test_login_invalid(client):
         target_url: /auth
     """
     resp = client.post('/auth', json={
-        'username': test_user['username'],
+        'secret_id': test_user['secret_id'],
     }, follow_redirects=True)
     assert resp.status_code == 400
     assert 'Invalid request' in resp.get_json()['message']
 
     resp = client.post('/auth', json={
-        'username': test_user['username'],
+        'secret_id': test_user['secret_id'],
         'g-recaptcha-response': test_user['g-recaptcha-response'],
     }, follow_redirects=True, content_type='application/xml')
     assert resp.status_code == 400
@@ -72,7 +72,7 @@ def test_auth_token(client):
 
        target_url: /auth
     """
-    resp = login(client, admin['username'], admin['g-recaptcha-response'])
+    resp = login(client, admin['secret_id'], admin['g-recaptcha-response'])
     assert 'token' in resp
 
     token = resp['token']
@@ -92,12 +92,12 @@ def test_status(client):
         target_url: /status
     """
     user = test_user
-    resp = as_user_get(client, user['username'],
+    resp = as_user_get(client, user['secret_id'],
                        user['g-recaptcha-response'], '/status')
     assert 'id' in resp.get_json()
 
     with client.application.app_context():
-        db_status = User.query.filter_by(username=user['username']).first()
+        db_status = User.query.filter_by(secret_id=user['secret_id']).first()
 
         assert resp.get_json() == user_schema.dump(db_status)[0]
 
