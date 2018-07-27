@@ -7,6 +7,7 @@
 # but in systemd-timer or cron, etc...
 
 import json
+import sys
 import argparse
 from urllib.request import Request, urlopen
 
@@ -16,6 +17,8 @@ parser.add_argument("-l", "--list", type=str,
                     required=True, help="ID list json file path")
 parser.add_argument("-h", "--host", type=str,
                     default="localhost", help="API hostname")
+parser.add_argument("-y", "--yes", action='store_true',
+                    help="Don't confirm before drawing")
 args = parser.parse_args()
 
 with open(args.list, 'r') as f:
@@ -43,6 +46,14 @@ def post_json(url, data=None, token=None):
 # Login as admin
 response = post_json('/auth', admin_cred)
 token = response['token']
+
+if not args.yes:
+    print('Attempt to draw lotteries.')
+    print('Proceed? [ny] >', end='')
+    ans = input()
+    if ans != 'y':
+        print('Abort.')
+        sys.exit(-1)
 
 # POST /draw_all
 response_draw = post_json('/draw_all', None, token)
