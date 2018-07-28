@@ -1,3 +1,4 @@
+from flask import current_app
 from unittest import mock
 import pytest
 import datetime
@@ -113,8 +114,14 @@ def test_apply(client):
     idx = '1'
     token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
-    resp = client.post('/lotteries/'+idx,
-                       headers={'Authorization': 'Bearer ' + token})
+    with client.application.app_context():
+        _, time = current_app.config['TIMEPOINTS'][0]
+        apply_date = mod_time(time, datetime.timedelta.resolution)
+    with mock.patch('api.time_management.get_time_index',
+                    return_value=idx):
+        resp = client.post('/lotteries/'+idx,
+                           headers={'Authorization': 'Bearer ' + token})
+        assert resp.status_code == 200
 
     with client.application.app_context():
         # get needed objects
