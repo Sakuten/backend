@@ -117,8 +117,9 @@ def test_apply(client):
     with client.application.app_context():
         _, time = current_app.config['TIMEPOINTS'][0]
         apply_date = mod_time(time, datetime.timedelta.resolution)
-                    return_value=idx):
+        lottery = Lottery.query.get(idx)
     with mock.patch('api.routes.api.get_time_index',
+                    return_value=lottery.index):
         resp = client.post('/lotteries/'+idx,
                            headers={'Authorization': 'Bearer ' + token})
         assert resp.status_code == 200
