@@ -1,4 +1,3 @@
-from flask import current_app
 from unittest import mock
 import pytest
 import datetime
@@ -115,8 +114,6 @@ def test_apply(client):
     token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
     with client.application.app_context():
-        _, time = current_app.config['TIMEPOINTS'][0]
-        apply_date = mod_time(time, datetime.timedelta.resolution)
         lottery = Lottery.query.get(idx)
     with mock.patch('api.routes.api.get_time_index',
                     return_value=lottery.index):
