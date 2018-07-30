@@ -229,7 +229,7 @@ def test_apply_time_invalid(client):
         resp = client.post(f'/lotteries/{idx}',
                            headers={'Authorization': f'Bearer {token}'})
         assert resp.status_code == 400
-        assert "this lottery is not acceptable now." in \
+        assert "This lottery is not acceptable now." in \
                resp.get_json()['message']
 
 
