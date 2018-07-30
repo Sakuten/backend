@@ -222,7 +222,8 @@ def test_apply_time_invalid(client):
     token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
 
-    index = Lottery.query.get(idx).index
+    with client.application.app_context():
+        index = Lottery.query.get(idx).index
     with mock.patch('api.routes.api.get_time_index',
                     return_value=index + 1):
         resp = client.post(f'/lotteries/{idx}',
