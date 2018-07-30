@@ -228,8 +228,9 @@ def test_apply_time_invalid(client):
                     return_value=index + 1):
         resp = client.post(f'/lotteries/{idx}',
                            headers={'Authorization': f'Bearer {token}'})
-        assert resp.status_code == 403
-        assert "you can't apply to this lottery" in resp.get_json()['message']
+        assert resp.status_code == 400
+        assert "this lottery is not acceptable now." in \
+               resp.get_json()['message']
 
 
 def test_get_allapplications(client):
