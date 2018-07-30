@@ -203,8 +203,10 @@ def test_apply_same_period(client):
         db.session.add(application)
         db.session.commit()
 
-    resp = client.post('/lotteries/'+idx,
-                       headers={'Authorization': 'Bearer ' + token})
+    with mock.patch('api.routes.api.get_time_index',
+                    return_value=0):
+        resp = client.post('/lotteries/'+idx,
+                           headers={'Authorization': 'Bearer ' + token})
 
     message = resp.get_json()['message']
 
