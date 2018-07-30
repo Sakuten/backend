@@ -111,8 +111,9 @@ def test_apply(client):
         target_url: /lotteries/<id> [POST]
     """
     idx = '1'
-    token = login(client, test_user['secret_id'],
-                  test_user['g-recaptcha-response'])['token']
+    user_info = test_user
+    token = login(client, user_info['secret_id'],
+                  user_info['g-recaptcha-response'])['token']
     with client.application.app_context():
         lottery = Lottery.query.get(idx)
     with mock.patch('api.routes.api.get_time_index',
@@ -124,7 +125,7 @@ def test_apply(client):
     with client.application.app_context():
         # get needed objects
         target_lottery = Lottery.query.filter_by(id=idx).first()
-        user = User.query.filter_by(secret_id=test_user['secret_id']).first()
+        user = User.query.filter_by(secret_id=user_info['secret_id']).first()
         # this application should be added by previous 'client.put'
         application = Application.query.filter_by(
             lottery=target_lottery, user_id=user.id).first()
