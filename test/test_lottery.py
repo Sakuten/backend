@@ -222,8 +222,9 @@ def test_apply_time_invalid(client):
     token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
 
+    index = Lottery.query.get(idx).index
     with mock.patch('api.routes.api.get_time_index',
-                    return_value=1):
+                    return_value=index + 1):
         resp = client.post(f'/lotteries/{idx}',
                            headers={'Authorization': f'Bearer {token}'})
         assert resp.status_code == 403
