@@ -18,6 +18,8 @@ responses:
     description: >-
       Malformed Authenication Header has detected / Lottery has already
       done / You’re already applying to a lottery in this period
+      / We're not accepting any application in this hours.
+      / this lottery is not acceptable now.
     headers:
       WWW-Authenicate:
         description: >-
