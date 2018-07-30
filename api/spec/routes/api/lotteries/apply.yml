@@ -18,6 +18,8 @@ responses:
     description: >-
       Malformed Authenication Header has detected / Lottery has already
       done / You’re already applying to a lottery in this period
+      / We're not accepting any application in this hours.
+      / this lottery is not acceptable now.
     headers:
       WWW-Authenicate:
         description: >-
@@ -37,7 +39,7 @@ responses:
     schema:
       $ref: '#/definitions/ErrorMessage'
   '403':
-    description: You have no permission to perform the action / We're not accepting any application in this hours. / this lottery is not acceptable now.
+    description: You have no permission to perform the action
     headers:
       WWW-Authenicate:
         description: >-
