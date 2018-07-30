@@ -206,8 +206,8 @@ def test_apply_same_period(client):
     assert 'already applying to a lottery in this period' in message
 
 
-def test_get_allapplications(client):
-    """test proper infomation is returned from the API
+def test_get_allapplications_no_admin(client):
+    """test 403 is returned from the API to a normal user
         target_url: /applications
     """
     lottery_id = 1
@@ -218,6 +218,21 @@ def test_get_allapplications(client):
                        test_user['g-recaptcha-response'],
                        '/applications')
 
+    assert resp.status_code == 403
+
+
+def test_get_allapplications_admin(client):
+    """test proper information is returnd from the API to admin
+        target_url: /applications
+    """
+    lottery_id = 1
+    make_application(client, admin['secret_id'], lottery_id)
+
+    resp = as_user_get(client,
+                       admin['secret_id'],
+                       admin['g-recaptcha-response'],
+                       '/applications')
+
     with client.application.app_context():
         db_status = Application.query.all()
         application_list = applications_schema.dump(db_status)[0]
@@ -225,8 +240,8 @@ def test_get_allapplications(client):
     assert resp.get_json() == application_list
 
 
-def test_get_specific_application(client):
-    """test proper infomation is returned from the API
+def test_get_specific_application_no_admin(client):
+    """test 403 is returned from the API to a normal user
         target_url: /applications/<id>
     """
     lottery_id = 1
@@ -236,6 +251,22 @@ def test_get_specific_application(client):
     resp = as_user_get(client,
                        test_user['secret_id'],
                        test_user['g-recaptcha-response'],
+                       f'/applications/{application_id}')
+
+    assert resp.status_code == 403
+
+
+def test_get_specific_application_admin(client):
+    """test proper infromation is returned from the API to admin
+        target_url: /applications/<id>
+    """
+    lottery_id = 1
+    application_id = make_application(
+        client, admin['secret_id'], lottery_id)
+
+    resp = as_user_get(client,
+                       admin['secret_id'],
+                       admin['g-recaptcha-response'],
                        f'/applications/{application_id}')
 
     with client.application.app_context():
@@ -251,25 +282,21 @@ def test_get_specific_application_invaild_id(client):
     """
     lottery_id = 1
     application_id = make_application(
-        client, test_user['secret_id'], lottery_id)
+        client, admin['secret_id'], lottery_id)
 
     # application id to test
     idx = application_id + 1
     resp = as_user_get(client,
-                       test_user['secret_id'],
-                       test_user['g-recaptcha-response'],
+                       admin['secret_id'],
+                       admin['g-recaptcha-response'],
                        f'/applications/{idx}')
 
     assert resp.status_code == 404
     assert 'Application could not be found.' in resp.get_json()['message']
 
 
-def test_cancel(client):
-    """test: cancel added application
-        1. add new application to db
-        2. send request to cancel
-        3. check response's status_code and db status
-        target_url: /applications/<id> [DELETE]
+def test_cancel_no_admin(client):
+    """test: return 403 for canceling by a normal user
     """
     lottery_id = 1
     application_id = make_application(
@@ -277,6 +304,25 @@ def test_cancel(client):
 
     token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
+    resp = client.delete(f'/applications/{application_id}',
+                         headers={'Authorization': 'Bearer ' + token})
+
+    assert resp.status_code == 403
+
+
+def test_cancel_admin(client):
+    """test: cancel added application
+        1. add new application to db
+        2. send request to cancel as admin
+        3. check response's status_code and db status
+        target_url: /applications/<id> [DELETE]
+    """
+    lottery_id = 1
+    application_id = make_application(
+        client, admin['secret_id'], lottery_id)
+
+    token = login(client, admin['secret_id'],
+                  admin['g-recaptcha-response'])['token']
     user_resp = client.get('/status',
                            headers={'Authorization': 'Bearer ' + token})
     user_id = user_resp.get_json()['id']
@@ -290,17 +336,17 @@ def test_cancel(client):
     assert application is None
 
 
-def test_cancel_already_done(client):
+def test_cancel_already_done_admin(client):
     """attempt to cancel application that already-done lottery
         1. create 'done' application
         2. attempt to cancel that application
         target_url: /lotteries/<id> [DELETE]
     """
-    token = login(client, test_user['secret_id'],
-                  test_user['g-recaptcha-response'])['token']
+    token = login(client, admin['secret_id'],
+                  admin['g-recaptcha-response'])['token']
     lottery_id = 1
     application_id = make_application(
-        client, test_user['secret_id'], lottery_id)
+        client, admin['secret_id'], lottery_id)
 
     with client.application.app_context():
         target_application = Application.query.filter_by(

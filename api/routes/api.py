@@ -120,7 +120,7 @@ def apply_lottery(idx):
 
 @bp.route('/applications')
 @spec('api/applications.yml')
-@login_required("admin")
+@login_required('admin', 'staff')
 def list_applications():
     """
         return applications list.
@@ -137,7 +137,7 @@ def list_applications():
 
 @bp.route('/applications/<int:idx>', methods=['GET'])
 @spec('api/applications/idx.yml')
-@login_required("admin")
+@login_required('admin', 'staff')
 def list_application(idx):
     """
         return infomation about specified application.
@@ -153,7 +153,7 @@ def list_application(idx):
 
 @bp.route('/applications/<int:idx>', methods=['DELETE'])
 @spec('api/applications/cancel.yml')
-@login_required("admin")
+@login_required('admin', 'staff')
 def cancel_application(idx):
     """
         cancel the application.
