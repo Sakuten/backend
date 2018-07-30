@@ -10,14 +10,7 @@ class AlreadyDoneError(Exception):
     pass
 
 
-class NobodyIsApplyingError(Exception):
-    """
-        The Exception that indicates nobody is applying to the lottery
-    """
-    pass
-
-
-def draw_one(lottery, raise_on_nobody=True):
+def draw_one(lottery):
     """
         Draw the specified lottery
         Args:
@@ -25,18 +18,18 @@ def draw_one(lottery, raise_on_nobody=True):
         Return:
           winners([User]): The list of users who won
         Raises:
-            NobodyIsApplyingError, AlreadyDoneError
+            AlreadyDoneError
     """
     if lottery.done:
         raise AlreadyDoneError()
 
+    lottery.done = True
+
     idx = lottery.id
     applications = Application.query.filter_by(lottery_id=idx).all()
     if len(applications) == 0:
-        if raise_on_nobody:
-            raise NobodyIsApplyingError()
-        else:
-            return []
+        return []
+
     try:
         winner_apps = random.sample(
             applications, current_app.config['WINNERS_NUM'])
@@ -47,7 +40,6 @@ def draw_one(lottery, raise_on_nobody=True):
         application.status = "won" if application in winner_apps else "lose"
         db.session.add(application)
 
-    lottery.done = True
     db.session.add(lottery)
     db.session.commit()
     winners = [User.query.get(winner_app.user_id)
@@ -63,21 +55,18 @@ def draw_all_at_index(index):
         Return:
           winners([[User]]): The list of list of users who won
         Raises:
-            NobodyIsApplyingError, AlreadyDoneError
+            AlreadyDoneError
     """
     lotteries = Lottery.query.filter_by(index=index)
     if any(lottery.done for lottery in lotteries):
         raise AlreadyDoneError()
 
-    winners = [draw_one(lottery, raise_on_nobody=False)
+    winners = [draw_one(lottery)
                for lottery in lotteries]
 
     for lottery in lotteries:
         lottery.done = True
         db.session.add(lottery)
         db.session.commit()
-
-    if len(winners) == 0:
-        raise NobodyIsApplyingError()
 
     return winners

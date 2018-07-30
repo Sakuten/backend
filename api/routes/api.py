@@ -23,7 +23,6 @@ from api.time_management import (
 from api.draw import (
     draw_one,
     draw_all_at_index,
-    NobodyIsApplyingError,
     AlreadyDoneError
 )
 
@@ -204,8 +203,6 @@ def draw_lottery(idx):
 
     try:
         winners = draw_one(lottery)
-    except NobodyIsApplyingError:
-        return jsonify({"message": "Nobody is applying to this lottery"}), 400
     except AlreadyDoneError:
         return jsonify({"message": "This lottery is already done "
                         "and cannot be undone"}), 400
@@ -229,8 +226,6 @@ def draw_all_lotteries():
 
     try:
         winners = draw_all_at_index(index)
-    except NobodyIsApplyingError:
-        return jsonify({"message": "Nobody is applying to this lottery"}), 400
     except AlreadyDoneError:
         return jsonify({"message": "This lottery is already done "
                         "and cannot be undone"}), 400
