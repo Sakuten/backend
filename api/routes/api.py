@@ -99,14 +99,14 @@ def apply_lottery(idx):
         return jsonify({"message": "Lottery could not be found."}), 404
     if lottery.done:
         return jsonify({"message": "This lottery has already done"}), 400
-    cant_apply_resp = jsonify({"message":
-                               "you can't apply to this lottery"})
     try:
         current_index = get_time_index()
     except (OutOfHoursError, OutOfAcceptingHoursError):
-        return cant_apply_resp, 403
+        return jsonify({"message":
+                        "No lotteries are supplied"}), 403
     if lottery.index != current_index:
-        return cant_apply_resp, 403
+        return jsonify({"message":
+                        "you can't apply to this lottery"}), 403
     user = User.query.filter_by(id=g.token_data['user_id']).first()
     previous = Application.query.filter_by(user_id=user.id)
     if any(app.lottery.index == lottery.index and
