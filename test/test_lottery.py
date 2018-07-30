@@ -218,7 +218,7 @@ def test_apply_time_invalid(client):
     """attempt to apply to lottery out of range
         target_url: /lotteries/<id> [POST]
     """
-    idx = '1'
+    idx = 1
     token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
 
