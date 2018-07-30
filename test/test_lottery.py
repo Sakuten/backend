@@ -212,6 +212,22 @@ def test_apply_same_period(client):
     assert 'already applying to a lottery in this period' in message
 
 
+def test_apply_time_invalid(client):
+    """attempt to apply to lottery out of range
+        target_url: /lotteries/<id> [POST]
+    """
+    idx = '1'
+    token = login(client, test_user['secret_id'],
+                  test_user['g-recaptcha-response'])['token']
+
+    with mock.patch('api.routes.api.get_time_index',
+                    return_value=1):
+        resp = client.post(f'/lotteries/{idx}',
+                           headers={'Authorization': f'Bearer {token}'})
+        assert resp.status_code == 403
+        assert "you can't apply to this lottery" in resp.get_json()['message']
+
+
 def test_get_allapplications(client):
     """test proper infomation is returned from the API
         target_url: /applications
