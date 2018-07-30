@@ -110,7 +110,7 @@ def test_apply(client):
         2. test: DB is changed
         target_url: /lotteries/<id> [POST]
     """
-    idx = '1'
+    idx = 1
     user_info = test_user
     token = login(client, user_info['secret_id'],
                   user_info['g-recaptcha-response'])['token']
@@ -118,8 +118,8 @@ def test_apply(client):
         lottery = Lottery.query.get(idx)
     with mock.patch('api.routes.api.get_time_index',
                     return_value=lottery.index):
-        resp = client.post('/lotteries/'+idx,
-                           headers={'Authorization': 'Bearer ' + token})
+        resp = client.post(f'/lotteries/{idx}',
+                           headers={'Authorization': f'Bearer {token}'})
         assert resp.status_code == 200
 
     with client.application.app_context():
@@ -190,7 +190,7 @@ def test_apply_same_period(client):
         1. test: error is returned
         target_url: /lotteries/<id> [POST]
     """
-    idx = '1'
+    idx = 1
     token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
 
@@ -205,8 +205,8 @@ def test_apply_same_period(client):
 
     with mock.patch('api.routes.api.get_time_index',
                     return_value=0):
-        resp = client.post('/lotteries/'+idx,
-                           headers={'Authorization': 'Bearer ' + token})
+        resp = client.post(f'/lotteries/{idx}',
+                           headers={'Authorization': f'Bearer {token}'})
 
     message = resp.get_json()['message']
 
