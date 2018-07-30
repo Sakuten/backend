@@ -37,7 +37,7 @@ responses:
     schema:
       $ref: '#/definitions/ErrorMessage'
   '403':
-    description: You have no permission to perform the action / you can't apply to this lottery / No lotteries are supplied
+    description: You have no permission to perform the action / We're not accepting any application in this hours. / this lottery is not acceptable now.
     headers:
       WWW-Authenicate:
         description: >-
