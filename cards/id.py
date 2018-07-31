@@ -97,7 +97,7 @@ def generate_ids(how_many):
     id_dicts = [{
                 "secret_id": secret,
                 "public_id": encode_public_id(public),
-                "authority": ""
+                "authority": "normal"
                 }
                 for (secret, public) in zip(secret_ids, public_raw_ids)]
 
