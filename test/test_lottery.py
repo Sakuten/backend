@@ -45,7 +45,7 @@ def test_get_specific_classroom(client):
     """test proper infomation is returned from the API
         target_url: /classrooms/<id>
     """
-    idx = '1'  # classroom id to test
+    idx = 1  # classroom id to test
     resp = client.get(f'/classrooms/{idx}')
 
     with client.application.app_context():
@@ -83,7 +83,7 @@ def test_get_specific_lottery(client):
     """test proper infomation is returned from the API
         target_url: /lotteries/<id>
     """
-    idx = '1'  # lottery id to test
+    idx = 1  # lottery id to test
     resp = client.get(f'/lotteries/{idx}')
 
     with client.application.app_context():
@@ -410,7 +410,7 @@ def test_cancel_noperm(client):
         1. create new application.
         2. attempt to cancel with other user's token
     """
-    idx = '1'
+    idx = 1
     owner = test_user
     user = {'secret_id': 'hoge', 'g-recaptcha-response': 'hugo'}
     owner_token = login(client, owner['secret_id'],
@@ -435,7 +435,7 @@ def test_draw(client):
         4. test: DB is changed
         target_url: /lotteries/<id>/apply [PUT]
     """
-    idx = '1'
+    idx = 1
 
     with client.application.app_context():
         target_lottery = Lottery.query.filter_by(id=idx).first()
@@ -473,7 +473,7 @@ def test_draw_noperm(client):
     """attempt to draw without proper permission.
         target_url: /lotteries/<id>/draw [POST]
     """
-    idx = '1'
+    idx = 1
     token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
     resp = client.post(f'/lotteries/{idx}/draw',
@@ -536,7 +536,7 @@ def test_draw_already_done(client):
         1. test: error is returned
         target_url: /lotteries/<id>/draw [POST]
     """
-    idx = '1'
+    idx = 1
     token = login(client, admin['secret_id'],
                   admin['g-recaptcha-response'])['token']
 
@@ -564,7 +564,7 @@ def test_draw_nobody_apply(client):
         target_url: /lotteries/<id>/draw [POST]
     """
 
-    idx = '1'
+    idx = 1
     token = login(client, admin['secret_id'],
                   admin['g-recaptcha-response'])['token']
 
