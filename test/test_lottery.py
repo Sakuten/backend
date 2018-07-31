@@ -110,16 +110,22 @@ def test_apply(client):
         2. test: DB is changed
         target_url: /lotteries/<id> [POST]
     """
-    idx = '1'
-    token = login(client, test_user['secret_id'],
-                  test_user['g-recaptcha-response'])['token']
-    resp = client.post('/lotteries/'+idx,
-                       headers={'Authorization': 'Bearer ' + token})
+    idx = 1
+    user_info = test_user
+    token = login(client, user_info['secret_id'],
+                  user_info['g-recaptcha-response'])['token']
+    with client.application.app_context():
+        lottery = Lottery.query.get(idx)
+    with mock.patch('api.routes.api.get_time_index',
+                    return_value=lottery.index):
+        resp = client.post(f'/lotteries/{idx}',
+                           headers={'Authorization': f'Bearer {token}'})
+        assert resp.status_code == 200
 
     with client.application.app_context():
         # get needed objects
         target_lottery = Lottery.query.filter_by(id=idx).first()
-        user = User.query.filter_by(secret_id=test_user['secret_id']).first()
+        user = User.query.filter_by(secret_id=user_info['secret_id']).first()
         # this application should be added by previous 'client.put'
         application = Application.query.filter_by(
             lottery=target_lottery, user_id=user.id).first()
@@ -184,7 +190,7 @@ def test_apply_same_period(client):
         1. test: error is returned
         target_url: /lotteries/<id> [POST]
     """
-    idx = '1'
+    idx = 1
     token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
 
@@ -197,13 +203,34 @@ def test_apply_same_period(client):
         db.session.add(application)
         db.session.commit()
 
-    resp = client.post('/lotteries/'+idx,
-                       headers={'Authorization': 'Bearer ' + token})
+    with mock.patch('api.routes.api.get_time_index',
+                    return_value=0):
+        resp = client.post(f'/lotteries/{idx}',
+                           headers={'Authorization': f'Bearer {token}'})
 
     message = resp.get_json()['message']
 
     assert resp.status_code == 400
     assert 'already applying to a lottery in this period' in message
+
+
+def test_apply_time_invalid(client):
+    """attempt to apply to lottery out of range
+        target_url: /lotteries/<id> [POST]
+    """
+    idx = 1
+    token = login(client, test_user['secret_id'],
+                  test_user['g-recaptcha-response'])['token']
+
+    with client.application.app_context():
+        index = Lottery.query.get(idx).index
+    with mock.patch('api.routes.api.get_time_index',
+                    return_value=index + 1):
+        resp = client.post(f'/lotteries/{idx}',
+                           headers={'Authorization': f'Bearer {token}'})
+        assert resp.status_code == 400
+        assert "This lottery is not acceptable now." in \
+               resp.get_json()['message']
 
 
 def test_get_allapplications(client):
