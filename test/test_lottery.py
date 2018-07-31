@@ -55,7 +55,7 @@ def test_get_specific_classroom(client):
     assert resp.get_json() == classroom
 
 
-def test_get_specific_classroom_invaild_id(client):
+def test_get_specific_classroom_invalid_id(client):
     """test proper errpr is returned from the API
         target_url: /classrooms/<id>
     """
@@ -93,7 +93,7 @@ def test_get_specific_lottery(client):
     assert resp.get_json() == lottery
 
 
-def test_get_specific_lottery_invaild_id(client):
+def test_get_specific_lottery_invalid_id(client):
     """test proper errpr is returned from the API
         target_url: /lotteries/<id>
     """
@@ -111,15 +111,21 @@ def test_apply_normal(client):
         target_url: /lotteries/<id> [POST]
     """
     idx = 1
-    token = login(client, test_user['secret_id'],
-                  test_user['g-recaptcha-response'])['token']
-    resp = client.post(f'/lotteries/{idx}',
-                       headers={'Authorization': f'Bearer {token}'})
+    user_info = test_user
+    token = login(client, user_info['secret_id'],
+                  user_info['g-recaptcha-response'])['token']
+    with client.application.app_context():
+        lottery = Lottery.query.get(idx)
+    with mock.patch('api.routes.api.get_time_index',
+                    return_value=lottery.index):
+        resp = client.post(f'/lotteries/{idx}',
+                           headers={'Authorization': f'Bearer {token}'})
+        assert resp.status_code == 200
 
     with client.application.app_context():
         # get needed objects
         target_lottery = Lottery.query.filter_by(id=idx).first()
-        user = User.query.filter_by(secret_id=test_user['secret_id']).first()
+        user = User.query.filter_by(secret_id=user_info['secret_id']).first()
         # this application should be added by previous 'client.put'
         application = Application.query.filter_by(
             lottery=target_lottery, user_id=user.id).first()
@@ -157,7 +163,7 @@ def test_apply_noperm(client):
     assert 'no permission' in resp.get_json().keys()  # not completed yet
 
 
-def test_apply_invaild(client):
+def test_apply_invalid(client):
     """attempt to apply to non-exsit lottery
         target_url: /lotteries/<id> [PUT]
     """
@@ -211,8 +217,10 @@ def test_apply_same_period(client):
         db.session.add(application)
         db.session.commit()
 
-    resp = client.post(f'/lotteries/{idx}',
-                       headers={'Authorization': f'Bearer {token}'})
+    with mock.patch('api.routes.api.get_time_index',
+                    return_value=0):
+        resp = client.post(f'/lotteries/{idx}',
+                           headers={'Authorization': f'Bearer {token}'})
 
     message = resp.get_json()['message']
 
@@ -220,8 +228,27 @@ def test_apply_same_period(client):
     assert 'already applying to a lottery in this period' in message
 
 
-def test_get_allapplications_normal(client):
-    """test proper information is returnd from the API to a normal user
+def test_apply_time_invalid(client):
+    """attempt to apply to lottery out of range
+        target_url: /lotteries/<id> [POST]
+    """
+    idx = 1
+    token = login(client, test_user['secret_id'],
+                  test_user['g-recaptcha-response'])['token']
+
+    with client.application.app_context():
+        index = Lottery.query.get(idx).index
+    with mock.patch('api.routes.api.get_time_index',
+                    return_value=index + 1):
+        resp = client.post(f'/lotteries/{idx}',
+                           headers={'Authorization': f'Bearer {token}'})
+        assert resp.status_code == 400
+        assert "This lottery is not acceptable now." in \
+               resp.get_json()['message']
+
+
+def test_get_allapplications(client):
+    """test proper infomation is returned from the API to a normal user
         target_url: /applications
     """
     lottery_id = 1
@@ -456,7 +483,7 @@ def test_draw_noperm(client):
     assert 'Forbidden' in resp.get_json()['message']
 
 
-def test_draw_invaild(client):
+def test_draw_invalid(client):
     """attempt to draw non-exsit lottery
         target_url: /lotteries/<id>/draw [POST]
     """
@@ -471,7 +498,7 @@ def test_draw_invaild(client):
     assert 'Lottery could not be found.' in resp.get_json()['message']
 
 
-def test_draw_time_invaild(client):
+def test_draw_time_invalid(client):
     """attempt to draw in not acceptable time
         target_url: /draw_all [POST]
     """
@@ -625,7 +652,7 @@ def test_draw_all_noperm(client):
     assert 'Forbidden' in resp.get_json()['message']
 
 
-def test_draw_all_invaild(client):
+def test_draw_all_invalid(client):
     """attempt to draw in not acceptable time
         target_url: /draw_all [POST]
     """

@@ -17,7 +17,8 @@ from api.swagger import spec
 from api.time_management import (
     get_draw_time_index,
     OutOfHoursError,
-    OutOfAcceptingHoursError
+    OutOfAcceptingHoursError,
+    get_time_index
 )
 from api.draw import (
     draw_one,
@@ -97,6 +98,15 @@ def apply_lottery(idx):
         return jsonify({"message": "Lottery could not be found."}), 404
     if lottery.done:
         return jsonify({"message": "This lottery has already done"}), 400
+    try:
+        current_index = get_time_index()
+    except (OutOfHoursError, OutOfAcceptingHoursError):
+        return jsonify({"message":
+                        "We're not accepting any application in this hours."}
+                       ), 400
+    if lottery.index != current_index:
+        return jsonify({"message":
+                        "This lottery is not acceptable now."}), 400
     user = User.query.filter_by(id=g.token_data['user_id']).first()
     previous = Application.query.filter_by(user_id=user.id)
     if any(app.lottery.index == lottery.index and
