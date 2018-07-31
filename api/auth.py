@@ -43,6 +43,9 @@ def decrypt_token(token):
 def login_required(*required_authority):
     """
         a decorder to require login
+        Args:
+            *required_authority (str): required authorities
+                if this is blank, no requirement of authority
     """
     def login_required_impl(f):
         @wraps(f)
