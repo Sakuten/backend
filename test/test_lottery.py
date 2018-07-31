@@ -46,7 +46,7 @@ def test_get_specific_classroom(client):
         target_url: /classrooms/<id>
     """
     idx = '1'  # classroom id to test
-    resp = client.get('/classrooms/'+idx)
+    resp = client.get(f'/classrooms/{idx}')
 
     with client.application.app_context():
         db_status = Classroom.query.filter_by(id=idx).first()
@@ -60,7 +60,7 @@ def test_get_specific_classroom_invaild_id(client):
         target_url: /classrooms/<id>
     """
     idx = invalid_classroom_id  # classroom id to test
-    resp = client.get('/classrooms/'+idx)
+    resp = client.get(f'/classrooms/{idx}')
 
     assert resp.status_code == 404
     assert 'Classroom could not be found.' in resp.get_json()['message']
@@ -84,7 +84,7 @@ def test_get_specific_lottery(client):
         target_url: /lotteries/<id>
     """
     idx = '1'  # lottery id to test
-    resp = client.get('/lotteries/'+idx)
+    resp = client.get(f'/lotteries/{idx}')
 
     with client.application.app_context():
         db_status = Lottery.query.filter_by(id=idx).first()
@@ -98,7 +98,7 @@ def test_get_specific_lottery_invaild_id(client):
         target_url: /lotteries/<id>
     """
     idx = invalid_lottery_id  # lottery id to test
-    resp = client.get('/lotteries/'+idx)
+    resp = client.get(f'/lotteries/{idx}')
 
     assert resp.status_code == 404
     assert 'Lottery could not be found.' in resp.get_json()['message']
@@ -110,11 +110,11 @@ def test_apply_normal(client):
         2. test: DB is changed
         target_url: /lotteries/<id> [POST]
     """
-    idx = '1'
+    idx = 1
     token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
-    resp = client.post('/lotteries/'+idx,
-                       headers={'Authorization': 'Bearer ' + token})
+    resp = client.post(f'/lotteries/{idx}',
+                       headers={'Authorization': f'Bearer {token}'})
 
     with client.application.app_context():
         # get needed objects
@@ -133,11 +133,11 @@ def test_apply_admin(client):
         test: 403 is returned
         target_url: /lotteries/<id> [POST]
     """
-    idx = '1'
+    idx = 1
     token = login(client, admin['secret_id'],
                   admin['g-recaptcha-response'])['token']
-    resp = client.post('/lotteries/'+idx,
-                       headers={'Authorization': 'Bearer ' + token})
+    resp = client.post(f'/lotteries/{idx}',
+                       headers={'Authorization': f'Bearer {token}'})
 
     assert resp.status_code == 403
 
@@ -147,11 +147,11 @@ def test_apply_noperm(client):
     """attempt to apply without proper permission.
         target_url: /lotteries/<id>/apply [POST]
     """
-    idx = '1'
+    idx = 1
     token = login(client, admin['secret_id'],
                   admin['g-recaptcha-response'])['token']
-    resp = client.post('/lotteries/'+idx,
-                       headers={'Authorization': 'Bearer ' + token})
+    resp = client.post(f'/lotteries/{idx}',
+                       headers={'Authorization': f'Bearer {token}'})
 
     assert resp.status_code == 403
     assert 'no permission' in resp.get_json().keys()  # not completed yet
@@ -164,8 +164,8 @@ def test_apply_invaild(client):
     idx = invalid_lottery_id
     token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
-    resp = client.post('/lotteries/'+idx,
-                       headers={'Authorization': 'Bearer ' + token})
+    resp = client.post(f'/lotteries/{idx}',
+                       headers={'Authorization': f'Bearer {token}'})
 
     assert resp.status_code == 404
     assert 'Lottery could not be found.' in resp.get_json()['message']
@@ -176,7 +176,7 @@ def test_apply_already_done(client):
         1. test: error is returned
         target_url: /lotteries/<id> [POST]
     """
-    idx = '1'
+    idx = 1
     token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
 
@@ -186,8 +186,8 @@ def test_apply_already_done(client):
         db.session.add(target_lottery)
         db.session.commit()
 
-    resp = client.post('/lotteries/'+idx,
-                       headers={'Authorization': 'Bearer ' + token})
+    resp = client.post(f'/lotteries/{idx}',
+                       headers={'Authorization': f'Bearer {token}'})
 
     assert resp.status_code == 400
     assert 'already done' in resp.get_json()['message']
@@ -198,7 +198,7 @@ def test_apply_same_period(client):
         1. test: error is returned
         target_url: /lotteries/<id> [POST]
     """
-    idx = '1'
+    idx = 1
     token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
 
@@ -211,8 +211,8 @@ def test_apply_same_period(client):
         db.session.add(application)
         db.session.commit()
 
-    resp = client.post('/lotteries/'+idx,
-                       headers={'Authorization': 'Bearer ' + token})
+    resp = client.post(f'/lotteries/{idx}',
+                       headers={'Authorization': f'Bearer {token}'})
 
     message = resp.get_json()['message']
 
@@ -323,10 +323,10 @@ def test_cancel_normal(client):
     token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
     user_resp = client.get('/status',
-                           headers={'Authorization': 'Bearer ' + token})
+                           headers={'Authorization': f'Bearer {token}'})
     user_id = user_resp.get_json()['id']
     resp = client.delete(f'/applications/{application_id}',
-                         headers={'Authorization': 'Bearer ' + token})
+                         headers={'Authorization': f'Bearer {token}'})
     with client.application.app_context():
         application = Application.query.filter_by(
             lottery_id=lottery_id, user_id=user_id).first()
@@ -345,7 +345,7 @@ def test_cancel_admin(client):
     token = login(client, admin['secret_id'],
                   admin['g-recaptcha-response'])['token']
     resp = client.delete(f'/applications/{application_id}',
-                         headers={'Authorization': 'Bearer ' + token})
+                         headers={'Authorization': f'Bearer {token}'})
 
     assert resp.status_code == 403
 
@@ -370,7 +370,7 @@ def test_cancel_already_done_normal(client):
         db.session.commit()
 
     resp = client.delete(f'/applications/{application_id}',
-                         headers={'Authorization': 'Bearer ' + token})
+                         headers={'Authorization': f'Bearer {token}'})
 
     assert resp.status_code == 400
     assert 'The Application has already fullfilled' in resp.get_json()[
@@ -391,10 +391,10 @@ def test_cancel_noperm(client):
     user_token = login(client, user['secret_id'],
                        user['g-recaptcha-response'])['token']
 
-    client.post('/lotteries/' + idx,
-                headers={'Authorization': 'Bearer' + owner_token})
-    resp = client.delete('/applications/' + idx,
-                         headers={'Authorization': 'Bearer ' + user_token})
+    client.post(f'/lotteries/{idx}',
+                headers={'Authorization': f'Bearer {owner_token}'})
+    resp = client.delete(f'/applications/{idx}',
+                         headers={'Authorization': f'Bearer {user_token}'})
 
     assert resp.status_code == 403
     assert 'insufficient_scope' in resp.headers['WWW-Authenticate']
@@ -425,8 +425,8 @@ def test_draw(client):
         _, end = client.application.config['TIMEPOINTS'][int(idx)]
         with mock.patch('api.time_management.get_current_datetime',
                         return_value=end):
-            resp = client.post('/lotteries/'+idx+'/draw',
-                               headers={'Authorization': 'Bearer ' + token})
+            resp = client.post(f'/lotteries/{idx}/draw',
+                               headers={'Authorization': f'Bearer {token}'})
 
         assert resp.status_code == 200
 
@@ -449,8 +449,8 @@ def test_draw_noperm(client):
     idx = '1'
     token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
-    resp = client.post('/lotteries/'+idx+'/draw',
-                       headers={'Authorization': 'Bearer ' + token})
+    resp = client.post(f'/lotteries/{idx}/draw',
+                       headers={'Authorization': f'Bearer {token}'})
 
     assert resp.status_code == 403
     assert 'Forbidden' in resp.get_json()['message']
@@ -464,8 +464,8 @@ def test_draw_invaild(client):
     token = login(client, admin['secret_id'],
                   admin['g-recaptcha-response'])['token']
 
-    resp = client.post('/lotteries/'+idx+'/draw',
-                       headers={'Authorization': 'Bearer ' + token})
+    resp = client.post(f'/lotteries/{idx}/draw',
+                       headers={'Authorization': f'Bearer {token}'})
 
     assert resp.status_code == 404
     assert 'Lottery could not be found.' in resp.get_json()['message']
@@ -482,7 +482,7 @@ def test_draw_time_invaild(client):
         with mock.patch('api.time_management.get_current_datetime',
                         return_value=t):
             resp = client.post(f'/lotteries/{target_lottery.id}/draw',
-                               headers={'Authorization': 'Bearer ' + token})
+                               headers={'Authorization': f'Bearer {token}'})
 
             assert resp.status_code == 400
             assert 'Not acceptable' in resp.get_json()['message']
@@ -522,8 +522,8 @@ def test_draw_already_done(client):
     _, end = client.application.config['TIMEPOINTS'][int(idx)]
     with mock.patch('api.time_management.get_current_datetime',
                     return_value=end):
-        resp = client.post('/lotteries/'+idx+'/draw',
-                           headers={'Authorization': 'Bearer ' + token})
+        resp = client.post(f'/lotteries/{idx}/draw',
+                           headers={'Authorization': f'Bearer {token}'})
 
     assert resp.status_code == 400
     assert 'already done' in resp.get_json()['message']
@@ -547,8 +547,8 @@ def test_draw_nobody_apply(client):
             db.session.delete(target_applications)
             db.session.commit()
 
-    resp = client.post('/lotteries/'+idx+'/draw',
-                       headers={'Authorization': 'Bearer ' + token})
+    resp = client.post(f'/lotteries/{idx}/draw',
+                       headers={'Authorization': f'Bearer {token}'})
 
     assert resp.status_code == 400
     assert 'nobody' in resp.get_json()['message']
@@ -587,7 +587,7 @@ def test_draw_all(client):
     with mock.patch('api.time_management.get_current_datetime',
                     return_value=draw_time):
         resp = client.post('/draw_all',
-                           headers={'Authorization': 'Bearer ' + token})
+                           headers={'Authorization': f'Bearer {token}'})
 
     assert resp.status_code == 200
 
@@ -619,7 +619,7 @@ def test_draw_all_noperm(client):
     token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
     resp = client.post('/draw_all',
-                       headers={'Authorization': 'Bearer ' + token})
+                       headers={'Authorization': f'Bearer {token}'})
 
     assert resp.status_code == 403
     assert 'Forbidden' in resp.get_json()['message']
@@ -633,7 +633,7 @@ def test_draw_all_invaild(client):
         with mock.patch('api.time_management.get_current_datetime',
                         return_value=t):
             resp = client.post('/draw_all',
-                               headers={'Authorization': 'Bearer ' + token})
+                               headers={'Authorization': f'Bearer {token}'})
 
             assert resp.status_code == 400
             assert 'Not acceptable' in resp.get_json()['message']
