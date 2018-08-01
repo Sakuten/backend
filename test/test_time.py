@@ -51,8 +51,9 @@ def test_draw_time_index_same(client):
     with client.application.app_context():
         timepoints = client.application.config['TIMEPOINTS']
         ext = client.application.config['DRAWING_TIME_EXTENSION']
+        en_margin = client.application.config['TIMEPOINT_END_MARGIN']
         for i, (_, en) in enumerate(timepoints):
-            idx_l = get_draw_time_index(en)
+            idx_l = get_draw_time_index(mod_time(en, en_margin))
             assert i == idx_l
             idx_r = get_draw_time_index(mod_time(en, +ext))
             assert i == idx_r
