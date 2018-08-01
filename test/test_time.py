@@ -37,9 +37,11 @@ def test_draw_time_index_lim(client):
     with client.application.app_context():
         timepoints = client.application.config['TIMEPOINTS']
         ext = client.application.config['DRAWING_TIME_EXTENSION']
+        en_margin = client.application.config['TIMEPOINT_END_MARGIN']
         for i, (_, en) in enumerate(timepoints):
+            en_with_margin = mod_time(en, en_margin)
             res = datetime.timedelta.resolution
-            idx_l = get_draw_time_index(mod_time(en, +res))
+            idx_l = get_draw_time_index(mod_time(en_with_margin, +res))
             assert i == idx_l
             idx_r = get_draw_time_index(mod_time(en, +ext-res))
             assert i == idx_r
