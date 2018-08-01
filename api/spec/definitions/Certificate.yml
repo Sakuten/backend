@@ -1,0 +1,12 @@
+The Login Certificate
+---
+properties:
+  g-recaptcha-response:
+    description: Google reCAPTCHA response
+    type: string
+  id:
+    $ref: '#/definitions/SecretID'
+required:
+  - id
+  - g-recaptcha-response
+type: object

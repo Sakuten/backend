@@ -1,0 +1,277 @@
+swagger: '2.0'
+info:
+  contact:
+    email: devteam.sakuten@gmail.com
+  description: >-
+    **This specification is the pre-development vesion** The Web API for the
+    school featival in [Koishikawa Secondary Education
+    School](http://www.koishikawachuto-e.metro.tokyo.jp/). This is developed by
+    the Sakuten Development Team, which is independent of teachers. You can find
+    more about Sakuten at [sakuten.jp](https://sakuten.jp/). Also you can
+    explore the source code of this system on
+    [GitHub](https://github.com/Sakuten).
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+  termsOfService: 'https://www.sakuten.jp/terms/'
+  title: Sakuten API
+  version: 0.0.5
+host: sakuten-api-dev.herokuapp.com
+basePath: /
+schemes:
+  - https
+  - http
+definitions:
+  Application:
+    properties:
+      id:
+        $ref: '#/definitions/ApplicationID'
+      lottery:
+        $ref: '#/definitions/Lottery'
+      status:
+        $ref: '#/definitions/ApplicationStatus'
+    type: object
+  ApplicationID:
+    description: Application Identifier
+    example: 0
+    type: integer
+  ApplicationStatus:
+    description: Application Status
+    enum:
+      - pending
+      - won
+      - lose
+    type: string
+  Certificate:
+    properties:
+      g-recaptcha-response:
+        description: Google reCAPTCHA response
+        type: string
+      id:
+        $ref: '#/definitions/SecretID'
+    required:
+      - id
+      - g-recaptcha-response
+    type: object
+  Classroom:
+    properties:
+      grade:
+        description: The grade of classroom
+        example: 5
+        type: integer
+      id:
+        $ref: '#/definitions/ClassroomID'
+      index:
+        description: 'The index of classroom (0->A, 1->B, 2->C, 3->D)'
+        example: 0
+        type: integer
+      name:
+        description: The character refering to the classroom index
+        example: A
+        type: string
+    required:
+      - id
+      - grade
+      - index
+    type: object
+  ClassroomID:
+    description: Classroom Identifier
+    example: 0
+    type: integer
+  ErrorMessage:
+    properties:
+      message:
+        description: Simple message about the cause of the error
+        example: Error
+        type: string
+    required:
+      - message
+    type: object
+  Lottery:
+    properties:
+      classroom_id:
+        description: Classroom Identifier
+        example: 0
+        type: integer
+      done:
+        description: Whether this lottery is done or not
+        example: false
+        type: boolean
+      id:
+        $ref: '#/definitions/LotteryID'
+      index:
+        description: The index of the lottery
+        example: 0
+        type: integer
+      name:
+        description: Display name of the lottery
+        example: 5A.0
+        type: string
+      winners:
+        type: array
+        items:
+          $ref: '#/definitions/User'
+    required:
+      - id
+      - done
+      - classroom_id
+      - index
+      - winners
+    type: object
+  LotteryID:
+    description: Lottery Identifier
+    example: 0
+    type: integer
+  Message:
+    properties:
+      message:
+        description: Simple message about the status
+        example: Success
+        type: string
+    required:
+      - message
+    type: object
+  PublicID:
+    description: User Public ID written in the user card
+    example: 6ENR
+    type: string
+  SecretID:
+    description: User Secret ID scanned from QR Code
+    example: dJzhZrMRSmvXxpK_YffOEWGH8_VqyCOe
+    type: string
+  Token:
+    description: Access Token (fernet)
+    example: >-
+      gAAAAABbKh479Z7Pb77oqmdAWBlgrjySjiKO51wvwWp3DvJFk-FfhuVhPPM1iFxNFgUR8WydJkZhV6WbTQP1Rny18ixAQtmicnVUy7tAyCkYq8U5etbuUsgkzv6YCcDph-1z6PXn01fM3AWbnNRvOHip2j-Nby21Gw==
+    type: string
+  User:
+    properties:
+      application_history:
+        items:
+          $ref: '#/definitions/Application'
+        type: array
+      secret_id:
+        $ref: '#/definitions/SecretID'
+      public_id:
+        $ref: '#/definitions/PublicID'
+    type: object
+securityDefinitions:
+  admin_auth:
+    in: header
+    name: Authorization
+    type: apiKey
+  checker_auth:
+    in: header
+    name: Authorization
+    type: apiKey
+  user_auth:
+    in: header
+    name: Authorization
+    type: apiKey
+tags:
+  - description: User Authenication APIs
+    name: user
+  - description: Lottery System APIs
+    name: lottery
+  - description: Endpoints for checkers
+    name: checker
+externalDocs:
+  description: GitHub
+  url: 'https://github.com/Sakuten/'
+x-components:
+  responses:
+    ApplicationInfo:
+      description: Application Information
+      schema:
+        $ref: '#/definitions/Application'
+    ApplicationList:
+      description: List of Applications
+      schema:
+        items:
+          $ref: '#/definitions/Application'
+        type: array
+    Certificate:
+      description: Access Token
+      schema:
+        properties:
+          message:
+            example: Login Successful
+            type: string
+          token:
+            $ref: '#/definitions/Token'
+        type: object
+    ClassroomInfo:
+      description: Classroom Information
+      schema:
+        $ref: '#/definitions/Classroom'
+    ClassroomList:
+      description: List of Classrooms
+      schema:
+        items:
+          $ref: '#/definitions/Classroom'
+        type: array
+    Forbidden:
+      description: You have no permission to perform the action
+      headers:
+        WWW-Authenicate:
+          description: >-
+            Authenication Error Code. For details, please refer to RFC 6750 3.
+            The WWW-Authenticate Response Header Field
+          type: string
+      schema:
+        $ref: '#/definitions/ErrorMessage'
+    InvalidRequest:
+      description: Malformed Authenication Header has detected
+      headers:
+        WWW-Authenicate:
+          description: >-
+            Authenication Error Code. For details, please refer to RFC 6750 3.
+            The WWW-Authenticate Response Header Field
+          type: string
+      schema:
+        $ref: '#/definitions/ErrorMessage'
+    LotteryInfo:
+      description: Lottery Information
+      schema:
+        $ref: '#/definitions/Lottery'
+    LotteryList:
+      description: List of Lotteries
+      schema:
+        items:
+          $ref: '#/definitions/Lottery'
+        type: array
+    NotFound:
+      description: Not Found
+      schema:
+        $ref: '#/definitions/ErrorMessage'
+    SuccessfulOperation:
+      content:
+        application/json:
+          schema:
+            $ref: '#/definitions/Message'
+      description: Successful Operation
+    Unauthorized:
+      description: Authorization Failed
+      headers:
+        WWW-Authenicate:
+          description: >-
+            Authenication Error Code. For details, please refer to RFC 6750 3.
+            The WWW-Authenticate Response Header Field
+          type: string
+      schema:
+        $ref: '#/definitions/ErrorMessage'
+    UserChosen:
+      description: Chosen User
+      schema:
+        properties:
+          chosen:
+            $ref: '#/definitions/SecretID'
+        type: object
+    UserInfo:
+      description: User Information
+      schema:
+        properties:
+          status:
+            $ref: '#/definitions/User'
+        type: object
+

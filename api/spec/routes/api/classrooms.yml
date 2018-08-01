@@ -1,0 +1,28 @@
+Get list of available classrooms
+---
+produces:
+  - application/json
+parameters:
+  - description: Specify the method to sort the list
+    in: query
+    name: sort
+    required: false
+    type: string
+  - description: Specify the filter
+    in: query
+    name: filter
+    required: false
+    type: string
+    x-example: available
+responses:
+  '200':
+    description: List of Classrooms
+    schema:
+      items:
+        $ref: '#/definitions/Classroom'
+      type: array
+tags:
+  - lottery
+description: ''
+operationId: getClassrooms
+summary: Get list of available classrooms

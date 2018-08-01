@@ -1,0 +1,51 @@
+Draw the lottery
+---
+produces:
+  - application/json
+parameters:
+  - description: ID of the lottery to apply
+    in: path
+    name: lotteryId
+    required: true
+    type: integer
+    x-example: 0
+responses:
+  '200':
+    description: Chosen user
+    schema:
+      $ref: '#/definitions/User'
+  '400':
+    description: Malformed Authenication Header has detected / Not acceptable time / This lottery has already done
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+  '401':
+    description: Authorization Failed
+    headers:
+      WWW-Authenicate:
+        description: >-
+          Authenication Error Code. For details, please refer to RFC 6750
+          3. The WWW-Authenticate Response Header Field
+        type: string
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+  '403':
+    description: You have no permission to perform the action
+    headers:
+      WWW-Authenicate:
+        description: >-
+          Authenication Error Code. For details, please refer to RFC 6750
+          3. The WWW-Authenticate Response Header Field
+        type: string
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+  '404':
+    description: Not Found
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+security:
+  - admin_auth: []
+tags:
+  - lottery
+description: Draw thew lottery and return the list of winning users
+operationId: drawLotteryById
+summary: Draw the lottery

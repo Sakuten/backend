@@ -1,0 +1,34 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+flask = "*"
+flask-sqlalchemy = "*"
+marshmallow = "*"
+flask-cors = "*"
+cryptography = "*"
+psycopg2-binary = "*"
+gunicorn = "*"
+flasgger = "*"
+pyyaml = "*"
+pytest = "*"
+watchdog = "*"
+pillow = "*"
+qrcode = "*"
+
+[dev-packages]
+"flake8" = "*"
+"autopep8" = "*"
+
+[requires]
+python_version = "3.6"
+
+[scripts]
+"start:flask" = "flask run"
+"start:dep" = "watchmedo shell-command -p './Pipfile' -c 'pipenv install --dev' -W"
+start = "/bin/bash -c 'pipenv run start:dep & pipenv run start:flask'"
+fix = "autopep8 -ivr ."
+lint = "flake8 ."
+test = "pytest"
