@@ -488,11 +488,11 @@ def test_draw_already_done(client):
         db.session.add(target_lottery)
         db.session.commit()
 
-    _, end = client.application.config['TIMEPOINTS'][int(idx)]
-    with mock.patch('api.time_management.get_current_datetime',
-                    return_value=end):
-        resp = client.post('/lotteries/'+idx+'/draw',
-                           headers={'Authorization': 'Bearer ' + token})
+        _, end = client.application.config['TIMEPOINTS'][int(idx)]
+        with mock.patch('api.routes.api.get_draw_time_index',
+                        return_value=target_lottery.index):
+            resp = client.post('/lotteries/'+idx+'/draw',
+                               headers={'Authorization': 'Bearer ' + token})
 
     assert resp.status_code == 400
     assert 'already done' in resp.get_json()['message']
