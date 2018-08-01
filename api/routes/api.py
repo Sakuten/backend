@@ -17,12 +17,12 @@ from api.swagger import spec
 from api.time_management import (
     get_draw_time_index,
     OutOfHoursError,
-    OutOfAcceptingHoursError
+    OutOfAcceptingHoursError,
+    get_time_index
 )
 from api.draw import (
     draw_one,
     draw_all_at_index,
-    NobodyIsApplyingError,
     AlreadyDoneError
 )
 
@@ -87,7 +87,7 @@ def list_lottery(idx):
 
 @bp.route('/lotteries/<int:idx>', methods=['POST'])
 @spec('api/lotteries/apply.yml')
-@login_required()
+@login_required('normal')
 def apply_lottery(idx):
     """
         apply to the lottery.
@@ -98,6 +98,15 @@ def apply_lottery(idx):
         return jsonify({"message": "Lottery could not be found."}), 404
     if lottery.done:
         return jsonify({"message": "This lottery has already done"}), 400
+    try:
+        current_index = get_time_index()
+    except (OutOfHoursError, OutOfAcceptingHoursError):
+        return jsonify({"message":
+                        "We're not accepting any application in this hours."}
+                       ), 400
+    if lottery.index != current_index:
+        return jsonify({"message":
+                        "This lottery is not acceptable now."}), 400
     user = User.query.filter_by(id=g.token_data['user_id']).first()
     previous = Application.query.filter_by(user_id=user.id)
     if any(app.lottery.index == lottery.index and
@@ -121,7 +130,7 @@ def apply_lottery(idx):
 
 @bp.route('/applications')
 @spec('api/applications.yml')
-@login_required()
+@login_required('normal')
 def list_applications():
     """
         return applications list.
@@ -138,7 +147,7 @@ def list_applications():
 
 @bp.route('/applications/<int:idx>', methods=['GET'])
 @spec('api/applications/idx.yml')
-@login_required()
+@login_required('normal')
 def list_application(idx):
     """
         return infomation about specified application.
@@ -154,7 +163,7 @@ def list_application(idx):
 
 @bp.route('/applications/<int:idx>', methods=['DELETE'])
 @spec('api/applications/cancel.yml')
-@login_required()
+@login_required('normal')
 def cancel_application(idx):
     """
         cancel the application.
@@ -194,8 +203,6 @@ def draw_lottery(idx):
 
     try:
         winners = draw_one(lottery)
-    except NobodyIsApplyingError:
-        return jsonify({"message": "Nobody is applying to this lottery"}), 400
     except AlreadyDoneError:
         return jsonify({"message": "This lottery is already done "
                         "and cannot be undone"}), 400
@@ -219,8 +226,6 @@ def draw_all_lotteries():
 
     try:
         winners = draw_all_at_index(index)
-    except NobodyIsApplyingError:
-        return jsonify({"message": "Nobody is applying to this lottery"}), 400
     except AlreadyDoneError:
         return jsonify({"message": "This lottery is already done "
                         "and cannot be undone"}), 400
@@ -232,7 +237,7 @@ def draw_all_lotteries():
 
 @bp.route('/status', methods=['GET'])
 @spec('api/status.yml')
-@login_required()
+@login_required('normal')
 def get_status():
     """
         return user's id and applications

@@ -48,6 +48,8 @@ class TestingConfig(BaseConfig):
 class PreviewDeploymentConfig(BaseConfig):
     DEBUG = True
     TESTING = False
+    ID_LIST_FILE = BaseConfig.ROOT_DIR / 'cards/test_users.json'
+    WINNERS_NUM = 3  # just small value
     # DATABASE_URL is to be set by Heroku
     # SECRET_KEY is to be set in config vars
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')

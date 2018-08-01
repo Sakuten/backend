@@ -102,7 +102,7 @@ def test_status(client):
         assert resp.get_json() == user_schema.dump(db_status)[0]
 
 
-def test_status_invaild_header(client):
+def test_status_invalid_header(client):
     """attempt to get status with wrong header.
         this cause error in /api/auth. not in /api/routes/api
         target_url: /status
@@ -113,7 +113,7 @@ def test_status_invaild_header(client):
     assert 'token_required' in resp.headers['WWW-Authenticate']
 
 
-def test_status_invaild_auth(client):
+def test_status_invalid_auth(client):
     """attempt to get status with wrong auth data.
         this cause error in /api/auth. not in /api/routes/api
         target_url: /status
