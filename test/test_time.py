@@ -73,12 +73,13 @@ def test_time_index_ooh(client):
 def test_time_index_ooa(client):
     with client.application.app_context():
         timepoints = client.application.config['TIMEPOINTS']
+        res = datetime.timedelta.resolution
+        en_margin = client.application.config['TIMEPOINT_END_MARGIN']
         for i, point in enumerate(timepoints):
-            res = datetime.timedelta.resolution
             with pytest.raises(OutOfAcceptingHoursError):
                 get_time_index(mod_time(point[0], -res))
             with pytest.raises(OutOfAcceptingHoursError):
-                get_time_index(mod_time(point[1], +res))
+                get_time_index(mod_time(point[1], +res+en_margin))
 
 
 def test_time_index_lim(client):
