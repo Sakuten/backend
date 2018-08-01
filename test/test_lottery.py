@@ -390,8 +390,10 @@ def test_draw(client):
                       admin['g-recaptcha-response'])['token']
 
         _, end = client.application.config['TIMEPOINTS'][int(idx)]
+        end_margin = client.application.config['TIMEPOINT_END_MARGIN']
+        end_with_margin = mod_time(end, end_margin)
         with mock.patch('api.time_management.get_current_datetime',
-                        return_value=end):
+                        return_value=end_with_margin):
             resp = client.post('/lotteries/'+idx+'/draw',
                                headers={'Authorization': 'Bearer ' + token})
 
