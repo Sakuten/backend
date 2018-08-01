@@ -228,6 +228,33 @@ def test_apply_same_period(client):
     assert 'already applying to a lottery in this period' in message
 
 
+def test_apply_same_period_same_lottery(client):
+    """attempt to apply to the same lottery in the same period
+        1. test: error is returned
+        target_url: /lotteries/<id> [POST]
+    """
+    idx = 1
+    token = login(client, test_user['secret_id'],
+                  test_user['g-recaptcha-response'])['token']
+
+    with client.application.app_context():
+        target_lottery = Lottery.query.filter_by(id=idx).first()
+        user = User.query.filter_by(secret_id=test_user['secret_id']).first()
+        application = Application(lottery=target_lottery, user_id=user.id)
+        db.session.add(application)
+        db.session.commit()
+
+    with mock.patch('api.routes.api.get_time_index',
+                    return_value=0):
+        resp = client.post(f'/lotteries/{idx}',
+                           headers={'Authorization': f'Bearer {token}'})
+
+    message = resp.get_json()['message']
+
+    assert resp.status_code == 400
+    assert 'already accepted' in message
+
+
 def test_apply_time_invalid(client):
     """attempt to apply to lottery out of range
         target_url: /lotteries/<id> [POST]
