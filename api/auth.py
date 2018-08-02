@@ -4,6 +4,7 @@ from api.models import User
 from datetime import datetime
 from functools import wraps
 import json
+from api.time_management import get_current_datetime
 
 
 def generate_token(obj):
@@ -39,9 +40,12 @@ def decrypt_token(token):
     return json.loads(decrypted.decode())
 
 
-def login_required(required_name=None):
+def login_required(*required_authority):
     """
         a decorder to require login
+        Args:
+            *required_authority (str): required authorities
+                if this is blank, no requirement of authority
     """
     def login_required_impl(f):
         @wraps(f)
@@ -60,12 +64,17 @@ def login_required(required_name=None):
                     resp.headers['WWW-Authenticate'] = 'Bearer ' + headm
                 return resp
 
+            time = get_current_datetime()
+            end = current_app.config['END_DATETIME']
+            if end <= time:
+                return auth_error(403, 'realm="not acceptable"')
+
             # check form of request header
             if 'Authorization' not in request.headers:
                 return auth_error(401, 'realm="token_required"')
             auth = request.headers['Authorization'].split()
             if auth[0].lower() != 'bearer':
-                return auth_error(401, 'error="token_required"')
+                return auth_error(400, 'error="invalid_request"')
             elif len(auth) == 1:
                 return auth_error(400, 'error="invalid_request"')
             elif len(auth) > 2:
@@ -75,7 +84,8 @@ def login_required(required_name=None):
             if not data:
                 return auth_error(401, 'error="invalid_token"')
             user = User.query.filter_by(id=data['data']['user_id']).first()
-            if required_name is not None and user.username != required_name:
+            if required_authority and \
+                    (user.authority not in required_authority):
                 return auth_error(403, 'error="insufficient_scope"')
             g.token_data = data['data']
 

@@ -26,28 +26,32 @@ definitions:
     properties:
       id:
         $ref: '#/definitions/ApplicationID'
-      lottery_id:
-        $ref: '#/definitions/LotteryID'
+      lottery:
+        $ref: '#/definitions/Lottery'
       status:
-        description: 'true if won, false if not won. null means undrawn. (deprecated)'
-        example: true
-        type: boolean
-      user_id:
-        $ref: '#/definitions/SecretID'
+        $ref: '#/definitions/ApplicationStatus'
     type: object
   ApplicationID:
     description: Application Identifier
     example: 0
     type: integer
+  ApplicationStatus:
+    description: Application Status
+    enum:
+      - pending
+      - won
+      - lose
+    type: string
   Certificate:
     properties:
-      password:
-        $ref: '#/definitions/Password'
-      username:
-        $ref: '#/definitions/Username'
+      g-recaptcha-response:
+        description: Google reCAPTCHA response
+        type: string
+      id:
+        $ref: '#/definitions/SecretID'
     required:
-      - username
-      - password
+      - id
+      - g-recaptcha-response
     type: object
   Classroom:
     properties:
@@ -103,11 +107,16 @@ definitions:
         description: Display name of the lottery
         example: 5A.0
         type: string
+      winners:
+        type: array
+        items:
+          $ref: '#/definitions/User'
     required:
       - id
       - done
       - classroom_id
       - index
+      - winners
     type: object
   LotteryID:
     description: Lottery Identifier
@@ -122,14 +131,14 @@ definitions:
     required:
       - message
     type: object
-  Password:
-    description: Password (deprecated; will be replaced by id auth)
-    example: example1
+  PublicID:
+    description: User Public ID written in the user card
+    example: 6ENR
     type: string
   SecretID:
-    description: User ID number (not secret but named secret for future compatibility)
-    example: 1
-    type: integer
+    description: User Secret ID scanned from QR Code
+    example: dJzhZrMRSmvXxpK_YffOEWGH8_VqyCOe
+    type: string
   Token:
     description: Access Token (fernet)
     example: >-
@@ -137,21 +146,21 @@ definitions:
     type: string
   User:
     properties:
-      applications:
+      application_history:
         items:
           $ref: '#/definitions/Application'
         type: array
-      id:
+      secret_id:
         $ref: '#/definitions/SecretID'
-      username:
-        $ref: '#/definitions/Username'
+      public_id:
+        $ref: '#/definitions/PublicID'
     type: object
-  Username:
-    description: Username (deprecated; will be replaced by id auth)
-    example: example1
-    type: string
 securityDefinitions:
   admin_auth:
+    in: header
+    name: Authorization
+    type: apiKey
+  checker_auth:
     in: header
     name: Authorization
     type: apiKey
@@ -164,11 +173,23 @@ tags:
     name: user
   - description: Lottery System APIs
     name: lottery
+  - description: Endpoints for checkers
+    name: checker
 externalDocs:
   description: GitHub
   url: 'https://github.com/Sakuten/'
 x-components:
   responses:
+    ApplicationInfo:
+      description: Application Information
+      schema:
+        $ref: '#/definitions/Application'
+    ApplicationList:
+      description: List of Applications
+      schema:
+        items:
+          $ref: '#/definitions/Application'
+        type: array
     Certificate:
       description: Access Token
       schema:

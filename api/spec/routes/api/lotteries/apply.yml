@@ -11,16 +11,22 @@ parameters:
     x-example: 0
 responses:
   '200':
-    description: Successfully applied
+    description: Application Information
     schema:
-      properties:
-        id:
-          $ref: '#/definitions/ApplicationID'
-      type: object
+      $ref: '#/definitions/Application'
   '400':
     description: >-
-      Not Found / Invalid Request / Lottery has already done / You're
-      already applying to a lottery in this period
+      Malformed Authenication Header has detected / Lottery has already
+      done / You’re already applying to a lottery in this period
+      / Your application is already accepted
+      / We're not accepting any application in this hours.
+      / this lottery is not acceptable now.
+    headers:
+      WWW-Authenicate:
+        description: >-
+          Authenication Error Code. For details, please refer to RFC 6750
+          3. The WWW-Authenticate Response Header Field
+        type: string
     schema:
       $ref: '#/definitions/ErrorMessage'
   '401':
@@ -31,6 +37,20 @@ responses:
           Authenication Error Code. For details, please refer to RFC 6750
           3. The WWW-Authenticate Response Header Field
         type: string
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+  '403':
+    description: You have no permission to perform the action
+    headers:
+      WWW-Authenicate:
+        description: >-
+          Authenication Error Code. For details, please refer to RFC 6750
+          3. The WWW-Authenticate Response Header Field
+        type: string
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+  '404':
+    description: Not Found
     schema:
       $ref: '#/definitions/ErrorMessage'
 security:

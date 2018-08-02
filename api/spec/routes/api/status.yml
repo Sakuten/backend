@@ -7,10 +7,7 @@ responses:
   '200':
     description: User Information
     schema:
-      properties:
-        status:
-          $ref: '#/definitions/User'
-      type: object
+      $ref: '#/definitions/User'
   '400':
     description: Malformed Authenication Header has detected
     headers:
@@ -34,6 +31,7 @@ responses:
 security:
   - user_auth: []
   - admin_auth: []
+  - checker_auth: []
 tags:
   - user
 description: ''

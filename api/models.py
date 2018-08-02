@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.schema import UniqueConstraint
-from werkzeug.security import check_password_hash
+from cards.id import encode_public_id
 
 db = SQLAlchemy()
 
@@ -9,34 +9,20 @@ class User(db.Model):
     """
         User model for DB
         Args:
-            username (str): user name.
-            passhash (str): password hash.
+            public_id (int): public id.
+            secret_id (int): secret id.
         DB contents:
-            username (str): user name.
-            passhash (str): password hash.
+            public_id (int): public id.
+            secret_id (int): secret id.
     """
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(40), unique=True)
-    passhash = db.Column(db.String(128))
+    public_id = db.Column(db.Integer, unique=True)
+    secret_id = db.Column(db.String(40), unique=True)
+    authority = db.Column(db.String(20))
 
     def __repr__(self):
-        return '<User %r>' % self.username
-
-    def get_user_id(self):
-        """
-            return user id.
-        """
-        return self.id
-
-    def check_password(self, password):
-        """
-            check given password is correct or not.
-            Args:
-                password (str): string to check
-            Return:
-                return (bool): True -> correct, False -> incorrect
-        """
-        return check_password_hash(self.passhash, password)
+        authority_str = f'({self.authority})' if self.authority else ''
+        return f'<User {encode_public_id(self.public_id)} {authority_str}>'
 
 
 class Classroom(db.Model):
@@ -109,7 +95,10 @@ class Application(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(
         'user.id', ondelete='CASCADE'))
     user = db.relationship('User')
-    status = db.Column(db.Boolean)
+    # status: [ pending, won, lose ]
+    status = db.Column(db.String,
+                       default="pending",
+                       nullable=False)
 
     def __repr__(self):
         return "<Application {}{}>".format(self.lottery, self.user)
