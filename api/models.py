@@ -76,7 +76,7 @@ class Lottery(db.Model):
             id (int): lottery unique id
             classroom_id (int): associated classroom id
             classroom (relationship): associated classroom
-            index (int): number of peformance. maybe {1..4}
+            index (int): number of peformance. {0..4}
             done (bool): whether it's done or not
     """
     id = db.Column(db.Integer, primary_key=True)  # 'id' should be defined,
