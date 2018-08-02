@@ -708,4 +708,4 @@ def test_draw_all_invalid(client):
     for i, (_, en) in enumerate(timepoints):
         res = datetime.timedelta.resolution
         try_with_datetime(mod_time(en, -res))
-        t
+        try_with_datetime(mod_time(en, +ext+res))
