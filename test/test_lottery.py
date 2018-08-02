@@ -210,15 +210,16 @@ def test_apply_same_period(client):
 
     with client.application.app_context():
         target_lottery = Lottery.query.filter_by(id=idx).first()
+        index = target_lottery.index
         booking_lottery = Lottery.query.filter_by(
-            index=target_lottery.index).filter(Lottery.id != idx).first()
+            index=index).filter(Lottery.id != idx).first()
         user = User.query.filter_by(secret_id=test_user['secret_id']).first()
         application = Application(lottery=booking_lottery, user_id=user.id)
         db.session.add(application)
         db.session.commit()
 
     with mock.patch('api.routes.api.get_time_index',
-                    return_value=0):
+                    return_value=index):
         resp = client.post(f'/lotteries/{idx}',
                            headers={'Authorization': f'Bearer {token}'})
 
@@ -239,13 +240,14 @@ def test_apply_same_period_same_lottery(client):
 
     with client.application.app_context():
         target_lottery = Lottery.query.filter_by(id=idx).first()
+        index = target_lottery.index
         user = User.query.filter_by(secret_id=test_user['secret_id']).first()
         application = Application(lottery=target_lottery, user_id=user.id)
         db.session.add(application)
         db.session.commit()
 
     with mock.patch('api.routes.api.get_time_index',
-                    return_value=0):
+                    return_value=index):
         resp = client.post(f'/lotteries/{idx}',
                            headers={'Authorization': f'Bearer {token}'})
 
@@ -460,7 +462,7 @@ def test_draw(client):
         2. draws the lottery
         3. test: status code
         4. test: DB is changed
-        target_url: /lotteries/<id>/apply [PUT]
+        target_url: /lotteries/<id>/draw [PUT]
     """
     idx = 1
 
@@ -706,4 +708,4 @@ def test_draw_all_invalid(client):
     for i, (_, en) in enumerate(timepoints):
         res = datetime.timedelta.resolution
         try_with_datetime(mod_time(en, -res))
-        try_with_datetime(mod_time(en, +ext+res))
+        t
