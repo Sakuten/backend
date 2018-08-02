@@ -438,7 +438,7 @@ def test_draw(client):
     idx = 1
 
     with client.application.app_context():
-        target_lottery = Lottery.query.filter_by(id=idx).first()
+        target_lottery = Lottery.query.get(idx)
         index = target_lottery.index
         users = User.query.all()
         for user in users:
