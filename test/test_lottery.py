@@ -542,12 +542,14 @@ def test_draw_already_done(client):
                   admin['g-recaptcha-response'])['token']
 
     with client.application.app_context():
-        target_lottery = Lottery.query.filter_by(id=idx).first()
+        target_lottery = Lottery.query.get(idx)
         target_lottery.done = True
         db.session.add(target_lottery)
+
+        index = target_lottery.index
         db.session.commit()
 
-    _, end = client.application.config['TIMEPOINTS'][int(idx)]
+    _, end = client.application.config['TIMEPOINTS'][index]
     with mock.patch('api.time_management.get_current_datetime',
                     return_value=end):
         resp = client.post(f'/lotteries/{idx}/draw',
