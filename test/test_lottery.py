@@ -433,7 +433,7 @@ def test_draw(client):
         2. draws the lottery
         3. test: status code
         4. test: DB is changed
-        target_url: /lotteries/<id>/apply [PUT]
+        target_url: /lotteries/<id>/draw [PUT]
     """
     idx = 1
 
