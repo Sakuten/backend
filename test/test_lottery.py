@@ -379,6 +379,7 @@ def test_draw(client):
 
     with client.application.app_context():
         target_lottery = Lottery.query.filter_by(id=idx).first()
+        index = target_lottery.index
         users = User.query.all()
         for user in users:
             application = Application(lottery=target_lottery, user_id=user.id)
@@ -389,7 +390,7 @@ def test_draw(client):
                       admin['secret_id'],
                       admin['g-recaptcha-response'])['token']
 
-        _, end = client.application.config['TIMEPOINTS'][int(idx)]
+        _, end = client.application.config['TIMEPOINTS'][index]
         end_margin = client.application.config['TIMEPOINT_END_MARGIN']
         end_with_margin = mod_time(end, end_margin)
         with mock.patch('api.time_management.get_current_datetime',
