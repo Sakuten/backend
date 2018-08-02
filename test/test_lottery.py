@@ -552,7 +552,9 @@ def test_draw_all(client):
     token = login(client,
                   admin['secret_id'],
                   admin['g-recaptcha-response'])['token']
-    draw_time = client.application.config['TIMEPOINTS'][time_index][1]
+    _, en = client.application.config['TIMEPOINTS'][time_index]
+    en_margin = client.application.config['TIMEPOINT_END_MARGIN']
+    draw_time = mod_time(en, en_margin)
     with mock.patch('api.time_management.get_current_datetime',
                     return_value=draw_time):
         resp = client.post('/draw_all',
