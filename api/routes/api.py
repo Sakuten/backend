@@ -87,7 +87,7 @@ def list_lottery(idx):
 
 @bp.route('/lotteries/<int:idx>', methods=['POST'])
 @spec('api/lotteries/apply.yml')
-@login_required()
+@login_required('normal')
 def apply_lottery(idx):
     """
         apply to the lottery.
@@ -114,6 +114,11 @@ def apply_lottery(idx):
             for app in previous.all()):
         msg = "You're already applying to a lottery in this period"
         return jsonify({"message": msg}), 400
+    if any(app.lottery.index == lottery.index and
+            app.lottery.id == lottery.id
+            for app in previous.all()):
+        msg = "Your application is already accepted"
+        return jsonify({"message": msg}), 400
     application = previous.filter_by(lottery_id=lottery.id).first()
     # access DB
     if not application:
@@ -130,7 +135,7 @@ def apply_lottery(idx):
 
 @bp.route('/applications')
 @spec('api/applications.yml')
-@login_required()
+@login_required('normal')
 def list_applications():
     """
         return applications list.
@@ -147,7 +152,7 @@ def list_applications():
 
 @bp.route('/applications/<int:idx>', methods=['GET'])
 @spec('api/applications/idx.yml')
-@login_required()
+@login_required('normal')
 def list_application(idx):
     """
         return infomation about specified application.
@@ -163,7 +168,7 @@ def list_application(idx):
 
 @bp.route('/applications/<int:idx>', methods=['DELETE'])
 @spec('api/applications/cancel.yml')
-@login_required()
+@login_required('normal')
 def cancel_application(idx):
     """
         cancel the application.
@@ -237,7 +242,7 @@ def draw_all_lotteries():
 
 @bp.route('/status', methods=['GET'])
 @spec('api/status.yml')
-@login_required()
+@login_required('normal')
 def get_status():
     """
         return user's id and applications
