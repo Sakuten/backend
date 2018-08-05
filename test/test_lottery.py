@@ -498,6 +498,61 @@ def test_draw(client):
             assert application.status == status
 
 
+def test_draw_group(client):
+    """attempt to draw a lottery as a group
+        1. make some applications to one lottery as a group
+        2. draws the lottery
+        3. test: status code
+        4. test: DB is changed
+        5. test: result of each member
+        target_url: /lotteries/<id>/draw [PUT]
+    """
+    idx = 1
+
+    with client.application.app_context():
+        target_lottery = Lottery.query.filter_by(id=idx).first()
+        users = User.query.all()
+        for user in users[1:]:
+            application = Application(lottery=target_lottery,
+                                      user_id=user.id)
+            print(application)
+            db.session.add(application)
+        rep_application = Application(lottery=target_lottery,
+                                      user_id=users[0].id,
+                                      is_rep=True,
+                                      group_members=[user.id
+                                                     for user in users[1:]])
+        print(rep_application)
+        db.session.add(rep_application)
+        db.session.commit()
+
+        token = login(client,
+                      admin['secret_id'],
+                      admin['g-recaptcha-response'])['token']
+
+        _, end = client.application.config['TIMEPOINTS'][int(idx)]
+        with mock.patch('api.time_management.get_current_datetime',
+                        return_value=end):
+            resp = client.post(f'/lotteries/{idx}/draw',
+                               headers={'Authorization': f'Bearer {token}'})
+
+        assert resp.status_code == 200
+
+        winners_id = [winner['id'] for winner in resp.get_json()]
+        users = User.query.all()
+        target_lottery = Lottery.query.filter_by(id=idx).first()
+        assert target_lottery.done
+        for user in users:
+            application = Application.query.filter_by(
+                lottery=target_lottery, user_id=user.id).first()
+            if application:
+                status = 'won' if user.id in winners_id else 'lose'
+            assert application.status == status
+
+        howmany_winners = len(winners_id)
+        assert howmany_winners == len(users) or howmany_winners == 0
+
+
 def test_draw_noperm(client):
     """attempt to draw without proper permission.
         target_url: /lotteries/<id>/draw [POST]
