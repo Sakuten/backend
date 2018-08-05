@@ -55,12 +55,12 @@ def draw_one_group_members(applications, winners_num):
         decide win or lose for each group
         add applications to the session
     """
-    reps = (app for app in applications if app.is_rep)
+    reps = [app for app in applications if app.is_rep]
 
     # How likely is a rep to win
     probability = min(winners_num / len(applications), 1)
 
-    winner_reps = (rep for rep in reps if random.random() < probability)
+    winner_reps = [rep for rep in reps if random.random() < probability]
 
     winner_apps = set()
 
