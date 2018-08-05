@@ -22,6 +22,7 @@ from api.schemas import (
     lottery_schema
 )
 from api.time_management import mod_time
+from itertools import chain
 
 
 # ---------- Lottery API
@@ -518,9 +519,9 @@ def test_draw_group(client):
                                       user_id=user.id)
             db.session.add(application)
         rep_application = Application(
-                lottery=target_lottery,
-                user_id=users[0].id, is_rep=True,
-                group_members=[user.id for user in users[1:group_size]])
+            lottery=target_lottery,
+            user_id=users[0].id, is_rep=True,
+            group_members=[user.id for user in users[1:group_size]])
         db.session.add(rep_application)
         db.session.commit()
 
@@ -540,11 +541,67 @@ def test_draw_group(client):
         target_lottery = Lottery.query.filter_by(id=idx).first()
         assert target_lottery.done
         rep_status = Application.query.filter_by(
-                lottery=target_lottery, user_id=users[0].id).first().status
+            lottery=target_lottery, user_id=users[0].id).first().status
         for user in users[1:group_size]:
             application = Application.query.filter_by(
                 lottery=target_lottery, user_id=user.id).first()
             assert application.status == rep_status
+
+
+def test_draw_lots_of_groups(client):
+    """attempt to draw a lottery as 2 groups of 2 members
+            while WINNERS_NUM is 3
+        1. make some applications to one lottery as groups
+        2. draws the lottery
+        3. test: status code
+        4. test: DB is changed
+        5. test: result of each member
+        6. test: number of winners
+        target_url: /lotteries/<id>/draw [POST]
+    """
+    idx = 1
+    members = (0, 1)
+    reps = (2, 3)
+
+    with client.application.app_context():
+        target_lottery = Lottery.query.filter_by(id=idx).first()
+        users = User.query.all()
+        members_app = [Application(lottery=target_lottery, user_id=users[i].id)
+                       for i in members]
+        reps_app = [Application(
+                    lottery=target_lottery,
+                    user_id=users[i].id, is_rep=True,
+                    group_members=[users[j].id])
+                    for i, j in zip(reps, members)]
+
+        for application in chain(members_app, reps_app):
+            db.session.add(application)
+        db.session.commit()
+
+        token = login(client,
+                      admin['secret_id'],
+                      admin['g-recaptcha-response'])['token']
+
+        _, end = client.application.config['TIMEPOINTS'][int(idx)]
+        with mock.patch('api.time_management.get_current_datetime',
+                        return_value=end):
+            resp = client.post(f'/lotteries/{idx}/draw',
+                               headers={'Authorization': f'Bearer {token}'})
+
+        assert resp.status_code == 200
+
+        winners = resp.get_json()
+        assert len(winners) <= client.application.config['WINNERS_NUM']
+
+        users = User.query.all()
+        target_lottery = Lottery.query.filter_by(id=idx).first()
+        assert target_lottery.done
+        for i, j in zip(reps, members):
+            rep_status = Application.query.filter_by(
+                lottery=target_lottery, user_id=users[i].id).first().status
+            member_status = Application.query.filter_by(
+                    lottery=target_lottery, user_id=users[j].id).first().status
+            assert rep_status == member_status
 
 
 def test_draw_noperm(client):
