@@ -30,6 +30,10 @@ definitions:
         $ref: '#/definitions/Lottery'
       status:
         $ref: '#/definitions/ApplicationStatus'
+      is_rep:
+        $ref: '#/definitions/RepresentativeMarker'
+      group_members:
+        $ref: '#/definitions/GroupMembers'
     type: object
   ApplicationID:
     description: Application Identifier
@@ -42,6 +46,12 @@ definitions:
       - won
       - lose
     type: string
+  RepresentativeMarker:
+    description: Marker of the reps of applying groups
+    type: boolean
+  GroupMembers:
+    description: List of group members' IDs (User#id) the rep alone has
+    type: list
   Certificate:
     properties:
       g-recaptcha-response:
