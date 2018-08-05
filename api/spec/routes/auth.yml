@@ -1,4 +1,4 @@
-Authenicate
+Authenticate
 ---
   consumes:
     - application/json
@@ -29,5 +29,5 @@ Authenicate
   tags:
     - user
   description: ''
-  operationId: Authenicate
+  operationId: Authenticate
   summary: Authenication

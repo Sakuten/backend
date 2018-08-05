@@ -18,10 +18,11 @@ responses:
     description: >-
       Malformed Authenication Header has detected / Lottery has already
       done / You’re already applying to a lottery in this period
+      / Your application is already accepted
       / We're not accepting any application in this hours.
       / this lottery is not acceptable now.
     headers:
-      WWW-Authenicate:
+      WWW-Authenticate:
         description: >-
           Authenication Error Code. For details, please refer to RFC 6750
           3. The WWW-Authenticate Response Header Field
@@ -31,7 +32,7 @@ responses:
   '401':
     description: Authorization Failed
     headers:
-      WWW-Authenicate:
+      WWW-Authenticate:
         description: >-
           Authenication Error Code. For details, please refer to RFC 6750
           3. The WWW-Authenticate Response Header Field
@@ -41,7 +42,7 @@ responses:
   '403':
     description: You have no permission to perform the action
     headers:
-      WWW-Authenicate:
+      WWW-Authenticate:
         description: >-
           Authenication Error Code. For details, please refer to RFC 6750
           3. The WWW-Authenticate Response Header Field
