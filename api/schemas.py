@@ -7,6 +7,8 @@ class ApplicationSchema(Schema):
     id = fields.Int(dump_only=True)
     status = fields.Str()
     lottery = fields.Method("get_lottery", dump_only=True)
+    is_rep = fields.Boolean()
+    group_members = fields.List(fields.Int)
 
     def get_lottery(self, application):
         lottery = Lottery.query.get(application.lottery_id)
