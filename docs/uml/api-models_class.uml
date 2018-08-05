@@ -34,6 +34,8 @@ class Application {
   + user_id
   + user
   + status
+  + is_rep
+  + group_members
   + __repr__()
 }
 
