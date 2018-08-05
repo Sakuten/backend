@@ -462,7 +462,7 @@ def test_draw(client):
         2. draws the lottery
         3. test: status code
         4. test: DB is changed
-        target_url: /lotteries/<id>/draw [PUT]
+        target_url: /lotteries/<id>/draw [POST]
     """
     idx = 1
 
@@ -505,9 +505,10 @@ def test_draw_group(client):
         3. test: status code
         4. test: DB is changed
         5. test: result of each member
-        target_url: /lotteries/<id>/draw [PUT]
+        target_url: /lotteries/<id>/draw [POST]
     """
     idx = 1
+    group_size = 3
 
     with client.application.app_context():
         target_lottery = Lottery.query.filter_by(id=idx).first()
@@ -515,14 +516,11 @@ def test_draw_group(client):
         for user in users[1:]:
             application = Application(lottery=target_lottery,
                                       user_id=user.id)
-            print(application)
             db.session.add(application)
-        rep_application = Application(lottery=target_lottery,
-                                      user_id=users[0].id,
-                                      is_rep=True,
-                                      group_members=[user.id
-                                                     for user in users[1:]])
-        print(rep_application)
+        rep_application = Application(
+                lottery=target_lottery,
+                user_id=users[0].id, is_rep=True,
+                group_members=[user.id for user in users[1:group_size]])
         db.session.add(rep_application)
         db.session.commit()
 
@@ -538,19 +536,15 @@ def test_draw_group(client):
 
         assert resp.status_code == 200
 
-        winners_id = [winner['id'] for winner in resp.get_json()]
         users = User.query.all()
         target_lottery = Lottery.query.filter_by(id=idx).first()
         assert target_lottery.done
-        for user in users:
+        rep_status = Application.query.filter_by(
+                lottery=target_lottery, user_id=users[0].id).first().status
+        for user in users[1:group_size]:
             application = Application.query.filter_by(
                 lottery=target_lottery, user_id=user.id).first()
-            if application:
-                status = 'won' if user.id in winners_id else 'lose'
-            assert application.status == status
-
-        howmany_winners = len(winners_id)
-        assert howmany_winners == len(users) or howmany_winners == 0
+            assert application.status == rep_status
 
 
 def test_draw_noperm(client):
