@@ -63,9 +63,14 @@ def draw_one_group_members(applications, winners_num):
     winner_reps = [rep for rep in reps if random.random() < probability]
 
     winner_apps = set()
+    is_full = False
 
     for rep in reps:
-        is_won = rep in winner_reps
+        # when accidentally too many reps 'won' the lottery
+        is_full = is_full or \
+            len(winner_apps) + len(rep.group_members) + 1 > winners_num
+
+        is_won = (not is_full) and rep in winner_reps
         status = "won" if is_won else "lose"
 
         rep.status = status
