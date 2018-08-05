@@ -223,7 +223,7 @@ x-components:
     Forbidden:
       description: You have no permission to perform the action
       headers:
-        WWW-Authenicate:
+        WWW-Authenticate:
           description: >-
             Authenication Error Code. For details, please refer to RFC 6750 3.
             The WWW-Authenticate Response Header Field
@@ -233,7 +233,7 @@ x-components:
     InvalidRequest:
       description: Malformed Authenication Header has detected
       headers:
-        WWW-Authenicate:
+        WWW-Authenticate:
           description: >-
             Authenication Error Code. For details, please refer to RFC 6750 3.
             The WWW-Authenticate Response Header Field
@@ -263,7 +263,7 @@ x-components:
     Unauthorized:
       description: Authorization Failed
       headers:
-        WWW-Authenicate:
+        WWW-Authenticate:
           description: >-
             Authenication Error Code. For details, please refer to RFC 6750 3.
             The WWW-Authenticate Response Header Field

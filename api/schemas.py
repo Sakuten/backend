@@ -23,11 +23,6 @@ class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     secret_id = fields.Str()
     public_id = fields.Method("get_public_id_str", dump_only=True)
-    application_history = fields.Method("get_applications", dump_only=True)
-
-    def get_applications(self, user):
-        lotteries = Application.query.filter_by(user_id=user.id).all()
-        return applications_schema.dump(lotteries)[0]
 
     def get_public_id_str(self, user):
         return encode_public_id(user.public_id)
