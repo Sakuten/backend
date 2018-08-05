@@ -84,6 +84,9 @@ class Application(db.Model):
             lottery_id (int): lottery id this application linked to
             user_id (int): user id of this application
             status (Boolen): whether chosen or not. initalized with None
+            is_rep (bool): whether rep of a group or not
+            group_members (pickled list): ids of other group members
+                                          (if is_rep is True)
     """
     __table_args__ = (UniqueConstraint(
         "lottery_id", "user_id", name="unique_idx_lottery_user"),)
@@ -99,6 +102,9 @@ class Application(db.Model):
     status = db.Column(db.String,
                        default="pending",
                        nullable=False)
+    is_rep = db.Column(db.Boolean, default=False)
+    group_members = db.Column(db.PickleType, default=[])
 
     def __repr__(self):
-        return "<Application {}{}>".format(self.lottery, self.user)
+        return "<Application {}{}{}>".format(self.lottery, self.user,
+                                             " (rep)" if self.is_rep else "")
