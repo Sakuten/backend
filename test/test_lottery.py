@@ -548,7 +548,8 @@ def test_draw_group(client):
             assert application.status == rep_status
 
 
-def test_draw_lots_of_groups(client):
+@pytest.mark.parametrize("cnt", range(20))
+def test_draw_lots_of_groups(client, cnt):
     """attempt to draw a lottery as 2 groups of 2 members
             while WINNERS_NUM is 3
         1. make some applications to one lottery as groups
