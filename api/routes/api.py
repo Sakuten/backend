@@ -103,7 +103,7 @@ def apply_lottery(idx):
         8. make members application based on 'user_id' got in *3.*
         9. return application_id as result
         Variables:
-            group_members_secret_id (list of str): list of group members' secret_id
+            group_members_secret_id (list of str): list of members' secret_id
             lottery: (Lottery): specified Lottery object
             rep_user (User): token's owner's user object
             group_members (list of User): list of group members' User object
