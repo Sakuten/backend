@@ -124,6 +124,14 @@ def apply_lottery(idx):
                         "This lottery is not acceptable now."}), 400
     user = User.query.filter_by(id=g.token_data['user_id']).first()
     previous = Application.query.filter_by(user_id=user.id)
+    group_members = []
+    for sec_id in group_members_secret_id:
+        user = User.query.filter_by(secret_id=sec_id).first()
+        if user is not None:
+            group_members.append(user)
+        else:
+            return jsonify({"message":
+                            "wrong user id is given."}), 400
     if any(app.lottery.index == lottery.index and
             app.lottery.id != lottery.id
             for app in previous.all()):
