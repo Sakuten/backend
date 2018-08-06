@@ -122,8 +122,7 @@ def apply_lottery(idx):
     if lottery.index != current_index:
         return jsonify({"message":
                         "This lottery is not acceptable now."}), 400
-    user = User.query.filter_by(id=g.token_data['user_id']).first()
-    previous = Application.query.filter_by(user_id=user.id)
+
     group_members = []
     for sec_id in group_members_secret_id:
         user = User.query.filter_by(secret_id=sec_id).first()
@@ -132,6 +131,10 @@ def apply_lottery(idx):
         else:
             return jsonify({"message":
                             "wrong user id is given."}), 400
+
+    # treat application for token's user
+    rep_user = User.query.filter_by(id=g.token_data['user_id']).first()
+    previous = Application.query.get(rep_user.id)
     if any(app.lottery.index == lottery.index and
             app.lottery.id != lottery.id
             for app in previous.all()):
