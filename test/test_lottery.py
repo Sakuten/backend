@@ -166,7 +166,7 @@ def test_apply_noperm(client):
 
 def test_apply_invalid(client):
     """attempt to apply to non-exsit lottery
-        target_url: /lotteries/<id> [PUT]
+        target_url: /lotteries/<id> [POST]
     """
     idx = invalid_lottery_id
     token = login(client, test_user['secret_id'],
