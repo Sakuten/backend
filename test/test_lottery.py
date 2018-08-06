@@ -281,6 +281,40 @@ def test_apply_time_invalid(client):
                resp.get_json()['message']
 
 
+def test_apply_group(client):
+    """test group applying works correctly
+        target_url: /lotteries/<id> [POST]
+    """
+    idx = 1
+    user = test_user
+    members = [test_user1['secret_id'],
+               test_user2['secret_id'],
+               test_user3['secret_id'],
+               test_user4['secret_id'],
+               test_user5['secret_id']
+               ]
+    token = login(client, user['secret_id'],
+                  test_user['g-recaptcha-response'])['token']
+
+    with client.application.app_context():
+        index = Lottery.query.get(idx).index
+        user_id = User.query.filter_by(secret_id=user['secret_id']).first()
+    with mock.patch('api.routes.api.get_time_index',
+                    return_value=index + 1):
+        resp = client.post(f'/lotteries/{idx}',
+                           headers={'Authorization': f'Bearer {token}'},
+                           data={'group_members': members})
+
+    with client.application.app_context():
+        application = Application.query.filter_by(lottery_id=idx,
+                                                  user_id=user_id).first
+        assert application.is_rep is True
+        assert application.group_members == members
+
+        assert resp.status_code == 200
+        assert resp.get_json() == application_schema.dump(application)[0]
+
+
 def test_get_allapplications(client):
     """test proper infomation is returned from the API to a normal user
         target_url: /applications
