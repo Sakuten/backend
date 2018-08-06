@@ -63,27 +63,31 @@ def draw_one_group_members(applications, winners_num):
     winner_reps = [rep for rep in reps if random.random() < probability]
 
     winner_apps = set()
-    is_full = False
+    loser_apps = set()
 
     for rep in reps:
-        # when accidentally too many reps 'won' the lottery
-        is_full = is_full or \
-            len(winner_apps) + len(rep.group_members) + 1 > winners_num
 
-        is_won = (not is_full) and rep in winner_reps
+        is_won = rep in winner_reps
         status = "won" if is_won else "lose"
 
         rep.status = status
         db.session.add(rep)
-        if is_won:
-            winner_apps.add(rep)
+        (winner_apps if is_won else loser_apps).add(rep)
 
         for member_id in rep.group_members:
             member = Application.query.filter_by(user_id=member_id).first()
             member.status = status
-            db.session.add(member)
-            if is_won:
-                winner_apps.add(member)
+            (winner_apps if is_won else loser_apps).add(member)
+
+    # TODO: needed?
+    # n_group_members = [len(rep_app.group_members) + 1 for rep_app in reps]
+
+    if len(winner_apps) > winners_num:
+        # TODO: when too many groups accidentally 'won'
+        pass
+    elif len(winner_apps) < winners_num - sum(winner_reps):
+        # TODO: when too few groups accidentally 'won'
+        pass
 
     return winner_apps
 
