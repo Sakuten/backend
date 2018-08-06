@@ -1,6 +1,6 @@
 from itertools import chain
 
-from flask import Blueprint, jsonify, g
+from flask import Blueprint, jsonify, g, request
 from api.models import Lottery, Classroom, User, Application, db
 from api.schemas import (
     user_schema,
@@ -107,6 +107,7 @@ def apply_lottery(idx):
             rep_user (User): token's owner's user object
             group_members (list of User): list of group members' User object
     """
+    group_members_secret_id = request.get_json()['group_members']  # temp
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 404
