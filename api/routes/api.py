@@ -94,13 +94,14 @@ def apply_lottery(idx):
         specify the lottery id in the URL.
         1. check request errors
         2. check whether all group_member's secret_id are correct
-        3. get all `user_id` of members
-        4. make application of token's owner
-        5. if length of 'group_members' list is 0, goto *8.*
-        6. set 'is_rep' to True,
+        3. check wehter nobody in members made application to the same period
+        4. get all `user_id` of members
+        5. make application of token's owner
+        6. if length of 'group_members' list is 0, goto *8.*
+        7. set 'is_rep' to True,
            add 'user_id's got in *3.* to 'group_members' list
-        7. make members application based on 'user_id' got in *3.*
-        8. return application_id as result
+        8. make members application based on 'user_id' got in *3.*
+        9. return application_id as result
         Variables:
             group_members_secret_id (list of str): list of group members' secret_id
             lottery: (Lottery): specified Lottery object
