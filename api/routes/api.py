@@ -147,16 +147,22 @@ def apply_lottery(idx):
         return jsonify({"message": msg}), 400
     application = previous.filter_by(lottery_id=lottery.id).first()
     # access DB
-    if not application:
-        newapplication = Application(
-            lottery_id=lottery.id, user_id=user.id, status="pending")
-        db.session.add(newapplication)
-        db.session.commit()
-        result = application_schema.dump(newapplication)[0]
-        return jsonify(result)
-    else:
+    if application:
         result = application_schema.dump(application)[0]
         return jsonify(result)
+    else:
+        if len(group_members) == 0:
+            newapplication = Application(
+                lottery_id=lottery.id, user_id=user.id, status="pending")
+            db.session.add(newapplication)
+            db.session.commit()
+            result = application_schema.dump(newapplication)[0]
+            return jsonify(result)
+        else:
+            newapplication = Application(
+                lottery_id=lottery.id, user_id=user.id, status="pending",
+                is_rep=True, group_members=group_members)
+            db.session.add(newapplication)
 
 
 @bp.route('/applications')
