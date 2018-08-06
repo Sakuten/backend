@@ -106,5 +106,7 @@ class Application(db.Model):
     group_members = db.Column(db.PickleType, default=[])
 
     def __repr__(self):
-        return "<Application {}{}{}>".format(self.lottery, self.user,
-                                             " (rep)" if self.is_rep else "")
+        return "<Application {}{}{} {}>".format(
+                                            self.lottery, self.user,
+                                            " (rep)" if self.is_rep else "",
+                                            self.status)
