@@ -101,6 +101,11 @@ def apply_lottery(idx):
            add 'user_id's got in *3.* to 'group_members' list
         7. make members application based on 'user_id' got in *3.*
         8. return application_id as result
+        Variables:
+            group_members_secret_id (list of str): list of group members' secret_id
+            lottery: (Lottery): specified Lottery object
+            rep_user (User): token's owner's user object
+            group_members (list of User): list of group members' User object
     """
     lottery = Lottery.query.get(idx)
     if lottery is None:
