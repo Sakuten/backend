@@ -315,6 +315,33 @@ def test_apply_group(client):
         assert resp.get_json() == application_schema.dump(application)[0]
 
 
+def test_apply_group_invalid(client):
+    """attempt to add invalid secret_id as one of members
+        target_url: /lotteries/<id> [POST]
+    """
+    idx = 1
+    user = test_user
+    members = [test_user1['secret_id'],
+               test_user2['secret_id'],
+               test_user3['secret_id'],
+               test_user4['secret_id'],
+               "wrong_secret_id"
+               ]
+    token = login(client, user['secret_id'],
+                  test_user['g-recaptcha-response'])['token']
+
+    with client.application.app_context():
+        index = Lottery.query.get(idx).index
+    with mock.patch('api.routes.api.get_time_index',
+                    return_value=index + 1):
+        resp = client.post(f'/lotteries/{idx}',
+                           headers={'Authorization': f'Bearer {token}'},
+                           data={'group_members': members})
+
+    assert resp.status_code == 401
+    assert 'wrong user id is given.' in resp.get_json()['message']
+
+
 def test_get_allapplications(client):
     """test proper infomation is returned from the API to a normal user
         target_url: /applications
