@@ -131,7 +131,7 @@ def apply_lottery(idx):
             group_members.append(user)
         else:
             return jsonify({"message":
-                            "wrong user id is given."}), 400
+                            "wrong secret id is given."}), 400
 
     # treat application for token's user
     rep_user = User.query.filter_by(id=g.token_data['user_id']).first()

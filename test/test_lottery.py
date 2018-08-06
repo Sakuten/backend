@@ -339,7 +339,7 @@ def test_apply_group_invalid(client):
                            data={'group_members': members})
 
     assert resp.status_code == 401
-    assert 'wrong user id is given.' in resp.get_json()['message']
+    assert 'wrong secret id is given.' in resp.get_json()['message']
 
 
 def test_get_allapplications(client):
