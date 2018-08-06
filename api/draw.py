@@ -36,9 +36,7 @@ def draw_one(lottery):
 
         won_group_members = draw_one_group_members(applications, winners_num)
 
-        # TODO: for unit test until TODO below is done
-        # rest_winners_num = winners_num - len(won_group_members)
-        rest_winners_num = max(winners_num - len(won_group_members), 0)
+        rest_winners_num = winners_num - len(won_group_members)
         won_normal_users = draw_one_normal_users(applications,
                                                  rest_winners_num)
 
@@ -77,8 +75,8 @@ def draw_one_group_members(applications, winners_num):
             to_apps.append(member)
 
     def unset_group_result(rep, from_apps, from_reps):
-        print(f"unset {rep} from {from_apps}")
         from_apps.remove(rep)
+        from_reps.remove(rep)
         for member_id in rep.group_members:
             member = Application.query.filter_by(user_id=member_id).first()
             from_apps.remove(member)
