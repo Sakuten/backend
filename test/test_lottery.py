@@ -294,7 +294,7 @@ def test_apply_group(client):
                test_user5['secret_id']
                ]
     token = login(client, user['secret_id'],
-                  test_user['g-recaptcha-response'])['token']
+                  user['g-recaptcha-response'])['token']
 
     with client.application.app_context():
         index = Lottery.query.get(idx).index
@@ -328,7 +328,7 @@ def test_apply_group_invalid(client):
                "wrong_secret_id"
                ]
     token = login(client, user['secret_id'],
-                  test_user['g-recaptcha-response'])['token']
+                  user['g-recaptcha-response'])['token']
 
     with client.application.app_context():
         index = Lottery.query.get(idx).index
