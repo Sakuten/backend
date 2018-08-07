@@ -33,7 +33,7 @@ definitions:
       is_rep:
         $ref: '#/definitions/RepresentativeMarker'
       group_members:
-        $ref: '#/definitions/GroupMembers'
+        $ref: '#/definitions/GroupMember'
     type: object
   ApplicationID:
     description: Application Identifier
@@ -49,9 +49,6 @@ definitions:
   RepresentativeMarker:
     description: Marker of the reps of applying groups
     type: boolean
-  GroupMembers:
-    description: List of group members' IDs (User#id) the rep alone has
-    type: list
   Certificate:
     properties:
       g-recaptcha-response:
@@ -164,6 +161,25 @@ definitions:
         $ref: '#/definitions/SecretID'
       public_id:
         $ref: '#/definitions/PublicID'
+    type: object
+  GroupMember:
+    properties:
+      id:
+        $ref: '#/definitions/GroupMemberID'
+      own_application:
+        $ref: '#/definitions/OwnApplication'
+      rep_application:
+        $ref: '#/definitions/RepApplication'
+    type: object
+  GroupMemberID:
+    description: Group Member ID
+    example: 0
+    type: integer
+  OwnApplication:
+    description: a group member's personal application
+    type: object
+  RepApplication:
+    description: application of the rep of the group
     type: object
 securityDefinitions:
   admin_auth:

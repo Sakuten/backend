@@ -39,4 +39,15 @@ class Application {
   + __repr__()
 }
 
+class GroupMember {
+  + __tablename__
+  + id
+  + user_id
+  + user
+  + own_application
+  + rep_application_id
+  + rep_application
+  + __repr__()
+}
+
 @enduml
