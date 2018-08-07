@@ -342,6 +342,43 @@ def test_apply_group_invalid(client):
     assert 'wrong secret id is given.' in resp.get_json()['message']
 
 
+def test_apply_group_same_period(client):
+    """attempt to make application in the same period as member of group
+        target_url: /lotteries/<id> [POST]
+
+        1. make an application as member
+        2. attempt to apply
+    """
+    idx = 1
+    user = test_user
+    members = [test_user1['secret_id'],
+               test_user2['secret_id'],
+               test_user3['secret_id'],
+               test_user4['secret_id'],
+               test_user5['secret_id']
+               ]
+    token = login(client, user['secret_id'],
+                  user['g-recaptcha-response'])['token']
+
+    with client.application.app_context():
+        index = Lottery.query.get(idx).index
+        lottery = Lottery.query.filter(index == index, id != idx).first()
+        violation_user = User.query.filter_by(secret_id=members[0]).first()
+        application = Application(lottery=lottery, user_id=violation_user.id)
+        db.session.add(application)
+        db.session.commit()
+
+    with mock.patch('api.routes.api.get_time_index',
+                    return_value=index):
+        resp = client.post(f'/lotteries/{idx}',
+                           headers={'Authorization': f'Bearer {token}'},
+                           data={'group_members': members})
+
+        assert resp.status_code == 400
+        assert 'You’re already applying to a lottery in this period' in \
+            resp.get_json()['message']
+
+
 def test_get_allapplications(client):
     """test proper infomation is returned from the API to a normal user
         target_url: /applications
