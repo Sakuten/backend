@@ -126,8 +126,8 @@ def apply_lottery(idx):
                         "This lottery is not acceptable now."}), 400
 
     # 2. 3. 4.
+    group_members = []
     if len(group_members_secret_id) != 0:
-        group_members = []
         for sec_id in group_members_secret_id:
             user = User.query.filter_by(secret_id=sec_id).first()
             if user is not None:
