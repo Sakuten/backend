@@ -171,7 +171,7 @@ def apply_lottery(idx):
     else:
         if len(group_members) == 0:
             newapplication = Application(
-                lottery_id=lottery.id, user_id=user.id, status="pending")
+                lottery_id=lottery.id, user_id=rep_user.id, status="pending")
             db.session.add(newapplication)
             db.session.commit()
             result = application_schema.dump(newapplication)[0]
