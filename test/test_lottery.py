@@ -513,7 +513,8 @@ def test_draw_group(client):
     group_size = 3
 
     with client.application.app_context():
-        target_lottery = Lottery.query.filter_by(id=idx).first()
+        target_lottery = Lottery.query.get(idx)
+        index = target_lottery.index
         users = User.query.all()
         for user in users[1:]:
             application = Application(lottery=target_lottery,
@@ -530,7 +531,7 @@ def test_draw_group(client):
                       admin['secret_id'],
                       admin['g-recaptcha-response'])['token']
 
-        _, end = client.application.config['TIMEPOINTS'][int(idx)]
+        _, end = client.application.config['TIMEPOINTS'][index]
         with mock.patch('api.time_management.get_current_datetime',
                         return_value=end):
             resp = client.post(f'/lotteries/{idx}/draw',
@@ -567,6 +568,7 @@ def test_draw_lots_of_groups(client, cnt):
 
     with client.application.app_context():
         target_lottery = Lottery.query.filter_by(id=idx).first()
+        index = target_lottery.index
         users = User.query.all()
         members_app = [Application(lottery=target_lottery, user_id=users[i].id)
                        for i in members]
@@ -584,7 +586,7 @@ def test_draw_lots_of_groups(client, cnt):
                       admin['secret_id'],
                       admin['g-recaptcha-response'])['token']
 
-        _, end = client.application.config['TIMEPOINTS'][int(idx)]
+        _, end = client.application.config['TIMEPOINTS'][index]
         with mock.patch('api.time_management.get_current_datetime',
                         return_value=end):
             resp = client.post(f'/lotteries/{idx}/draw',
@@ -625,6 +627,7 @@ def test_draw_lots_of_groups_and_normal(client, cnt):
 
     with client.application.app_context():
         target_lottery = Lottery.query.filter_by(id=idx).first()
+        index = target_lottery.index
         users = User.query.all()
         members_app = [Application(lottery=target_lottery, user_id=users[i].id)
                        for i in chain(members, normal)]
@@ -642,7 +645,7 @@ def test_draw_lots_of_groups_and_normal(client, cnt):
                       admin['secret_id'],
                       admin['g-recaptcha-response'])['token']
 
-        _, end = client.application.config['TIMEPOINTS'][int(idx)]
+        _, end = client.application.config['TIMEPOINTS'][index]
         with mock.patch('api.time_management.get_current_datetime',
                         return_value=end):
             resp = client.post(f'/lotteries/{idx}/draw',
