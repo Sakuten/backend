@@ -137,7 +137,7 @@ def apply_lottery(idx):
                                 "wrong secret id is given."}), 400
 
         for user in group_members:
-            previous = Application.query.get(user.id)
+            previous = Application.query.filter_by(user_id=user.id)
             if any(app.lottery.index == lottery.index and
                    app.lottery.id != lottery.id
                    for app in previous.all()):
@@ -151,7 +151,7 @@ def apply_lottery(idx):
 
     # 5.
     rep_user = User.query.filter_by(id=g.token_data['user_id']).first()
-    previous = Application.query.get(rep_user.id)
+    previous = Application.query.filter_by(user_id=rep_user.id)
     if any(app.lottery.index == lottery.index and
             app.lottery.id != lottery.id
             for app in previous.all()):
