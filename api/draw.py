@@ -55,7 +55,10 @@ def draw_one_group_members(applications, winners_num):
         decide win or lose for each group
         add applications to the session
     """
-    winner_apps = loser_apps = winner_reps = loser_reps = []
+    winner_apps = []
+    loser_apps = []
+    winner_reps = []
+    loser_reps = []
 
     def set_group_result(rep, is_won):
         status = "won" if is_won else "lose"
