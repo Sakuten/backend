@@ -109,7 +109,7 @@ def apply_lottery(idx):
             group_members (list of User): list of group members' User object
     """
     # 1.
-    group_members_secret_id = request.get_json()['group_members']  # temp
+    group_members_secret_id = request.get_json()['group_members']
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 404
