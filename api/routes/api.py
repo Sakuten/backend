@@ -177,15 +177,21 @@ def apply_lottery(idx):
             result = application_schema.dump(newapplication)[0]
             return jsonify(result)
         else:
-            newapplication = Application(
+            rep_application = Application(
                 lottery_id=lottery.id, user_id=user.id, status="pending",
                 is_rep=True, group_members=group_members)
-            db.session.add(newapplication)
+            db.session.add(rep_application)
+
     # 8.
     for member in group_members:
         newapplication = Application(
                 lottery_id=lottery.id, user_id=member.id, status="pending")
         db.session.add(newapplication)
+
+    # 9.
+    db.session.commit()
+    result = application_schema.dump(rep_application)[0]
+    return jsonify(result)
 
 
 @bp.route('/applications')
