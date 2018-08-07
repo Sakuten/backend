@@ -383,7 +383,7 @@ def test_apply_group_same_period(client):
                            data={'group_members': members})
 
         assert resp.status_code == 400
-        assert 'You’re already applying to a lottery in this period' in \
+        assert 'someone is already applying to a lottery in this period' in \
             resp.get_json()['message']
 
 
