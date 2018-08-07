@@ -20,10 +20,10 @@ class BaseConfig(object):
     END_DATETIME = datetime(2018, 9, 17, 16, 00, 0, tzinfo=TIMEZONE)
     DRAWING_TIME_EXTENSION = timedelta(minutes=10)
     TIMEPOINTS = [
-        (time(9,  20), time(9,  50)),
-        (time(10, 45), time(11, 15)),
-        (time(12, 10), time(12, 40)),
-        (time(13, 35), time(14,  5)),
+        (time(8,  50), time(9,  20)),
+        (time(10, 15), time(10, 45)),
+        (time(12, 25), time(12, 55)),
+        (time(13, 50), time(14, 20)),
     ]
 
 
