@@ -125,7 +125,7 @@ def test_apply_normal(client):
                     return_value=lottery.index):
         resp = client.post(f'/lotteries/{idx}',
                            headers={'Authorization': f'Bearer {token}'},
-                           data={'group_members': []})
+                           json={'group_members': []})
         assert resp.status_code == 200
 
     with client.application.app_context():
@@ -150,7 +150,7 @@ def test_apply_admin(client):
                   admin['g-recaptcha-response'])['token']
     resp = client.post(f'/lotteries/{idx}',
                        headers={'Authorization': f'Bearer {token}'},
-                       data={'group_members': []})
+                       json={'group_members': []})
 
     assert resp.status_code == 403
 
@@ -165,7 +165,7 @@ def test_apply_noperm(client):
                   admin['g-recaptcha-response'])['token']
     resp = client.post(f'/lotteries/{idx}',
                        headers={'Authorization': f'Bearer {token}'},
-                       data={'group_members': []})
+                       json={'group_members': []})
 
     assert resp.status_code == 403
     assert 'no permission' in resp.get_json().keys()  # not completed yet
@@ -180,7 +180,7 @@ def test_apply_invalid(client):
                   test_user['g-recaptcha-response'])['token']
     resp = client.post(f'/lotteries/{idx}',
                        headers={'Authorization': f'Bearer {token}'},
-                       data={'group_members': []})
+                       json={'group_members': []})
 
     assert resp.status_code == 404
     assert 'Lottery could not be found.' in resp.get_json()['message']
@@ -203,7 +203,7 @@ def test_apply_already_done(client):
 
     resp = client.post(f'/lotteries/{idx}',
                        headers={'Authorization': f'Bearer {token}'},
-                       data={'group_members': []})
+                       json={'group_members': []})
 
     assert resp.status_code == 400
     assert 'already done' in resp.get_json()['message']
@@ -232,7 +232,7 @@ def test_apply_same_period(client):
                     return_value=index):
         resp = client.post(f'/lotteries/{idx}',
                            headers={'Authorization': f'Bearer {token}'},
-                           data={'group_members': []})
+                           json={'group_members': []})
 
     message = resp.get_json()['message']
 
@@ -261,7 +261,7 @@ def test_apply_same_period_same_lottery(client):
                     return_value=index):
         resp = client.post(f'/lotteries/{idx}',
                            headers={'Authorization': f'Bearer {token}'},
-                           data={'group_members': []})
+                           json={'group_members': []})
 
     message = resp.get_json()['message']
 
@@ -283,7 +283,7 @@ def test_apply_time_invalid(client):
                     return_value=index + 1):
         resp = client.post(f'/lotteries/{idx}',
                            headers={'Authorization': f'Bearer {token}'},
-                           data={'group_members': []})
+                           json={'group_members': []})
         assert resp.status_code == 400
         assert "This lottery is not acceptable now." in \
                resp.get_json()['message']
@@ -344,7 +344,7 @@ def test_apply_group_invalid(client):
                     return_value=index):
         resp = client.post(f'/lotteries/{idx}',
                            headers={'Authorization': f'Bearer {token}'},
-                           data={'group_members': members})
+                           json={'group_members': members})
 
     assert resp.status_code == 401
     assert 'wrong secret id is given.' in resp.get_json()['message']
@@ -380,7 +380,7 @@ def test_apply_group_same_period(client):
                     return_value=index):
         resp = client.post(f'/lotteries/{idx}',
                            headers={'Authorization': f'Bearer {token}'},
-                           data={'group_members': members})
+                           json={'group_members': members})
 
         assert resp.status_code == 400
         assert 'someone is already applying to a lottery in this period' in \
