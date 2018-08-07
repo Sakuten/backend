@@ -62,8 +62,8 @@ def draw_one_group_members(applications, winners_num):
 
     def set_group_result(rep, is_won):
         status = "won" if is_won else "lose"
-        to_apps, to_reps = \
-            (winner_apps, winner_reps) if is_won else (loser_apps, loser_reps)
+        to_apps = winner_apps if is_won else loser_apps
+        to_reps = winner_reps if is_won else loser_reps
 
         rep.status = status
         to_apps.append(rep)
