@@ -1,6 +1,6 @@
 import random
 from flask import current_app
-from api.models import User, Lottery, Application, db
+from api.models import Lottery, Application, db
 from itertools import chain
 
 
@@ -40,9 +40,8 @@ def draw_one(lottery):
         won_normal_users = draw_one_normal_users(applications,
                                                  rest_winners_num)
 
-        winners = [User.query.get(winner_app.user_id)
-                   for winner_app in chain(won_group_members,
-                                           won_normal_users)]
+        winners = [winner_app.user for winner_app in chain(won_group_members,
+                                                           won_normal_users)]
 
     db.session.add(lottery)
     db.session.commit()
@@ -69,17 +68,15 @@ def draw_one_group_members(applications, winners_num):
         to_apps.append(rep)
         to_reps.append(rep)
 
-        for member_id in rep.group_members:
-            member = Application.query.filter_by(user_id=member_id).first()
-            member.status = status
-            to_apps.append(member)
+        for member in rep.group_members:
+            member.own_application.status = status
+            to_apps.append(member.own_application)
 
     def unset_group_result(rep, from_apps, from_reps):
         from_apps.remove(rep)
         from_reps.remove(rep)
-        for member_id in rep.group_members:
-            member = Application.query.filter_by(user_id=member_id).first()
-            from_apps.remove(member)
+        for member in rep.group_members:
+            from_apps.remove(member.own_application)
 
     reps = [app for app in applications if app.is_rep]
 

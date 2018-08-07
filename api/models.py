@@ -103,10 +103,38 @@ class Application(db.Model):
                        default="pending",
                        nullable=False)
     is_rep = db.Column(db.Boolean, default=False)
-    group_members = db.Column(db.PickleType, default=[])
 
     def __repr__(self):
         return "<Application {}{}{} {}>".format(
                                             self.lottery, self.user,
                                             " (rep)" if self.is_rep else "",
                                             self.status)
+
+
+class GroupMember(db.Model):
+    """group-member model for DB
+        DB contents:
+            id (int): group member unique id
+            user_id (int): user id of this member
+            rep_application_id (int): rep application id
+    """
+    __tablename__ = 'group_members'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(
+            db.Integer,
+            db.ForeignKey('user.id', ondelete='CASCADE'),
+            db.ForeignKey('application.user_id', ondelete='CASCADE'))
+    user = db.relationship('User')
+    own_application = db.relationship('Application',
+                                      foreign_keys=[user_id],
+                                      viewonly=True)
+
+    rep_application_id = db.Column(db.Integer, db.ForeignKey(
+        'application.id', ondelete='CASCADE'))
+    rep_application = db.relationship('Application',
+                                      foreign_keys=[rep_application_id],
+                                      backref='group_members')
+
+    def __repr__(self):
+        return f"<GroupMemver {self.user}>"

@@ -12,7 +12,7 @@ from utils import (
     make_application
 )
 
-from api.models import Lottery, Classroom, User, Application, db
+from api.models import Lottery, Classroom, User, Application, GroupMember, db
 from api.schemas import (
     classrooms_schema,
     classroom_schema,
@@ -523,7 +523,9 @@ def test_draw_group(client):
         rep_application = Application(
             lottery=target_lottery,
             user_id=users[0].id, is_rep=True,
-            group_members=[user.id for user in users[1:group_size]])
+            group_members=[GroupMember(user_id=user.id)
+                           for user in users[1:group_size]])
+
         db.session.add(rep_application)
         db.session.commit()
 
@@ -575,7 +577,7 @@ def test_draw_lots_of_groups(client, cnt):
         reps_app = [Application(
                     lottery=target_lottery,
                     user_id=users[i].id, is_rep=True,
-                    group_members=[users[j].id])
+                    group_members=[GroupMember(user_id=users[j].id)])
                     for i, j in zip(reps, members)]
 
         for application in chain(members_app, reps_app):
@@ -634,7 +636,7 @@ def test_draw_lots_of_groups_and_normal(client, cnt):
         reps_app = [Application(
                     lottery=target_lottery,
                     user_id=users[i].id, is_rep=True,
-                    group_members=[users[j].id])
+                    group_members=[GroupMember(user_id=users[j].id)])
                     for i, j in zip(reps, members)]
 
         for application in chain(members_app, reps_app):
