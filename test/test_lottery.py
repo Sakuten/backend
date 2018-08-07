@@ -314,7 +314,7 @@ def test_apply_group(client):
                                json={'group_members': members})
 
         application = Application.query.filter_by(lottery_id=idx,
-                                                  user_id=user_id).first
+                                                  user_id=user_id).first()
         assert application.is_rep is True
         assert application.group_members == members
 
