@@ -203,7 +203,7 @@ def draw_lottery(idx):
     except (OutOfHoursError, OutOfAcceptingHoursError):
         return not_acceptable_resp, 400
 
-    if index != idx:
+    if index != lottery.index:
         return not_acceptable_resp, 400
 
     try:
