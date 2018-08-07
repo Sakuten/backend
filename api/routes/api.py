@@ -181,6 +181,11 @@ def apply_lottery(idx):
                 lottery_id=lottery.id, user_id=user.id, status="pending",
                 is_rep=True, group_members=group_members)
             db.session.add(newapplication)
+    # 8.
+    for member in group_members:
+        newapplication = Application(
+                lottery_id=lottery.id, user_id=member.id, status="pending")
+        db.session.add(newapplication)
 
 
 @bp.route('/applications')
