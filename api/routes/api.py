@@ -114,6 +114,11 @@ def apply_lottery(idx):
             for app in previous.all()):
         msg = "You're already applying to a lottery in this period"
         return jsonify({"message": msg}), 400
+    if any(app.lottery.index == lottery.index and
+            app.lottery.id == lottery.id
+            for app in previous.all()):
+        msg = "Your application is already accepted"
+        return jsonify({"message": msg}), 400
     application = previous.filter_by(lottery_id=lottery.id).first()
     # access DB
     if not application:
