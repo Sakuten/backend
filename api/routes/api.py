@@ -108,6 +108,7 @@ def apply_lottery(idx):
             rep_user (User): token's owner's user object
             group_members (list of User): list of group members' User object
     """
+    # 1.
     group_members_secret_id = request.get_json()['group_members']  # temp
     lottery = Lottery.query.get(idx)
     if lottery is None:
@@ -124,6 +125,7 @@ def apply_lottery(idx):
         return jsonify({"message":
                         "This lottery is not acceptable now."}), 400
 
+    # 2. 3. 4.
     if len(group_members_secret_id) != 0:
         group_members = []
         for sec_id in group_members_secret_id:
@@ -147,7 +149,7 @@ def apply_lottery(idx):
                 msg = "someone is already applying to this lottery"
                 return jsonify({"message": msg}), 400
 
-    # treat application for token's user
+    # 5.
     rep_user = User.query.filter_by(id=g.token_data['user_id']).first()
     previous = Application.query.get(rep_user.id)
     if any(app.lottery.index == lottery.index and
@@ -162,6 +164,7 @@ def apply_lottery(idx):
         return jsonify({"message": msg}), 400
     application = previous.filter_by(lottery_id=lottery.id).first()
     # access DB
+    # 6. 7.
     if application:
         result = application_schema.dump(application)[0]
         return jsonify(result)
