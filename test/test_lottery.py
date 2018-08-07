@@ -124,7 +124,8 @@ def test_apply_normal(client):
     with mock.patch('api.routes.api.get_time_index',
                     return_value=lottery.index):
         resp = client.post(f'/lotteries/{idx}',
-                           headers={'Authorization': f'Bearer {token}'})
+                           headers={'Authorization': f'Bearer {token}'},
+                           data={'group_members': []})
         assert resp.status_code == 200
 
     with client.application.app_context():
@@ -148,7 +149,8 @@ def test_apply_admin(client):
     token = login(client, admin['secret_id'],
                   admin['g-recaptcha-response'])['token']
     resp = client.post(f'/lotteries/{idx}',
-                       headers={'Authorization': f'Bearer {token}'})
+                       headers={'Authorization': f'Bearer {token}'},
+                       data={'group_members': []})
 
     assert resp.status_code == 403
 
@@ -162,7 +164,8 @@ def test_apply_noperm(client):
     token = login(client, admin['secret_id'],
                   admin['g-recaptcha-response'])['token']
     resp = client.post(f'/lotteries/{idx}',
-                       headers={'Authorization': f'Bearer {token}'})
+                       headers={'Authorization': f'Bearer {token}'},
+                       data={'group_members': []})
 
     assert resp.status_code == 403
     assert 'no permission' in resp.get_json().keys()  # not completed yet
@@ -176,7 +179,8 @@ def test_apply_invalid(client):
     token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
     resp = client.post(f'/lotteries/{idx}',
-                       headers={'Authorization': f'Bearer {token}'})
+                       headers={'Authorization': f'Bearer {token}'},
+                       data={'group_members': []})
 
     assert resp.status_code == 404
     assert 'Lottery could not be found.' in resp.get_json()['message']
@@ -198,7 +202,8 @@ def test_apply_already_done(client):
         db.session.commit()
 
     resp = client.post(f'/lotteries/{idx}',
-                       headers={'Authorization': f'Bearer {token}'})
+                       headers={'Authorization': f'Bearer {token}'},
+                       data={'group_members': []})
 
     assert resp.status_code == 400
     assert 'already done' in resp.get_json()['message']
@@ -226,7 +231,8 @@ def test_apply_same_period(client):
     with mock.patch('api.routes.api.get_time_index',
                     return_value=index):
         resp = client.post(f'/lotteries/{idx}',
-                           headers={'Authorization': f'Bearer {token}'})
+                           headers={'Authorization': f'Bearer {token}'},
+                           data={'group_members': []})
 
     message = resp.get_json()['message']
 
@@ -254,7 +260,8 @@ def test_apply_same_period_same_lottery(client):
     with mock.patch('api.routes.api.get_time_index',
                     return_value=index):
         resp = client.post(f'/lotteries/{idx}',
-                           headers={'Authorization': f'Bearer {token}'})
+                           headers={'Authorization': f'Bearer {token}'},
+                           data={'group_members': []})
 
     message = resp.get_json()['message']
 
@@ -275,7 +282,8 @@ def test_apply_time_invalid(client):
     with mock.patch('api.routes.api.get_time_index',
                     return_value=index + 1):
         resp = client.post(f'/lotteries/{idx}',
-                           headers={'Authorization': f'Bearer {token}'})
+                           headers={'Authorization': f'Bearer {token}'},
+                           data={'group_members': []})
         assert resp.status_code == 400
         assert "This lottery is not acceptable now." in \
                resp.get_json()['message']
