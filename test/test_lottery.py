@@ -308,7 +308,7 @@ def test_apply_group(client):
         index = Lottery.query.get(idx).index
         user_id = User.query.filter_by(secret_id=user['secret_id']).first()
         with mock.patch('api.routes.api.get_time_index',
-                        return_value=index + 1):
+                        return_value=index):
             resp = client.post(f'/lotteries/{idx}',
                                headers={'Authorization': f'Bearer {token}'},
                                json={'group_members': members})
