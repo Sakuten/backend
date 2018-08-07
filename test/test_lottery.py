@@ -306,7 +306,7 @@ def test_apply_group(client):
 
     with client.application.app_context():
         index = Lottery.query.get(idx).index
-        user_id = User.query.filter_by(secret_id=user['secret_id']).first()
+        user_id = User.query.filter_by(secret_id=user['secret_id']).first().id
         with mock.patch('api.routes.api.get_time_index',
                         return_value=index):
             resp = client.post(f'/lotteries/{idx}',
