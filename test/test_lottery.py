@@ -333,7 +333,7 @@ def test_apply_group_invalid(client):
     with client.application.app_context():
         index = Lottery.query.get(idx).index
     with mock.patch('api.routes.api.get_time_index',
-                    return_value=index + 1):
+                    return_value=index):
         resp = client.post(f'/lotteries/{idx}',
                            headers={'Authorization': f'Bearer {token}'},
                            data={'group_members': members})
