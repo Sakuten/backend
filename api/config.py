@@ -57,9 +57,9 @@ class PreviewDeploymentConfig(BaseConfig):
     ENV = 'development'
     START_DATETIME = datetime(2018, 8, 2, 0, 0, 0, tzinfo=BaseConfig.TIMEZONE)
     END_DATETIME = datetime(2018, 8, 2, 23, 59, 59, tzinfo=BaseConfig.TIMEZONE)
-    DRAWING_TIME_EXTENSION = timedelta(minutes=1)
+    DRAWING_TIME_EXTENSION = timedelta(minutes=10)
     TIMEPOINTS = [
-        (time(14,  0), time(14,  5)),
+        (time(14,  30), time(14,  35)),
     ]
 
 
