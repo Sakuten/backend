@@ -1,6 +1,7 @@
 from unittest import mock
 import pytest
 import datetime
+import pickle
 
 from utils import (
     login,
@@ -316,7 +317,7 @@ def test_apply_group(client):
         application = Application.query.filter_by(lottery_id=idx,
                                                   user_id=user_id).first()
         assert application.is_rep is True
-        assert application.group_members == members
+        assert pickle.loads(application.group_members) == members
 
         assert resp.status_code == 200
         assert resp.get_json() == application_schema.dump(application)[0]
