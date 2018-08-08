@@ -1,4 +1,5 @@
 from itertools import chain
+import pickle
 
 from flask import Blueprint, jsonify, g, request
 from api.models import Lottery, Classroom, User, Application, db
@@ -179,7 +180,8 @@ def apply_lottery(idx):
         else:
             rep_application = Application(
                 lottery_id=lottery.id, user_id=user.id, status="pending",
-                is_rep=True, group_members=group_members)
+                is_rep=True,
+                group_members=pickle.dumps(group_members, protocol=3))
             db.session.add(rep_application)
 
     # 8.
