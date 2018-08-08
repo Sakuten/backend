@@ -178,10 +178,11 @@ def apply_lottery(idx):
             result = application_schema.dump(newapplication)[0]
             return jsonify(result)
         else:
+            group_members_id = [member.id for member in group_members]
             rep_application = Application(
                 lottery_id=lottery.id, user_id=rep_user.id, status="pending",
                 is_rep=True,
-                group_members=pickle.dumps(group_members, protocol=3))
+                group_members=pickle.dumps(group_members_id))
             db.session.add(rep_application)
 
     # 8.
