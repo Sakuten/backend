@@ -302,6 +302,9 @@ def test_apply_group(client):
                test_user4['secret_id'],
                test_user5['secret_id']
                ]
+    with client.application.app_context():
+        members_id = [User.query.filter_by(secret_id=member_secret).first().id
+                      for member_secret in members]
     token = login(client, user['secret_id'],
                   user['g-recaptcha-response'])['token']
 
@@ -317,7 +320,7 @@ def test_apply_group(client):
         application = Application.query.filter_by(lottery_id=idx,
                                                   user_id=user_id).first()
         assert application.is_rep is True
-        assert pickle.loads(application.group_members) == members
+        assert pickle.loads(application.group_members) == members_id
 
         assert resp.status_code == 200
         assert resp.get_json() == application_schema.dump(application)[0]
