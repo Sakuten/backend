@@ -134,7 +134,7 @@ def apply_lottery(idx):
                 group_members.append(user)
             else:
                 return jsonify({"message":
-                                "wrong secret id is given."}), 400
+                                "wrong secret id is given."}), 401
 
         for user in group_members:
             previous = Application.query.filter_by(user_id=user.id)
