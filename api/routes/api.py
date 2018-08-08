@@ -179,7 +179,7 @@ def apply_lottery(idx):
             return jsonify(result)
         else:
             rep_application = Application(
-                lottery_id=lottery.id, user_id=user.id, status="pending",
+                lottery_id=lottery.id, user_id=rep_user.id, status="pending",
                 is_rep=True,
                 group_members=pickle.dumps(group_members, protocol=3))
             db.session.add(rep_application)
