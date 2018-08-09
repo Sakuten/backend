@@ -188,7 +188,7 @@ def apply_lottery(idx):
     # 8.
     for member in group_members:
         newapplication = Application(
-                lottery_id=lottery.id, user_id=member.id, status="pending")
+            lottery_id=lottery.id, user_id=member.id, status="pending")
         db.session.add(newapplication)
 
     # 9.
