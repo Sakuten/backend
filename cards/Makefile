@@ -14,7 +14,7 @@ ${OUT_PDF_FILE}: ${OUT_HTML_FILE}
 
 ${OUT_HTML_FILE}: ${TEMPLATE_FILE} ${ID_LIST_FILE}
 	mkdir -p ${DIST_DIR} ${QR_DIR}
-	pipenv run python mkhtml.py -i ${ID_LIST_FILE} -o ${OUT_HTML_FILE} -t ${TEMPLATE_FILE} -b ${QR_BASE_URL}
+	pipenv run python mkhtml.py --horizontal 2 -i ${ID_LIST_FILE} -o ${OUT_HTML_FILE} -t ${TEMPLATE_FILE} -b ${QR_BASE_URL}
 
 ${ID_LIST_FILE}:
 	pipenv run python mkid.py -n ${ID_NUM} -o ${ID_LIST_FILE}
