@@ -373,7 +373,8 @@ def test_apply_group_same_period(client):
 
     with client.application.app_context():
         index = Lottery.query.get(idx).index
-        lottery = Lottery.query.filter(index == index, id != idx).first()
+        lottery = Lottery.query.filter(Lottery.index == index,
+                                       Lottery.id != idx).first()
         violation_user = User.query.filter_by(secret_id=members[0]).first()
         application = Application(lottery=lottery, user_id=violation_user.id)
         db.session.add(application)
