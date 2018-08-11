@@ -9,6 +9,17 @@ parameters:
     required: true
     type: integer
     x-example: 0
+  - description: Group Member List
+    in: body
+    name: body
+    required: true
+    schema:
+      type: object
+      required:
+        - group_members
+      properties:
+        group_members:
+          $ref: '#/definitions/GroupMemberList'
 responses:
   '200':
     description: Application Information

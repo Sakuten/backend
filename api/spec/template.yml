@@ -22,6 +22,10 @@ schemes:
   - https
   - http
 definitions:
+  GroupMemberList:
+    type: array
+    items:
+      $ref: '#/definitions/SecretID'
   Application:
     properties:
       id:
