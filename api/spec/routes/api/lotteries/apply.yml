@@ -32,6 +32,8 @@ responses:
       / Your application is already accepted
       / We're not accepting any application in this hours.
       / this lottery is not acceptable now.
+      / someone in the group is already applying to a lottery in this period
+      / someone in the group is already applying to this lottery
     headers:
       WWW-Authenticate:
         description: >-
@@ -41,7 +43,7 @@ responses:
     schema:
       $ref: '#/definitions/ErrorMessage'
   '401':
-    description: Authorization Failed
+    description: Authorization Failed / Invalid group member secret id
     headers:
       WWW-Authenticate:
         description: >-
