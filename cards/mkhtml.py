@@ -21,6 +21,9 @@ parser.add_argument("--horizontal", type=int, default=3,
                     help="How many cards listed in horizontal line")
 parser.add_argument("-o", "--output", type=str,
                     required=True, help="Output html file directory")
+parser.add_argument("-q", "--qr-output", type=str,
+                    default="./dist/qr",
+                    help="QR code files output directory")
 parser.add_argument("-m", "--max-num", type=int, default=1000,
                     help="How many cards to print in one html files")
 args = parser.parse_args()
@@ -34,7 +37,7 @@ with open(args.input, 'r') as f:
 
 cards = []
 for id_pair in id_pairs:
-    qr = gen_qr_code(args.base_url, id_pair['secret_id'])
+    qr = gen_qr_code(args.qr_output, args.base_url, id_pair['secret_id'])
 
     newcard = card(qr, id_pair['public_id'])
     cards.append(newcard)

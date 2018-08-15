@@ -22,7 +22,7 @@ ${OUT_PDF_DIR}/%.pdf: ${OUT_HTML_DIR}/%.html
 
 ${OUT_HTML_DIR}: ${TEMPLATE_FILE} ${ID_LIST_FILE}
 	mkdir -p ${DIST_DIR} ${QR_DIR} ${OUT_HTML_DIR}
-	pipenv run python mkhtml.py --horizontal 2 -i ${ID_LIST_FILE} -o ${OUT_HTML_DIR} -t ${TEMPLATE_FILE} -b ${QR_BASE_URL} -m ${MAX_QR_NUM}
+	pipenv run python mkhtml.py --horizontal 2 -q ${QR_DIR} -i ${ID_LIST_FILE} -o ${OUT_HTML_DIR} -t ${TEMPLATE_FILE} -b ${QR_BASE_URL} -m ${MAX_QR_NUM}
 
 ${ID_LIST_FILE}:
 	pipenv run python mkid.py -n ${ID_NUM} -o ${ID_LIST_FILE}
