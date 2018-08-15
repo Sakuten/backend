@@ -18,7 +18,10 @@ users_schema = UserSchema(many=True)
 
 class GroupMemberSchema(Schema):
     id = fields.Int(dump_only=True)
-    user = fields.Nested(UserSchema)
+    public_id = fields.Method("get_public_id_str", dump_only=True)
+
+    def get_public_id_str(self, group_member):
+        return encode_public_id(group_member.user.public_id)
 
 
 group_member_schema = GroupMemberSchema()
