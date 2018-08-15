@@ -8,7 +8,7 @@ OUT_HTML_DIR:=${DIST_DIR}
 OUT_PDF_DIR:=${DIST_DIR}/pdf
 QR_BASE_URL:=https://sakuten.jp/lottery/login?sid=
 
-ID_LIST_FILE:=ids.json
+ID_LIST_FILE:=${DIST_DIR}/ids.json
 
 .PHONY: pdf
 pdf: html $(patsubst ${OUT_HTML_DIR}/%.html,${OUT_PDF_DIR}/%.pdf,$(wildcard ${OUT_HTML_DIR}/*.html))
