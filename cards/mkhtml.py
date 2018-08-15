@@ -50,7 +50,13 @@ def print_cards(cards, path):
         f.write(html)
 
 def chunks(l, n):
-    """Yield successive n-sized chunks from l."""
+    """
+    This function is taken from Stack Overflow: https://stackoverflow.com/questions/312443
+    Asked by jespern (https://stackoverflow.com/users/112415
+    Answered by Ned Batchelder (https://stackoverflow.com/users/14343)
+
+    Yield successive n-sized chunks from l.
+    """
     for i in range(0, len(l), n):
         yield l[i:i + n]
 
