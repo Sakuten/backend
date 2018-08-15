@@ -7,6 +7,7 @@ import json
 
 from mkqr import gen_qr_code
 from cards import card
+from pathlib import Path
 
 parser = argparse.ArgumentParser(description='Generate HTML from template')
 parser.add_argument("-i", "--input", type=str,
@@ -19,7 +20,9 @@ parser.add_argument("-t", "--template", type=str,
 parser.add_argument("--horizontal", type=int, default=3,
                     help="How many cards listed in horizontal line")
 parser.add_argument("-o", "--output", type=str,
-                    required=True, help="Output html file path")
+                    required=True, help="Output html file directory")
+parser.add_argument("-m", "--max-num", type=int, default=1000,
+                    help="How many cards to print in one html files")
 args = parser.parse_args()
 
 # 1. Loads list of ids(secret_id, public_id) from json file
@@ -29,21 +32,28 @@ args = parser.parse_args()
 with open(args.input, 'r') as f:
     id_pairs = json.load(f)
 
-qr_pathes = []
 cards = []
 for id_pair in id_pairs:
     qr = gen_qr_code(args.base_url, id_pair['secret_id'])
-    qr_pathes.append(qr)
 
     newcard = card(qr, id_pair['public_id'])
     cards.append(newcard)
 
+def print_cards(cards, path):
+    empty_card = card('', '')
+    env = Environment(loader=FileSystemLoader('.'))
+    template = env.get_template(args.template)
 
-empty_card = card('', '')
-env = Environment(loader=FileSystemLoader('.'))
-template = env.get_template(args.template)
+    html = template.render(
+        {'cards': cards, 'empty_card': empty_card, 'horizontal': args.horizontal})
+    with open(path, 'w') as f:
+        f.write(html)
 
-html = template.render(
-    {'cards': cards, 'empty_card': empty_card, 'horizontal': args.horizontal})
-with open(args.output, 'w') as f:
-    f.write(html)
+def chunks(l, n):
+    """Yield successive n-sized chunks from l."""
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+
+outdir = Path(args.output)
+for i, chunk in enumerate(chunks(cards, args.max_num)):
+    print_cards(chunk, outdir / f"cards{i}.html")
