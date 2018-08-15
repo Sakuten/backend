@@ -25,6 +25,7 @@ ${OUT_HTML_DIR}: ${TEMPLATE_FILE} ${ID_LIST_FILE}
 	pipenv run python mkhtml.py --horizontal 2 -i ${ID_LIST_FILE} -o ${OUT_HTML_DIR} -t ${TEMPLATE_FILE} -b ${QR_BASE_URL} -m ${MAX_QR_NUM}
 
 ${ID_LIST_FILE}:
+	mkdir -p ${DIST_DIR}
 	pipenv run python mkid.py -n ${ID_NUM} -o ${ID_LIST_FILE}
 
 .PHONY: clean
