@@ -39,19 +39,25 @@ for id_pair in id_pairs:
     newcard = card(qr, id_pair['public_id'])
     cards.append(newcard)
 
+
 def print_cards(cards, path):
     empty_card = card('', '')
     env = Environment(loader=FileSystemLoader('.'))
     template = env.get_template(args.template)
 
-    html = template.render(
-        {'cards': cards, 'empty_card': empty_card, 'horizontal': args.horizontal})
+    html = template.render({
+        'cards': cards,
+        'empty_card': empty_card,
+        'horizontal': args.horizontal
+    })
     with open(path, 'w') as f:
         f.write(html)
 
+
 def chunks(l, n):
     """
-    This function is taken from Stack Overflow: https://stackoverflow.com/questions/312443
+    This function is taken from Stack Overflow:
+    https://stackoverflow.com/questions/312443
     Asked by jespern (https://stackoverflow.com/users/112415
     Answered by Ned Batchelder (https://stackoverflow.com/users/14343)
 
@@ -59,6 +65,7 @@ def chunks(l, n):
     """
     for i in range(0, len(l), n):
         yield l[i:i + n]
+
 
 outdir = Path(args.output)
 for i, chunk in enumerate(chunks(cards, args.max_num)):
