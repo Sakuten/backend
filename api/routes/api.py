@@ -182,11 +182,11 @@ def apply_lottery(idx):
             rep_application = Application(
                 lottery_id=lottery.id, user_id=rep_user.id, status="pending",
                 is_rep=True,
-                group_members=pickle.dumps(group_members_id))
+                group_members=pickle.dumps(group_members_id))  # SHOULD BE CHANGED
             db.session.add(rep_application)
 
     # 8.
-    for member in group_members:
+    for member in group_members:  # SHOULD BE CHANGED
         newapplication = Application(
             lottery_id=lottery.id, user_id=member.id, status="pending")
         db.session.add(newapplication)
