@@ -1,8 +1,7 @@
 from itertools import chain
-import pickle
 
 from flask import Blueprint, jsonify, g, request
-from api.models import Lottery, Classroom, User, Application, db
+from api.models import Lottery, Classroom, User, Application, db, GroupMember
 from api.schemas import (
     user_schema,
     users_schema,
@@ -178,15 +177,14 @@ def apply_lottery(idx):
             result = application_schema.dump(newapplication)[0]
             return jsonify(result)
         else:
-            group_members_id = [member.id for member in group_members]
             rep_application = Application(
                 lottery_id=lottery.id, user_id=rep_user.id, status="pending",
                 is_rep=True,
-                group_members=pickle.dumps(group_members_id))  # SHOULD BE CHANGED
+                group_members=[GroupMember(user_id=member.id)
+                               for member in group_members])
             db.session.add(rep_application)
-
     # 8.
-    for member in group_members:  # SHOULD BE CHANGED
+    for member in group_members:
         newapplication = Application(
             lottery_id=lottery.id, user_id=member.id, status="pending")
         db.session.add(newapplication)
