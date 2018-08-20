@@ -30,6 +30,10 @@ definitions:
         $ref: '#/definitions/Lottery'
       status:
         $ref: '#/definitions/ApplicationStatus'
+      is_rep:
+        $ref: '#/definitions/RepresentativeMarker'
+      group_members:
+        $ref: '#/definitions/GroupMember'
     type: object
   ApplicationID:
     description: Application Identifier
@@ -42,6 +46,9 @@ definitions:
       - won
       - lose
     type: string
+  RepresentativeMarker:
+    description: Marker of the reps of applying groups
+    type: boolean
   Certificate:
     properties:
       g-recaptcha-response:
@@ -154,6 +161,25 @@ definitions:
         $ref: '#/definitions/SecretID'
       public_id:
         $ref: '#/definitions/PublicID'
+    type: object
+  GroupMember:
+    properties:
+      id:
+        $ref: '#/definitions/GroupMemberID'
+      own_application:
+        $ref: '#/definitions/OwnApplication'
+      rep_application:
+        $ref: '#/definitions/RepApplication'
+    type: object
+  GroupMemberID:
+    description: Group Member ID
+    example: 0
+    type: integer
+  OwnApplication:
+    description: a group member's personal application
+    type: object
+  RepApplication:
+    description: application of the rep of the group
     type: object
 securityDefinitions:
   admin_auth:
