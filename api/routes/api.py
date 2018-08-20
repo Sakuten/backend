@@ -130,7 +130,8 @@ def draw_lottery(idx):
 @bp.route('/lotteries/<int:idx>/winners')
 @spec('api/lotteries/winners.yml')
 def get_winners_id(idx):
-    """Return winners identification Id for 'idx' lottery
+    """
+        Return winners identification Id for 'idx' lottery
     """
     lottery = Lottery.query.get(idx)
     if lottery is None:
