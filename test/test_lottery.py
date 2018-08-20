@@ -882,3 +882,37 @@ def test_draw_all_invalid(client):
         res = datetime.timedelta.resolution
         try_with_datetime(mod_time(en, -res))
         try_with_datetime(mod_time(en, +ext+res))
+
+
+def test_get_winners(client):
+    """test proper public_id's are returned from the API
+        target_url: /lotteries/<id>/winners
+    """
+    idx = 1
+
+    with client.application.app_context():
+        target_lottery = Lottery.query.get(idx)
+        index = target_lottery.index
+        users = User.query.all()
+        for user in users:
+            application = Application(lottery=target_lottery, user_id=user.id)
+            db.session.add(application)
+        db.session.commit()
+
+        token = login(client,
+                      admin['secret_id'],
+                      admin['g-recaptcha-response'])['token']
+
+        _, end = client.application.config['TIMEPOINTS'][index]
+        with mock.patch('api.time_management.get_current_datetime',
+                        return_value=end):
+            draw_resp = client.post(
+                f'/lotteries/{idx}/draw',
+                headers={'Authorization': f'Bearer {token}'})
+            winners_resp = client.get(
+                f'/lotteries/{idx}/winners',
+                headers={'Authorization': f'Bearer {token}'})
+
+        winners_id = set(User.query.get(winner['id']).public_id
+                         for winner in draw_resp.get_json())
+        assert winners_id == set(winners_resp.get_json())

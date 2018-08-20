@@ -244,22 +244,19 @@ def draw_all_lotteries():
 @spec('api/lotteries/winners.yml')
 def get_winners_id(idx):
     """
-        Return winners identification Id for 'idx' lottery
+        Return winners' public_id for 'idx' lottery
     """
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 400
     if not lottery.done:
         return jsonify({"message": "This lottery is not done yet."}), 400
-    applications = Application.query.filter_by(
-        lottery_id=idx, status=True).all()  # status=True -> winner
-    user_public_ids = []
-    for application in applications:
-        # can't I do 'user_ids = applications.user_id' out of this for loop?
-        user_id = application.user_id
-        user = User.query.get(user_id)
-        user_public_ids.append(user.public_id)
-    return jsonify(user_public_ids)
+
+    def public_id_generator():
+        for app in lottery.Application:
+            if app.status == 'won':
+                yield app.user.public_id
+    return jsonify(list(public_id_generator()))
 
 
 @bp.route('/status', methods=['GET'])

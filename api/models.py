@@ -92,7 +92,7 @@ class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     lottery_id = db.Column(db.Integer, db.ForeignKey(
         'lottery.id', ondelete='CASCADE'))
-    lottery = db.relationship('Lottery')
+    lottery = db.relationship('Lottery', backref='Application')
     user_id = db.Column(db.Integer, db.ForeignKey(
         'user.id', ondelete='CASCADE'))
     user = db.relationship('User')
