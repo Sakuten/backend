@@ -127,6 +127,7 @@ def test_status_invalid_auth(client):
 def test_translate_user_ids(client):
     """test it return a vaild response
         test: response contains correct public_id
+        target_url: /public_id
     """
     token_user = admin
     target_user = test_user
