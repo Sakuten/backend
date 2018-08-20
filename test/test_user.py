@@ -122,3 +122,17 @@ def test_status_invalid_auth(client):
                       headers={'Authorization': 'Bearer wrong_token_here'})
     assert resp.status_code == 401
     assert 'invalid_token' in resp.headers['WWW-Authenticate']
+
+
+def test_translate_user_ids(client):
+    """test it return a vaild response
+        test: response contains correct public_id
+    """
+    token_user = admin
+    target_user = test_user
+    token = login(client, token_user['secret_id'], '')['token']
+    resp = client.get(f'public_id/{target_user.secret_id}',
+                      headers={'Authorization': f'Bearer {token}'})
+
+    assert resp.status_code == 200
+    assert resp['public_id'] == target_user['public_id']
