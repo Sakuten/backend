@@ -137,3 +137,16 @@ def test_translate_user_ids(client):
 
     assert resp.status_code == 200
     assert resp['public_id'] == target_user['public_id']
+
+
+def test_translate_user_ids_invalid_secret_id(client):
+    """attempt to translate invalid secret_id
+        target_url: /public_id
+    """
+    token_user = admin
+    token = login(client, token_user['secret_id'], '')['token']
+    resp = client.get(f'public_id/Non_EXST_KEY',
+                      headers={'Authorization': f'Bearer {token}'})
+
+    assert resp.status_code == 404
+    assert 'no such user found' in resp['message']
