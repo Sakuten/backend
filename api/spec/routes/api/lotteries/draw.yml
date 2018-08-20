@@ -11,22 +11,17 @@ parameters:
     x-example: 0
 responses:
   '200':
-    description: Chosen User
+    description: Chosen user
     schema:
-      properties:
-        chosen:
-          $ref: '#/definitions/SecretID'
-      type: object
+      $ref: '#/definitions/User'
   '400':
-    description: >-
-      Not Found / Invalid Request / This lottery is already done and
-      cannot be undone / Nobody is applying to this lottery
+    description: Malformed Authenication Header has detected / Not acceptable time / This lottery has already done
     schema:
       $ref: '#/definitions/ErrorMessage'
   '401':
     description: Authorization Failed
     headers:
-      WWW-Authenicate:
+      WWW-Authenticate:
         description: >-
           Authenication Error Code. For details, please refer to RFC 6750
           3. The WWW-Authenticate Response Header Field
@@ -36,11 +31,15 @@ responses:
   '403':
     description: You have no permission to perform the action
     headers:
-      WWW-Authenicate:
+      WWW-Authenticate:
         description: >-
           Authenication Error Code. For details, please refer to RFC 6750
           3. The WWW-Authenticate Response Header Field
         type: string
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+  '404':
+    description: Not Found
     schema:
       $ref: '#/definitions/ErrorMessage'
 security:

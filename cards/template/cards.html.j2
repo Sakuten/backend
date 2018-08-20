@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosansjp.css">
+  <style>
+  body, table {
+    padding: 0;
+    margin: 0;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .container {
+    padding: 10px 10px 30px 30px;
+    width: 45.5%;
+    display: inline-block;
+    height: 81.5mm;
+    border-style: none;
+    border-width: 1px;
+  }
+  .container:nth-child(even) {
+    border-left-style: dashed;
+    border-top-style: dashed;
+    border-bottom-style: dashed;
+  }
+  .container:nth-child(odd) {
+    border-top-style: dashed;
+    border-bottom-style: dashed;
+  }
+  img {
+    width: 100%;
+  }
+  .image {
+    float: left;
+    width: 50%;
+    margin-left: -10px;
+  }
+  .header {
+    margin-top: 10px;
+    margin-bottom: 15px;
+  }
+  .description {
+    float: left;
+    width: 50%;
+  }
+  .header {
+    font-size: 2rem;
+  }
+  .explanation {
+    font-size: 1.0rem;
+  }
+  .public-id {
+    font-size: 1.6rem;
+  }
+  .outer-container {
+    width: 100%;
+    font-size: 0;
+  }
+  .row:nth-child(4n+1) > .container {
+    page-break-before: always;
+    border-top-style: none;
+  }
+  .row:nth-child(4n) > .container {
+    border-bottom-style: none;
+  }
+  </style>
+</head>
+<body>
+  <div class="outer-container">
+    {% for row in range(cards|length // horizontal) %}
+    <div class="row">
+      {% for column in range(1,horizontal +1) %}
+      {% set card_index = (row * horizontal) + column  %}
+      {% set card = cards[card_index -1]|default(empty_card) %}
+      <div class="container">
+        <h2 class="header">抽選カード</h2>
+        <div class="image">
+          <img src="{{ card.qr_path }}">
+        </div>
+        <div class="description">
+          <div class="explanation">
+            <p>スマートフォンは左のQRコードから、
+            お持ちでない人は3Fアリーナの有人受付から劇にお申し込みいただけます。</p>
+            <p>詳細は立志・小立志のS4ページをご覧ください。</p>
+          </div>
+          <div class="public-id">
+            確認用ID: <strong>{{ card.public_id }}</strong>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+</body>
+</html>

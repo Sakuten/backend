@@ -1,21 +1,15 @@
-Get Information about you
+Draw all of the available lotteries
 ---
-produces:
-  - application/json
 parameters: []
 responses:
   '200':
-    description: User Information
+    description: List of Users
     schema:
-      $ref: '#/definitions/User'
+      items:
+        $ref: '#/definitions/User'
+      type: array
   '400':
-    description: Malformed Authenication Header has detected
-    headers:
-      WWW-Authenticate:
-        description: >-
-          Authenication Error Code. For details, please refer to RFC 6750
-          3. The WWW-Authenticate Response Header Field
-        type: string
+    description: Malformed Authenication Header has detected / Not acceptable time / This lottery has already done
     schema:
       $ref: '#/definitions/ErrorMessage'
   '401':
@@ -28,12 +22,20 @@ responses:
         type: string
     schema:
       $ref: '#/definitions/ErrorMessage'
+  '403':
+    description: You have no permission to perform the action
+    headers:
+      WWW-Authenticate:
+        description: >-
+          Authenication Error Code. For details, please refer to RFC 6750
+          3. The WWW-Authenticate Response Header Field
+        type: string
+    schema:
+      $ref: '#/definitions/ErrorMessage'
 security:
-  - user_auth: []
   - admin_auth: []
-  - checker_auth: []
 tags:
-  - user
-description: ''
-operationId: getStatus
-summary: Get Information about you
+  - lottery
+description: Draw all of the available lotteries and return the list of winners
+operationId: drawAll
+summary: Draw all of the available lotteries
