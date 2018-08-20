@@ -23,5 +23,5 @@ responses:
       $ref: '#/definitions/ErrorMessage'
 tags:
   - lottery
-description: get the list of winners' identification Id for specified lottery Id
+description: get the list of winners' public_id for specified lottery Id
 operationId: getWinners
