@@ -250,3 +250,17 @@ def get_status():
     user = User.query.filter_by(id=g.token_data['user_id']).first()
     result = user_schema.dump(user)[0]
     return jsonify(result)
+
+
+@bp.route('/public_id/<str:secret_id>', methods=['GET'])
+@spec('api/public_id.yml')
+@login_required('normal', 'checker', 'admin')
+def translate_secret_to_public(secret_id):
+    """translate secret_id into public_id
+        This will used for checking the guests at each classes
+    """
+    user = User.query.filter_by(secret_id=secret_id).first()
+    if not user:
+        return jsonify({"message": "no such user found"}), 404
+    else:
+        return jsonify({"public_id": user.public_id})
