@@ -137,14 +137,15 @@ def get_winners_id(idx):
         return jsonify({"message": "Lottery could not be found."}), 400
     if not lottery.done:
         return jsonify({"message": "This lottery is not done yet."}), 400
-    applications = Application.query.filter_by(lottery_id=idx, status=True).all() # status=True -> winner
+    applications = Application.query.filter_by(
+        lottery_id=idx, status=True).all()  # status=True -> winner
     user_public_ids = []
     for application in applications:
-        user_id = application.user_id  # can't I do 'user_ids = applications.user_id' out of this for loop?
+        # can't I do 'user_ids = applications.user_id' out of this for loop?
+        user_id = application.user_id
         user = User.query.get(user_id)
         user_public_ids.append(user.public_id)
     return jsonify(user_public_ids)
-
 
 
 @bp.route('/status', methods=['GET'])
