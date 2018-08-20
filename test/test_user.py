@@ -135,8 +135,12 @@ def test_translate_user_ids(client):
     resp = client.get(f'public_id/{target_user.secret_id}',
                       headers={'Authorization': f'Bearer {token}'})
 
+    with client.application.app_context():
+        public_id = User.query.filter_by(secret_id=target_user['secret_id']
+                                         ).fitst().public_id
+
     assert resp.status_code == 200
-    assert resp['public_id'] == target_user['public_id']
+    assert resp['public_id'] == public_id
 
 
 def test_translate_user_ids_invalid_secret_id(client):
