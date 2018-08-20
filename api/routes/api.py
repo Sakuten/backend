@@ -253,7 +253,7 @@ def get_winners_id(idx):
         return jsonify({"message": "This lottery is not done yet."}), 400
 
     def public_id_generator():
-        for app in lottery.Application:
+        for app in lottery.application:
             if app.status == 'won':
                 yield app.user.public_id
     return jsonify(list(public_id_generator()))
