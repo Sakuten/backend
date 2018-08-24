@@ -137,7 +137,7 @@ def test_translate_user_ids(client):
 
     with client.application.app_context():
         public_id = User.query.filter_by(secret_id=target_user['secret_id']
-                                         ).fitst().public_id
+                                         ).first().public_id
 
     assert resp.status_code == 200
     assert resp.get_json()['public_id'] == public_id
