@@ -132,7 +132,7 @@ def test_translate_user_ids(client):
     token_user = admin
     target_user = test_user
     token = login(client, token_user['secret_id'], '')['token']
-    resp = client.get(f'public_id/{target_user.secret_id}',
+    resp = client.get('public_id/' + target_user['secret_id'],
                       headers={'Authorization': f'Bearer {token}'})
 
     with client.application.app_context():
