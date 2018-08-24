@@ -140,7 +140,7 @@ def test_translate_user_ids(client):
                                          ).fitst().public_id
 
     assert resp.status_code == 200
-    assert resp['public_id'] == public_id
+    assert resp.get_json()['public_id'] == public_id
 
 
 def test_translate_user_ids_invalid_secret_id(client):
@@ -153,4 +153,4 @@ def test_translate_user_ids_invalid_secret_id(client):
                       headers={'Authorization': f'Bearer {token}'})
 
     assert resp.status_code == 404
-    assert 'no such user found' in resp['message']
+    assert 'no such user found' in resp.get_json()['message']
