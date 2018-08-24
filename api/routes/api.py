@@ -252,7 +252,7 @@ def get_status():
     return jsonify(result)
 
 
-@bp.route('/public_id/<str:secret_id>', methods=['GET'])
+@bp.route('/public_id/<string:secret_id>', methods=['GET'])
 @spec('api/translate_secret_to_public.yml')
 @login_required('normal', 'checker', 'admin')
 def translate_secret_to_public(secret_id):
