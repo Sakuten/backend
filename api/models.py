@@ -135,4 +135,4 @@ class GroupMember(db.Model):
                                       backref='group_members')
 
     def __repr__(self):
-        return f"<GroupMemver {self.user}>"
+        return f"<GroupMember {self.user}>"
