@@ -144,7 +144,7 @@ def apply_lottery(idx):
                 msg = "someone in the group is already " \
                        "applying to a lottery in this period"
                 return jsonify({"message": msg}), 400
-            if any(app.lottery.index == lottery.id and
+            if any(app.lottery.index == lottery.index and
                    app.lottery.id == lottery.id
                    for app in previous.all()):
                 msg = "someone in the group is already " \
