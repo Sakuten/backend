@@ -350,7 +350,7 @@ def test_apply_group_invalid(client):
                            json={'group_members': members})
 
     assert resp.status_code == 401
-    assert 'wrong secret id is given.' in resp.get_json()['message']
+    assert 'Invalid group member secret id' in resp.get_json()['message']
 
 
 def test_apply_group_same_period(client):
@@ -387,7 +387,7 @@ def test_apply_group_same_period(client):
                            json={'group_members': members})
 
         assert resp.status_code == 400
-        assert 'someone is already applying to a lottery in this period' in \
+        assert 'already applying to a lottery in this period' in \
             resp.get_json()['message']
 
 

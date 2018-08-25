@@ -134,19 +134,21 @@ def apply_lottery(idx):
                 group_members.append(user)
             else:
                 return jsonify({"message":
-                                "wrong secret id is given."}), 401
+                                "Invalid group member secret id"}), 401
 
         for user in group_members:
             previous = Application.query.filter_by(user_id=user.id)
             if any(app.lottery.index == lottery.index and
                    app.lottery.id != lottery.id
                    for app in previous.all()):
-                msg = "someone is already applying to a lottery in this period"
+                msg = "someone in the group is already " \
+                       "applying to a lottery in this period"
                 return jsonify({"message": msg}), 400
             if any(app.lottery.index == lottery.id and
                    app.lottery.id == lottery.id
                    for app in previous.all()):
-                msg = "someone is already applying to this lottery"
+                msg = "someone in the group is already " \
+                      "applying to this lottery"
                 return jsonify({"message": msg}), 400
 
     # 5.
