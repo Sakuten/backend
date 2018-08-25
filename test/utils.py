@@ -3,19 +3,19 @@ from api.models import User, Application, db
 # --- variables
 
 # secret_id is to be set in the fixture
-admin = {'secret_id': 'GfVf96Ns9-NW9WI_Kc5KE8D4J4-ega9w',
+admin = {'secret_id': '',
          'g-recaptcha-response': ''}
-test_user = {'secret_id': 'nCGX_hMrMZxRAak-W36kIzzxrup_SIKI',
+test_user = {'secret_id': '',
              'g-recaptcha-response': ''}
-test_user1 = {'secret_id': 'excGkN88o8eN61NbZpHMfJK0HgThsX9N',
+test_user1 = {'secret_id': '',
               'g-recaptcha-response': ''}
-test_user2 = {'secret_id': 'zmPplhO29m7dMNDdLnt4MtO_aFONrViC',
+test_user2 = {'secret_id': '',
               'g-recaptcha-response': ''}
-test_user3 = {'secret_id': 'TFdC-Ckz30CmhRS8PozhwgT5qM6t1q3I',
+test_user3 = {'secret_id': '',
               'g-recaptcha-response': ''}
-test_user4 = {'secret_id': 'RPb2_WV96OfmibLyE-5GXVLz7b71YORY',
+test_user4 = {'secret_id': '',
               'g-recaptcha-response': ''}
-test_user5 = {'secret_id': 'lr73g9neHNfaI215I6b4Av8Z-jFtWHK6',
+test_user5 = {'secret_id': '',
               'g-recaptcha-response': ''}
 
 invalid_classroom_id = '999999999999'
