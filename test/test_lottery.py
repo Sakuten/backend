@@ -749,8 +749,8 @@ def test_draw_already_done(client):
 
         with mock.patch('api.routes.api.get_draw_time_index',
                         return_value=target_lottery.index):
-        resp = client.post(f'/lotteries/{idx}/draw',
-                           headers={'Authorization': f'Bearer {token}'})
+            resp = client.post(f'/lotteries/{idx}/draw',
+                               headers={'Authorization': f'Bearer {token}'})
 
     assert resp.status_code == 400
     assert 'already done' in resp.get_json()['message']
