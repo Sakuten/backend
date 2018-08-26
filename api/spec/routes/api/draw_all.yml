@@ -15,7 +15,7 @@ responses:
   '401':
     description: Authorization Failed
     headers:
-      WWW-Authenicate:
+      WWW-Authenticate:
         description: >-
           Authenication Error Code. For details, please refer to RFC 6750
           3. The WWW-Authenticate Response Header Field
@@ -25,7 +25,7 @@ responses:
   '403':
     description: You have no permission to perform the action
     headers:
-      WWW-Authenicate:
+      WWW-Authenticate:
         description: >-
           Authenication Error Code. For details, please refer to RFC 6750
           3. The WWW-Authenticate Response Header Field
