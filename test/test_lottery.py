@@ -481,8 +481,10 @@ def test_draw(client):
                       admin['g-recaptcha-response'])['token']
 
         _, end = client.application.config['TIMEPOINTS'][index]
+        end_margin = client.application.config['TIMEPOINT_END_MARGIN']
+        end_with_margin = mod_time(end, end_margin)
         with mock.patch('api.time_management.get_current_datetime',
-                        return_value=end):
+                        return_value=end_with_margin):
             resp = client.post(f'/lotteries/{idx}/draw',
                                headers={'Authorization': f'Bearer {token}'})
 
@@ -533,9 +535,8 @@ def test_draw_group(client):
                       admin['secret_id'],
                       admin['g-recaptcha-response'])['token']
 
-        _, end = client.application.config['TIMEPOINTS'][index]
-        with mock.patch('api.time_management.get_current_datetime',
-                        return_value=end):
+        with mock.patch('api.routes.api.get_draw_time_index',
+                        return_value=index):
             resp = client.post(f'/lotteries/{idx}/draw',
                                headers={'Authorization': f'Bearer {token}'})
 
@@ -588,9 +589,8 @@ def test_draw_lots_of_groups(client, cnt):
                       admin['secret_id'],
                       admin['g-recaptcha-response'])['token']
 
-        _, end = client.application.config['TIMEPOINTS'][index]
-        with mock.patch('api.time_management.get_current_datetime',
-                        return_value=end):
+        with mock.patch('api.routes.api.get_draw_time_index',
+                        return_value=index):
             resp = client.post(f'/lotteries/{idx}/draw',
                                headers={'Authorization': f'Bearer {token}'})
 
@@ -647,9 +647,8 @@ def test_draw_lots_of_groups_and_normal(client, cnt):
                       admin['secret_id'],
                       admin['g-recaptcha-response'])['token']
 
-        _, end = client.application.config['TIMEPOINTS'][index]
-        with mock.patch('api.time_management.get_current_datetime',
-                        return_value=end):
+        with mock.patch('api.routes.api.get_draw_time_index',
+                        return_value=index):
             resp = client.post(f'/lotteries/{idx}/draw',
                                headers={'Authorization': f'Bearer {token}'})
 
@@ -745,14 +744,12 @@ def test_draw_already_done(client):
         target_lottery.done = True
         db.session.add(target_lottery)
 
-        index = target_lottery.index
         db.session.commit()
 
-    _, end = client.application.config['TIMEPOINTS'][index]
-    with mock.patch('api.time_management.get_current_datetime',
-                    return_value=end):
-        resp = client.post(f'/lotteries/{idx}/draw',
-                           headers={'Authorization': f'Bearer {token}'})
+        with mock.patch('api.routes.api.get_draw_time_index',
+                        return_value=target_lottery.index):
+            resp = client.post(f'/lotteries/{idx}/draw',
+                               headers={'Authorization': f'Bearer {token}'})
 
     assert resp.status_code == 400
     assert 'already done' in resp.get_json()['message']
@@ -812,7 +809,9 @@ def test_draw_all(client):
     token = login(client,
                   admin['secret_id'],
                   admin['g-recaptcha-response'])['token']
-    draw_time = client.application.config['TIMEPOINTS'][time_index][1]
+    _, en = client.application.config['TIMEPOINTS'][time_index]
+    en_margin = client.application.config['TIMEPOINT_END_MARGIN']
+    draw_time = mod_time(en, en_margin)
     with mock.patch('api.time_management.get_current_datetime',
                     return_value=draw_time):
         resp = client.post('/draw_all',
