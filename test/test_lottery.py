@@ -744,7 +744,6 @@ def test_draw_already_done(client):
         target_lottery.done = True
         db.session.add(target_lottery)
 
-        index = target_lottery.index
         db.session.commit()
 
         with mock.patch('api.routes.api.get_draw_time_index',
