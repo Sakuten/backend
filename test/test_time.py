@@ -37,9 +37,11 @@ def test_draw_time_index_lim(client):
     with client.application.app_context():
         timepoints = client.application.config['TIMEPOINTS']
         ext = client.application.config['DRAWING_TIME_EXTENSION']
+        en_margin = client.application.config['TIMEPOINT_END_MARGIN']
         for i, (_, en) in enumerate(timepoints):
+            en_with_margin = mod_time(en, en_margin)
             res = datetime.timedelta.resolution
-            idx_l = get_draw_time_index(mod_time(en, +res))
+            idx_l = get_draw_time_index(mod_time(en_with_margin, +res))
             assert i == idx_l
             idx_r = get_draw_time_index(mod_time(en, +ext-res))
             assert i == idx_r
@@ -49,8 +51,9 @@ def test_draw_time_index_same(client):
     with client.application.app_context():
         timepoints = client.application.config['TIMEPOINTS']
         ext = client.application.config['DRAWING_TIME_EXTENSION']
+        en_margin = client.application.config['TIMEPOINT_END_MARGIN']
         for i, (_, en) in enumerate(timepoints):
-            idx_l = get_draw_time_index(en)
+            idx_l = get_draw_time_index(mod_time(en, en_margin))
             assert i == idx_l
             idx_r = get_draw_time_index(mod_time(en, +ext))
             assert i == idx_r
@@ -70,12 +73,13 @@ def test_time_index_ooh(client):
 def test_time_index_ooa(client):
     with client.application.app_context():
         timepoints = client.application.config['TIMEPOINTS']
+        res = datetime.timedelta.resolution
+        en_margin = client.application.config['TIMEPOINT_END_MARGIN']
         for i, point in enumerate(timepoints):
-            res = datetime.timedelta.resolution
             with pytest.raises(OutOfAcceptingHoursError):
                 get_time_index(mod_time(point[0], -res))
             with pytest.raises(OutOfAcceptingHoursError):
-                get_time_index(mod_time(point[1], +res))
+                get_time_index(mod_time(point[1], +res+en_margin))
 
 
 def test_time_index_lim(client):

@@ -3,20 +3,6 @@ from api.models import Application, Lottery
 from cards.id import encode_public_id
 
 
-class ApplicationSchema(Schema):
-    id = fields.Int(dump_only=True)
-    status = fields.Str()
-    lottery = fields.Method("get_lottery", dump_only=True)
-
-    def get_lottery(self, application):
-        lottery = Lottery.query.get(application.lottery_id)
-        return lottery_schema.dump(lottery)[0]
-
-
-application_schema = ApplicationSchema()
-applications_schema = ApplicationSchema(many=True)
-
-
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     secret_id = fields.Str()
@@ -28,6 +14,34 @@ class UserSchema(Schema):
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
+
+
+class GroupMemberSchema(Schema):
+    id = fields.Int(dump_only=True)
+    public_id = fields.Method("get_public_id_str", dump_only=True)
+
+    def get_public_id_str(self, group_member):
+        return encode_public_id(group_member.user.public_id)
+
+
+group_member_schema = GroupMemberSchema()
+group_members_schema = GroupMemberSchema(many=True)
+
+
+class ApplicationSchema(Schema):
+    id = fields.Int(dump_only=True)
+    status = fields.Str()
+    lottery = fields.Method("get_lottery", dump_only=True)
+    is_rep = fields.Boolean()
+    group_members = fields.Nested(GroupMemberSchema, many=True)
+
+    def get_lottery(self, application):
+        lottery = Lottery.query.get(application.lottery_id)
+        return lottery_schema.dump(lottery)[0]
+
+
+application_schema = ApplicationSchema()
+applications_schema = ApplicationSchema(many=True)
 
 
 class ClassroomSchema(Schema):
