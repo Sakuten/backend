@@ -7,6 +7,16 @@ admin = {'secret_id': '',
          'g-recaptcha-response': ''}
 test_user = {'secret_id': '',
              'g-recaptcha-response': ''}
+test_user1 = {'secret_id': '',
+              'g-recaptcha-response': ''}
+test_user2 = {'secret_id': '',
+              'g-recaptcha-response': ''}
+test_user3 = {'secret_id': '',
+              'g-recaptcha-response': ''}
+test_user4 = {'secret_id': '',
+              'g-recaptcha-response': ''}
+test_user5 = {'secret_id': '',
+              'g-recaptcha-response': ''}
 
 invalid_classroom_id = '999999999999'
 invalid_lottery_id = '9999999999'

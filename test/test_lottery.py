@@ -1,16 +1,21 @@
 from unittest import mock
 import pytest
 import datetime
-
 from utils import (
     login,
     admin,
     test_user,
+    test_user1,
+    test_user2,
+    test_user3,
+    test_user4,
+    test_user5,
     as_user_get,
     invalid_classroom_id,
     invalid_lottery_id,
     make_application
 )
+
 
 from api.models import Lottery, Classroom, User, Application, GroupMember, db
 from api.schemas import (
@@ -120,7 +125,8 @@ def test_apply_normal(client):
     with mock.patch('api.routes.api.get_time_index',
                     return_value=lottery.index):
         resp = client.post(f'/lotteries/{idx}',
-                           headers={'Authorization': f'Bearer {token}'})
+                           headers={'Authorization': f'Bearer {token}'},
+                           json={'group_members': []})
         assert resp.status_code == 200
 
     with client.application.app_context():
@@ -144,7 +150,8 @@ def test_apply_admin(client):
     token = login(client, admin['secret_id'],
                   admin['g-recaptcha-response'])['token']
     resp = client.post(f'/lotteries/{idx}',
-                       headers={'Authorization': f'Bearer {token}'})
+                       headers={'Authorization': f'Bearer {token}'},
+                       json={'group_members': []})
 
     assert resp.status_code == 403
 
@@ -158,7 +165,8 @@ def test_apply_noperm(client):
     token = login(client, admin['secret_id'],
                   admin['g-recaptcha-response'])['token']
     resp = client.post(f'/lotteries/{idx}',
-                       headers={'Authorization': f'Bearer {token}'})
+                       headers={'Authorization': f'Bearer {token}'},
+                       json={'group_members': []})
 
     assert resp.status_code == 403
     assert 'no permission' in resp.get_json().keys()  # not completed yet
@@ -172,7 +180,8 @@ def test_apply_invalid(client):
     token = login(client, test_user['secret_id'],
                   test_user['g-recaptcha-response'])['token']
     resp = client.post(f'/lotteries/{idx}',
-                       headers={'Authorization': f'Bearer {token}'})
+                       headers={'Authorization': f'Bearer {token}'},
+                       json={'group_members': []})
 
     assert resp.status_code == 404
     assert 'Lottery could not be found.' in resp.get_json()['message']
@@ -194,7 +203,8 @@ def test_apply_already_done(client):
         db.session.commit()
 
     resp = client.post(f'/lotteries/{idx}',
-                       headers={'Authorization': f'Bearer {token}'})
+                       headers={'Authorization': f'Bearer {token}'},
+                       json={'group_members': []})
 
     assert resp.status_code == 400
     assert 'already done' in resp.get_json()['message']
@@ -222,7 +232,8 @@ def test_apply_same_period(client):
     with mock.patch('api.routes.api.get_time_index',
                     return_value=index):
         resp = client.post(f'/lotteries/{idx}',
-                           headers={'Authorization': f'Bearer {token}'})
+                           headers={'Authorization': f'Bearer {token}'},
+                           json={'group_members': []})
 
     message = resp.get_json()['message']
 
@@ -250,7 +261,8 @@ def test_apply_same_period_same_lottery(client):
     with mock.patch('api.routes.api.get_time_index',
                     return_value=index):
         resp = client.post(f'/lotteries/{idx}',
-                           headers={'Authorization': f'Bearer {token}'})
+                           headers={'Authorization': f'Bearer {token}'},
+                           json={'group_members': []})
 
     message = resp.get_json()['message']
 
@@ -271,10 +283,151 @@ def test_apply_time_invalid(client):
     with mock.patch('api.routes.api.get_time_index',
                     return_value=index + 1):
         resp = client.post(f'/lotteries/{idx}',
-                           headers={'Authorization': f'Bearer {token}'})
+                           headers={'Authorization': f'Bearer {token}'},
+                           json={'group_members': []})
         assert resp.status_code == 400
         assert "This lottery is not acceptable now." in \
                resp.get_json()['message']
+
+
+def test_apply_group(client):
+    """test group applying works correctly
+        target_url: /lotteries/<id> [POST]
+    """
+    idx = 1
+    user = test_user
+    members = [test_user1['secret_id'],
+               test_user2['secret_id'],
+               test_user3['secret_id'],
+               test_user4['secret_id'],
+               test_user5['secret_id']
+               ]
+    with client.application.app_context():
+        members_id = [User.query.filter_by(secret_id=member_secret).first().id
+                      for member_secret in members]
+    token = login(client, user['secret_id'],
+                  user['g-recaptcha-response'])['token']
+
+    with client.application.app_context():
+        index = Lottery.query.get(idx).index
+        user_id = User.query.filter_by(secret_id=user['secret_id']).first().id
+        with mock.patch('api.routes.api.get_time_index',
+                        return_value=index):
+            resp = client.post(f'/lotteries/{idx}',
+                               headers={'Authorization': f'Bearer {token}'},
+                               json={'group_members': members})
+
+        application = Application.query.filter_by(lottery_id=idx,
+                                                  user_id=user_id).first()
+        group_members = [gm.user_id for gm in GroupMember.query.filter_by(
+                         rep_application=application).all()]
+        assert application.is_rep is True
+        assert group_members == members_id
+
+        assert resp.status_code == 200
+        assert resp.get_json() == application_schema.dump(application)[0]
+
+
+def test_apply_group_invalid(client):
+    """attempt to add invalid secret_id as one of members
+        target_url: /lotteries/<id> [POST]
+    """
+    idx = 1
+    user = test_user
+    members = [test_user1['secret_id'],
+               test_user2['secret_id'],
+               test_user3['secret_id'],
+               test_user4['secret_id'],
+               "wrong_secret_id"
+               ]
+    token = login(client, user['secret_id'],
+                  user['g-recaptcha-response'])['token']
+
+    with client.application.app_context():
+        index = Lottery.query.get(idx).index
+    with mock.patch('api.routes.api.get_time_index',
+                    return_value=index):
+        resp = client.post(f'/lotteries/{idx}',
+                           headers={'Authorization': f'Bearer {token}'},
+                           json={'group_members': members})
+
+    assert resp.status_code == 401
+    assert 'Invalid group member secret id' in resp.get_json()['message']
+
+
+def test_apply_group_same_period(client):
+    """attempt to make application in the same period as member of group
+        target_url: /lotteries/<id> [POST]
+
+        1. make an application as member
+        2. attempt to apply
+    """
+    idx = 1
+    user = test_user
+    members = [test_user1['secret_id'],
+               test_user2['secret_id'],
+               test_user3['secret_id'],
+               test_user4['secret_id'],
+               test_user5['secret_id']
+               ]
+    token = login(client, user['secret_id'],
+                  user['g-recaptcha-response'])['token']
+
+    with client.application.app_context():
+        index = Lottery.query.get(idx).index
+        lottery = Lottery.query.filter(Lottery.index == index,
+                                       Lottery.id != idx).first()
+        violation_user = User.query.filter_by(secret_id=members[0]).first()
+        application = Application(lottery=lottery, user_id=violation_user.id)
+        db.session.add(application)
+        db.session.commit()
+
+    with mock.patch('api.routes.api.get_time_index',
+                    return_value=index):
+        resp = client.post(f'/lotteries/{idx}',
+                           headers={'Authorization': f'Bearer {token}'},
+                           json={'group_members': members})
+
+        assert resp.status_code == 400
+        assert 'already applying to a lottery in this period' in \
+            resp.get_json()['message']
+
+
+def test_apply_group_same_lottery(client):
+    """attempt to make application to the same lottery as member of group
+        target_url: /lotteries/<id> [POST]
+
+        1. make an application as member
+        2. attempt to apply
+    """
+    idx = 1
+    user = test_user
+    members = [test_user1['secret_id'],
+               test_user2['secret_id'],
+               test_user3['secret_id'],
+               test_user4['secret_id'],
+               test_user5['secret_id']
+               ]
+    token = login(client, user['secret_id'],
+                  user['g-recaptcha-response'])['token']
+
+    with client.application.app_context():
+        index = Lottery.query.get(idx).index
+        lottery = Lottery.query.get(idx)
+        violation_user = User.query.filter_by(secret_id=members[0]).first()
+        application = Application(lottery=lottery, user_id=violation_user.id)
+        db.session.add(application)
+        db.session.commit()
+
+    with mock.patch('api.routes.api.get_time_index',
+                    return_value=index):
+        resp = client.post(f'/lotteries/{idx}',
+                           headers={'Authorization': f'Bearer {token}'},
+                           json={'group_members': members})
+
+        assert resp.status_code == 400
+        assert 'someone in the group is already applying to this lottery' in \
+            resp.get_json()['message']
 
 
 def test_get_allapplications(client):
