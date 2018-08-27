@@ -22,6 +22,10 @@ schemes:
   - https
   - http
 definitions:
+  GroupMemberList:
+    type: array
+    items:
+      $ref: '#/definitions/SecretID'
   Application:
     properties:
       id:
@@ -153,10 +157,6 @@ definitions:
     type: string
   User:
     properties:
-      application_history:
-        items:
-          $ref: '#/definitions/Application'
-        type: array
       secret_id:
         $ref: '#/definitions/SecretID'
       public_id:
