@@ -92,10 +92,10 @@ class Application(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     lottery_id = db.Column(db.Integer, db.ForeignKey(
-        'lottery.id', ondelete='CASCADE'))
+        'lottery.id', ondelete='CASCADE'), unique=True)
     lottery = db.relationship('Lottery', backref='application')
     user_id = db.Column(db.Integer, db.ForeignKey(
-        'user.id', ondelete='CASCADE'))
+        'user.id', ondelete='CASCADE'), unique=True)
     user = db.relationship('User')
     # status: [ pending, won, lose ]
     status = db.Column(db.String,
