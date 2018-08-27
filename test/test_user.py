@@ -122,3 +122,35 @@ def test_status_invalid_auth(client):
                       headers={'Authorization': 'Bearer wrong_token_here'})
     assert resp.status_code == 401
     assert 'invalid_token' in resp.headers['WWW-Authenticate']
+
+
+def test_translate_user_ids(client):
+    """test it return a vaild response
+        test: response contains correct public_id
+        target_url: /public_id
+    """
+    token_user = admin
+    target_user = test_user
+    token = login(client, token_user['secret_id'], '')['token']
+    resp = client.get('public_id/' + target_user['secret_id'],
+                      headers={'Authorization': f'Bearer {token}'})
+
+    with client.application.app_context():
+        public_id = User.query.filter_by(secret_id=target_user['secret_id']
+                                         ).first().public_id
+
+    assert resp.status_code == 200
+    assert resp.get_json()['public_id'] == public_id
+
+
+def test_translate_user_ids_invalid_secret_id(client):
+    """attempt to translate invalid secret_id
+        target_url: /public_id
+    """
+    token_user = admin
+    token = login(client, token_user['secret_id'], '')['token']
+    resp = client.get(f'public_id/Non_EXST_KEY',
+                      headers={'Authorization': f'Bearer {token}'})
+
+    assert resp.status_code == 404
+    assert 'no such user found' in resp.get_json()['message']
