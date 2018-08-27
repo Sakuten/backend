@@ -86,13 +86,14 @@ class Application(db.Model):
             status (Boolen): whether chosen or not. initalized with None
             is_rep (bool): whether rep of a group or not
     """
+    __tablename__ = 'application'
     __table_args__ = (UniqueConstraint(
         "lottery_id", "user_id", name="unique_idx_lottery_user"),)
 
     id = db.Column(db.Integer, primary_key=True)
     lottery_id = db.Column(db.Integer, db.ForeignKey(
         'lottery.id', ondelete='CASCADE'))
-    lottery = db.relationship('Lottery')
+    lottery = db.relationship('Lottery', backref='application')
     user_id = db.Column(db.Integer, db.ForeignKey(
         'user.id', ondelete='CASCADE'))
     user = db.relationship('User')
