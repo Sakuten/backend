@@ -903,9 +903,8 @@ def test_get_winners(client):
                       admin['secret_id'],
                       admin['g-recaptcha-response'])['token']
 
-        _, end = client.application.config['TIMEPOINTS'][index]
-        with mock.patch('api.time_management.get_current_datetime',
-                        return_value=end):
+        with mock.patch('api.routes.api.get_draw_time_index',
+                        return_value=index):
             draw_resp = client.post(
                 f'/lotteries/{idx}/draw',
                 headers={'Authorization': f'Bearer {token}'})
