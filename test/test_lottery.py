@@ -883,31 +883,6 @@ def test_draw_time_invalid(client):
     try_with_datetime(mod_time(en, +ext+res))
 
 
-def test_draw_already_done(client):
-    """attempt to draw previously drawn lottery.
-        1. test: error is returned
-        target_url: /lotteries/<id>/draw [POST]
-    """
-    idx = 1
-    token = login(client, admin['secret_id'],
-                  admin['g-recaptcha-response'])['token']
-
-    with client.application.app_context():
-        target_lottery = Lottery.query.get(idx)
-        target_lottery.done = True
-        db.session.add(target_lottery)
-
-        db.session.commit()
-
-        with mock.patch('api.routes.api.get_draw_time_index',
-                        return_value=target_lottery.index):
-            resp = client.post(f'/lotteries/{idx}/draw',
-                               headers={'Authorization': f'Bearer {token}'})
-
-    assert resp.status_code == 400
-    assert 'already done' in resp.get_json()['message']
-
-
 @pytest.mark.skip(reason='not implemented yet')
 def test_draw_nobody_apply(client):
     """attempt to draw a lottery that nobody applying
