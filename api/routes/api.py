@@ -23,7 +23,6 @@ from api.time_management import (
 from api.draw import (
     draw_one,
     draw_all_at_index,
-    AlreadyDoneError
 )
 
 bp = Blueprint(__name__, 'api')
@@ -113,8 +112,6 @@ def apply_lottery(idx):
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return jsonify({"message": "Lottery could not be found."}), 404
-    if lottery.done:
-        return jsonify({"message": "This lottery has already done"}), 400
     try:
         current_index = get_time_index()
     except (OutOfHoursError, OutOfAcceptingHoursError):
@@ -142,7 +139,7 @@ def apply_lottery(idx):
                    app.lottery.id != lottery.id
                    for app in previous.all()):
                 msg = "someone in the group is already " \
-                       "applying to a lottery in this period"
+                    "applying to a lottery in this period"
                 return jsonify({"message": msg}), 400
             if any(app.lottery.index == lottery.index and
                    app.lottery.id == lottery.id
@@ -270,13 +267,10 @@ def draw_lottery(idx):
     if index != lottery.index:
         return not_acceptable_resp, 400
 
-    try:
-        winners = draw_one(lottery)
-    except AlreadyDoneError:
-        return jsonify({"message": "This lottery is already done "
-                        "and cannot be undone"}), 400
+    winners = draw_one(lottery)
 
     result = users_schema.dump(winners)
+
     return jsonify(result[0])
 
 
@@ -293,11 +287,7 @@ def draw_all_lotteries():
     except (OutOfHoursError, OutOfAcceptingHoursError):
         return jsonify({"message": "Not acceptable time"}), 400
 
-    try:
-        winners = draw_all_at_index(index)
-    except AlreadyDoneError:
-        return jsonify({"message": "This lottery is already done "
-                        "and cannot be undone"}), 400
+    winners = draw_all_at_index(index)
 
     flattened = list(chain.from_iterable(winners))
     result = users_schema.dump(flattened)

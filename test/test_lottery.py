@@ -207,7 +207,7 @@ def test_apply_already_done(client):
                        json={'group_members': []})
 
     assert resp.status_code == 400
-    assert 'already done' in resp.get_json()['message']
+    assert "any application in this hours." in resp.get_json()['message']
 
 
 def test_apply_same_period(client):
