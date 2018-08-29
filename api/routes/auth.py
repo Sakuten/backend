@@ -2,8 +2,7 @@ from flask import Blueprint, jsonify, request, current_app
 from urllib.request import urlopen
 import json
 from ipaddress import ip_address
-from api.models import User
-from api.auth import generate_token
+from api.auth import generate_token, todays_user
 from api.swagger import spec
 
 bp = Blueprint(__name__, 'auth')
@@ -30,7 +29,7 @@ def home():
     # login flow
     secret_id = data.get('id')
     recaptcha_code = data.get('g-recaptcha-response')
-    user = User.query.filter_by(secret_id=secret_id).first()
+    user = todays_user(secret_id)
     if user:
         if not ip_address(request.remote_addr).is_private:
             secret_key = current_app.config['RECAPTCHA_SECRET_KEY']
