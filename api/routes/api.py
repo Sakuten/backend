@@ -1,7 +1,15 @@
 from itertools import chain
 
 from flask import Blueprint, jsonify, g, request
-from api.models import Lottery, Classroom, User, Application, db, GroupMember
+from api.models import (
+    Lottery,
+    Classroom,
+    User,
+    Application,
+    db,
+    GroupMember,
+    todays_user
+)
 from api.schemas import (
     user_schema,
     users_schema,
@@ -129,7 +137,7 @@ def apply_lottery(idx):
     group_members = []
     if len(group_members_secret_id) != 0:
         for sec_id in group_members_secret_id:
-            user = User.query.filter_by(secret_id=sec_id).first()
+            user = todays_user(sec_id)
             if user is not None:
                 group_members.append(user)
             else:
