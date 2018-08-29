@@ -1,7 +1,7 @@
 from flask import make_response, g, current_app, jsonify, request
 from cryptography.fernet import Fernet, InvalidToken
-from api.models import User
-from datetime import datetime
+from api.models import User, db
+from datetime import datetime, date
 from functools import wraps
 import json
 from api.time_management import get_current_datetime
@@ -92,3 +92,32 @@ def login_required(*required_authority):
             return f(*args, **kwargs)
         return decorated_function
     return login_required_impl
+
+
+def todays_user(secret_id):
+    """confirm the user id isn't used in other day
+        and return `User` object
+        Args:
+            secret_id (str): secret id of target user
+        Return:
+            User (api.models.User): the user object of 'secret_id'
+            None : when given 'secret_id' is used in other day
+
+        References are here:
+            https://github.com/Sakuten/backend/issues/78#issuecomment-416609508
+    """
+
+    user = User.query.filter_by(secret_id=secret_id).first()
+
+    if not user:
+        return None
+
+    if user.first_access is None:
+        user.first_access = date.today()
+        db.session.add(user)
+        db.session.commit
+        return user
+    elif user.first_access == date.today():
+        return user
+    else:
+        return None
