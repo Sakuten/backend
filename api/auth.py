@@ -96,7 +96,7 @@ def login_required(*required_authority):
     return login_required_impl
 
 
-def todays_user(secret_id):
+def todays_user(secret_id='', user_id=''):
     """confirm the user id isn't used in other day
         and return `User` object
         Args:
@@ -109,7 +109,10 @@ def todays_user(secret_id):
             https://github.com/Sakuten/backend/issues/78#issuecomment-416609508
     """
 
-    user = User.query.filter_by(secret_id=secret_id).first()
+    if secret_id:
+        user = User.query.filter_by(secret_id=secret_id).first()
+    elif user_id:
+        user = User.query.get(user_id)
 
     if not user:
         return None
