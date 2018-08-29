@@ -19,6 +19,7 @@ class User(db.Model):
     public_id = db.Column(db.Integer, unique=True)
     secret_id = db.Column(db.String(40), unique=True)
     authority = db.Column(db.String(20))
+    first_access = db.Column(db.Date)
 
     def __repr__(self):
         authority_str = f'({self.authority})' if self.authority else ''
