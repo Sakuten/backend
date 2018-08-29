@@ -27,8 +27,8 @@ responses:
       $ref: '#/definitions/Application'
   '400':
     description: >-
-      Malformed Authenication Header has detected / Lottery has already
-      done / You’re already applying to a lottery in this period
+      Malformed Authenication Header has detected
+      / You’re already applying to a lottery in this period
       / Your application is already accepted
       / We're not accepting any application in this hours.
       / this lottery is not acceptable now.

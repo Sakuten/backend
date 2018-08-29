@@ -139,7 +139,7 @@ def apply_lottery(idx):
                    app.lottery.id != lottery.id
                    for app in previous.all()):
                 msg = "someone in the group is already " \
-                    "applying to a lottery in this period"
+                      "applying to a lottery in this period"
                 return jsonify({"message": msg}), 400
             if any(app.lottery.index == lottery.index and
                    app.lottery.id == lottery.id
@@ -270,7 +270,6 @@ def draw_lottery(idx):
     winners = draw_one(lottery)
 
     result = users_schema.dump(winners)
-
     return jsonify(result[0])
 
 
