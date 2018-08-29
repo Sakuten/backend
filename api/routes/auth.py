@@ -29,7 +29,7 @@ def home():
     # login flow
     secret_id = data.get('id')
     recaptcha_code = data.get('g-recaptcha-response')
-    user = todays_user(secret_id)
+    user = todays_user(secret_id=secret_id)
     if user:
         if not ip_address(request.remote_addr).is_private:
             secret_key = current_app.config['RECAPTCHA_SECRET_KEY']
