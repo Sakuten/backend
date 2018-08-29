@@ -14,15 +14,18 @@ class User(db.Model):
         DB contents:
             public_id (int): public id.
             secret_id (int): secret id.
+            lose_count (int): how many times the user lost
     """
     id = db.Column(db.Integer, primary_key=True)
     public_id = db.Column(db.Integer, unique=True)
     secret_id = db.Column(db.String(40), unique=True)
     authority = db.Column(db.String(20))
+    lose_count = db.Column(db.Integer)
 
     def __repr__(self):
         authority_str = f'({self.authority})' if self.authority else ''
-        return f'<User {encode_public_id(self.public_id)} {authority_str}>'
+        return f'<User ({self.lose_count}) ' \
+               f'{encode_public_id(self.public_id)} {authority_str}>'
 
 
 class Classroom(db.Model):
