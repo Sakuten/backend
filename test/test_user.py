@@ -1,3 +1,5 @@
+from unittest import mock
+from datetime import date
 from utils import (
     as_user_get,
     login_with_form,
@@ -5,7 +7,7 @@ from utils import (
     admin,
     test_user
 )
-from api.models import User
+from api.models import User, db
 from api.schemas import user_schema
 from api.auth import decrypt_token
 # ---------- User API
@@ -154,3 +156,28 @@ def test_translate_user_ids_invalid_secret_id(client):
 
     assert resp.status_code == 404
     assert 'no such user found' in resp.get_json()['message']
+
+
+def test_auth_used_user(client):
+    """for 'todays_user' method.
+        attempt to get token as used uer
+        target_url: /auth
+    """
+    login_user = test_user
+    date_before = date(2018, 1, 1)
+    date_login = date(2018, 1, 2)
+    with client.application.app_context():
+        user = User.query.filter_by(secret_id=login_user['secret_id']).first()
+        user.first_access = date_before
+        db.session.add(user)
+        db.session.commit()
+
+    with mock.patch('api.auth.date',
+                    return_value=date_login):
+        resp = client.post('/auth', json={
+                           'id': login_user['secret_id'],
+                           'g-recaptcha-response': login_user['g-recaptcha-response']
+                           }, follow_redirects=True)
+
+    assert resp.status_code == 400
+    assert resp.get_json()['message'] == 'Login Unsuccessful'
