@@ -83,7 +83,9 @@ def login_required(*required_authority):
             data = decrypt_token(token)
             if not data:
                 return auth_error(401, 'error="invalid_token"')
-            user = User.query.filter_by(id=data['data']['user_id']).first()
+            user = todays_user(data['data']['user_id'])
+            if user is None:
+                return auth_error(401, 'realm="id_disabled"')
             if required_authority and \
                     (user.authority not in required_authority):
                 return auth_error(403, 'error="insufficient_scope"')
