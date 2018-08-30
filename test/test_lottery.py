@@ -187,29 +187,6 @@ def test_apply_invalid(client):
     assert 'Lottery could not be found.' in resp.get_json()['message']
 
 
-def test_apply_already_done(client):
-    """attempt to apply previously drawn application.
-        1. test: error is returned
-        target_url: /lotteries/<id> [POST]
-    """
-    idx = 1
-    token = login(client, test_user['secret_id'],
-                  test_user['g-recaptcha-response'])['token']
-
-    with client.application.app_context():
-        target_lottery = Lottery.query.filter_by(id=idx).first()
-        target_lottery.done = True
-        db.session.add(target_lottery)
-        db.session.commit()
-
-    resp = client.post(f'/lotteries/{idx}',
-                       headers={'Authorization': f'Bearer {token}'},
-                       json={'group_members': []})
-
-    assert resp.status_code == 400
-    assert "any application in this hours." in resp.get_json()['message']
-
-
 def test_apply_same_period(client):
     """attempt to apply to the same period with the previous application
         1. test: error is returned
