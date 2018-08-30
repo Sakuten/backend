@@ -2,6 +2,7 @@ import random
 from flask import current_app
 from api.models import Lottery, Application, db
 from itertools import chain
+from numpy.random import choice
 
 
 class AlreadyDoneError(Exception):
@@ -107,17 +108,24 @@ def draw_one_group_members(applications, winners_num):
     return winner_apps
 
 
-def draw_one_normal_users(applications, winners_num):
+def draw_one_normal_users(apps, winners_num):
     """internal function
         decide win or lose for each user not belonging to a group
         add applications to the session
     """
-    normal_users = [app for app in applications if app.status == "pending"]
-    try:
-        winner_apps = random.sample(normal_users, winners_num)
-    except ValueError:
-        # if applications are less than winners_num, all applications win
+    normal_users = [app for app in apps if app.status == "pending"]
+
+    if winners_num > len(apps):
         winner_apps = normal_users
+    else:
+        advantages = map(calc_advantage, apps)
+
+        sum_advantage = sum(advantages)
+        probabilities = map(lambda ad: ad / sum_advantage, advantages)
+
+        winner_apps = choice(normal_users, winners_num,
+                             replacement=False,     # no duplication
+                             p=probabilities)
 
     for application in normal_users:
         application.status = "won" if application in winner_apps else "lose"
@@ -149,3 +157,16 @@ def draw_all_at_index(index):
         db.session.commit()
 
     return winners
+
+
+def calc_advantage(app):
+    """
+        returns multiplier indicating how more likely
+        the application is to win
+    """
+    win_count = app.user.win_count
+    lose_count = app.user.lose_count
+    if win_count == 0 and lose_count == 0:
+        return 1
+    else:
+        return 1    # TODO: DIFINE ME please!
