@@ -90,6 +90,7 @@ class Application(db.Model):
             user_id (int): user id of this application
             status (Boolen): whether chosen or not. initalized with None
             is_rep (bool): whether rep of a group or not
+            probabitily (nullable float): how likely the application is to win
     """
     __tablename__ = 'application'
     __table_args__ = (UniqueConstraint(
@@ -107,6 +108,7 @@ class Application(db.Model):
                        default="pending",
                        nullable=False)
     is_rep = db.Column(db.Boolean, default=False)
+    probabitily = db.Column(db.Float, default=None)
 
     def __repr__(self):
         return "<Application {}{}{} {}>".format(
