@@ -30,5 +30,5 @@ def test_checker(client, def_status):
                            staff['g-recaptcha-response'],
                            f'/checker/{classroom_id}/{secret_id}')
 
-    assert resp.status == 200
-    assert resp.get_json()['status'] == def_status  # This is still not sure
+    assert resp.status_code == 200
+    assert resp.get_json()['status'] == def_status
