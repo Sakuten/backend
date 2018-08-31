@@ -32,3 +32,22 @@ def test_checker(client, def_status):
 
     assert resp.status_code == 200
     assert resp.get_json()['status'] == def_status
+
+
+def test_checker_no_application(client):  # This is still not sure
+    """attempt to use `/checker` endpoint without application for that
+       target_url: /checker/{classroom_id}/{secret_id}
+    """
+    classroom_id = 1
+    index = 1
+    target_user = test_user
+    secret_id = target_user['secret_id']
+    staff = checker
+
+    with mock.patch('api.routes.api.get_time_index',  # is that correct?
+                    return_value=index):
+        resp = as_user_get(client, staff['secret_id'],
+                           staff['g-recaptcha-response'],
+                           f'/checker/{classroom_id}/{secret_id}')
+    assert resp.status_code == 404
+    assert resp.get_json()['message'] == 'application not found'
