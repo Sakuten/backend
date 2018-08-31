@@ -2,6 +2,7 @@ import random
 from flask import current_app
 from api.models import Lottery, Application, db
 from itertools import chain
+from numpy.random import choice
 
 
 class AlreadyDoneError(Exception):
@@ -32,6 +33,9 @@ def draw_one(lottery):
     if len(applications) == 0:
         winners = []
     else:
+        for app in applications:
+            app.advantage = calc_advantage(app)
+
         winners_num = current_app.config['WINNERS_NUM']
 
         won_group_members = draw_one_group_members(applications, winners_num)
@@ -60,16 +64,20 @@ def draw_one_group_members(applications, winners_num):
     loser_reps = []
 
     def set_group_result(rep, is_won):
-        status, to_apps, to_reps = \
-            ("won", winner_apps, winner_reps) if is_won \
-            else ("lose", loser_apps, loser_reps)
+        status, to_apps, to_reps, win, lose = \
+            ("won", winner_apps, winner_reps, 1, 0) if is_won \
+            else ("lose", loser_apps, loser_reps, 0, 1)
 
         rep.status = status
+        rep.user.win_count += win
+        rep.user.lose_count += lose
         to_apps.append(rep)
         to_reps.append(rep)
 
         for member in rep.group_members:
             member.own_application.status = status
+            member.own_application.user.win_count += win
+            member.own_application.user.lose_count += lose
             to_apps.append(member.own_application)
 
     def unset_group_result(rep, from_apps, from_reps):
@@ -79,12 +87,13 @@ def draw_one_group_members(applications, winners_num):
             from_apps.remove(member.own_application)
 
     reps = [app for app in applications if app.is_rep]
+    indexes = [i for i, app in enumerate(applications) if app.is_rep]
 
-    # How likely is a rep to win
-    probability = min(winners_num / len(applications), 1)
+    all_probabilities = calc_probabilities(applications)
 
-    for rep in reps:
-        set_group_result(rep, random.random() < probability)
+    for i, rep in zip(indexes, reps):
+        set_group_result(rep,
+                         random.random() < all_probabilities[i] * winners_num)
 
     n_group_members = sum(len(rep_app.group_members) + 1 for rep_app in reps)
     n_normal_users = len(applications) - n_group_members
@@ -113,11 +122,15 @@ def draw_one_normal_users(applications, winners_num):
         add applications to the session
     """
     normal_users = [app for app in applications if app.status == "pending"]
-    try:
-        winner_apps = random.sample(normal_users, winners_num)
-    except ValueError:
+
+    if len(applications) <= winners_num or not normal_users:
         # if applications are less than winners_num, all applications win
         winner_apps = normal_users
+    else:
+        winner_apps = choice(
+            normal_users, winners_num,
+            replace=False,      # no duplication
+            p=calc_probabilities(normal_users))
 
     for application in normal_users:
         application.status = "won" if application in winner_apps else "lose"
@@ -149,3 +162,21 @@ def draw_all_at_index(index):
         db.session.commit()
 
     return winners
+
+
+def calc_probabilities(apps):
+    sum_advantage = sum(app.advantage for app in apps)
+    return [app.advantage / sum_advantage for app in apps]
+
+
+def calc_advantage(app):
+    """
+        returns multiplier indicating how more likely
+        the application is to win
+    """
+    win_count = app.user.win_count
+    lose_count = app.user.lose_count
+    if win_count == 0 and lose_count == 0:
+        return 1
+    else:
+        return 1   # TODO: DEFINE ME please!
