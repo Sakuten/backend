@@ -15,6 +15,7 @@ from utils import (
     invalid_lottery_id,
     make_application
 )
+import conftest
 
 
 from api.models import Lottery, Classroom, User, Application, GroupMember, db
@@ -28,6 +29,8 @@ from api.schemas import (
 )
 from api.time_management import mod_time
 from itertools import chain
+from operator import itemgetter
+from collections import defaultdict
 
 
 # ---------- Lottery API
@@ -726,13 +729,13 @@ def test_draw_lots_of_groups(client, cnt):
         target_lottery = Lottery.query.filter_by(id=idx).first()
         index = target_lottery.index
         users = User.query.all()
-        members_app = [Application(lottery=target_lottery, user_id=users[i].id)
-                       for i in members]
-        reps_app = [Application(
+        members_app = (Application(lottery=target_lottery, user_id=users[i].id)
+                       for i in members)
+        reps_app = (Application(
                     lottery=target_lottery,
                     user_id=users[i].id, is_rep=True,
                     group_members=[GroupMember(user_id=users[j].id)])
-                    for i, j in zip(reps, members)]
+                    for i, j in zip(reps, members))
 
         for application in chain(members_app, reps_app):
             db.session.add(application)
@@ -906,6 +909,53 @@ def test_draw_already_done(client):
 
     assert resp.status_code == 400
     assert 'already done' in resp.get_json()['message']
+
+
+def test_losers_advantage(client):
+    """
+        user with the lose_count of 3 and others with that of 0 attempt to
+        apply a lottery
+        test loser is more likely to win
+        target_url: /lotteries/<id>/draw
+    """
+    idx = 1
+    win_count = defaultdict(int)
+
+    for _ in range(20):
+        with client.application.app_context():
+            target_lottery = Lottery.query.get(idx)
+            index = target_lottery.index
+
+            users = User.query.all()
+            users[0].lose_count = 3
+            user0_id = users[0].id
+            win_count = {user.id: 0 for user in users}
+
+            apps = (Application(lottery=target_lottery, user_id=user.id)
+                    for user in users)
+
+            for app in apps:
+                db.session.add(app)
+            # db.session.commit()
+
+            token = login(client, admin['secret_id'],
+                          admin['g-recaptcha-response'])['token']
+
+            with mock.patch('api.routes.api.get_draw_time_index',
+                            return_value=index):
+                resp = client.post(
+                    f'/lotteries/{idx}/draw',
+                    headers={'Authorization': f'Bearer {token}'})
+
+                print(resp.get_json())
+                for winner_json in resp.get_json():
+                    winner_id = winner_json['id']
+                    win_count[winner_id] += 1
+        # re-configure and reset test environment
+        client = next(conftest.client())
+
+    won_most = max(win_count.items(), key=itemgetter(1))[0]
+    assert won_most == user0_id
 
 
 @pytest.mark.skip(reason='not implemented yet')
