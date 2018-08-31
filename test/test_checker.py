@@ -51,3 +51,21 @@ def test_checker_no_application(client):  # This is still not sure
                            f'/checker/{classroom_id}/{secret_id}')
     assert resp.status_code == 404
     assert resp.get_json()['message'] == 'application not found'
+
+
+def test_checker_invalid_user(client):
+    """attempt to use `/checker` endpoint with wrong user
+    """
+    classroom_id = 1
+    index = 1
+    staff = checker
+    secret_id = "NOTEXIST_SECRET_KEY"
+
+    with mock.patch('api.routes.api.get_time_index',
+                    return_value=index):
+        resp = as_user_get(client, staff['secret_id'],
+                           staff['g-recaptcha-response'],
+                           f'/checker/{classroom_id}/{secret_id}')
+
+    assert resp.status_code == 404
+    assert resp.get_json()['message'] == 'user not found'
