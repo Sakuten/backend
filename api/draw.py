@@ -164,9 +164,9 @@ def draw_all_at_index(index):
     return winners
 
 
-def calc_probabilities(apps):
-    sum_advantage = sum(app.advantage for app in apps)
-    return [app.advantage / sum_advantage for app in apps]
+def calc_probabilities(applications):
+    sum_advantage = sum(app.advantage for app in applications)
+    return [app.advantage / sum_advantage for app in applications]
 
 
 def calc_advantage(app):
@@ -179,4 +179,4 @@ def calc_advantage(app):
     if win_count == 0 and lose_count == 0:
         return 1
     else:
-        return 1   # TODO: DEFINE ME please!
+        return 1    # TODO: DEFINE ME please!
