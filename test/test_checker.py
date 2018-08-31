@@ -1,6 +1,6 @@
 from unittest import mock
 import pytest
-from utils import test_user
+from utils import test_user, checker, as_user_get
 from api.models import Lottery, User, Application, db
 
 
@@ -12,6 +12,7 @@ def test_checker(client, def_status):
     classroom_id = 1
     index = 1
     target_user = test_user
+    staff = checker
     secret_id = target_user['secret_id']
 
     with client.application.app_context():
