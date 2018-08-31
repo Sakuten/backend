@@ -347,3 +347,28 @@ def translate_secret_to_public(secret_id):
         return jsonify({"message": "no such user found"}), 404
     else:
         return jsonify({"public_id": user.public_id})
+
+
+@bp.route('/checker/<int:classroom_id>/<string:secret_id>', methods=['GET'])
+@spec('api/checker.yml')
+@login_required('checker')
+def checker(classroom_id, secret_id):
+    """return if the user is winner of given classroom
+        Args:
+            classroom_id (int): target classroom
+            secret_id (string): secret id of target user
+    """
+    user = User.query.filter_by(secret_id=secret_id).first()
+    if not user:
+        return jsonify({"message": "user not found"}), 404
+    lottery = Lottery.query.filter_by(classroom_id=classroom_id,
+                                      index=get_time_index)
+    if not lottery:
+        return jsonify({"message": "lottery not found"}), 404
+    application = Application.query.filter_by(user=user,
+                                              lottery=lottery).first()
+    if not application:
+        return jsonify({"message": "application not found"}), 404
+
+    return jsonify({"status": application.status})
+
