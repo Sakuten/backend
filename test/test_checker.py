@@ -1,0 +1,31 @@
+from unittest import mock
+import pytest
+from utils import test_user
+from api.models import Lottery, User, Application, db
+
+
+@pytest.mark.parametrize("def_status", ["pending", "won", "lose"])
+def test_checker(client, def_status):
+    """use `/checker` endpoint with winner user
+        target_url: /checker/{classroom_id}/{secret_id}
+    """
+    classroom_id = 1
+    index = 1
+    target_user = test_user
+    secret_id = target_user['secret_id']
+
+    with client.application.app_context():
+        lottery_id = Lottery.query.filter_by(classroom_id=classroom_id,
+                                             index=index).first().id
+        user = User.query.filter_by(secret_id=secret_id).first()
+        application = Application(user_id=user.id,
+                                  lottery_id=lottery_id, status=def_status)
+        db.session.add(application)
+        db.session.commit()
+
+    with mock.patch('api.routes.api.get_time_index',  # is that correct?
+                    return_value=1):
+        resp = client.get(f'/checker/{classroom_id}/{secret_id}')
+
+    assert resp.status == 200
+    assert resp.get_json()['status'] == def_status  # This is still not sure
