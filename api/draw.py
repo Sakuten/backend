@@ -179,4 +179,4 @@ def calc_advantage(app):
     if win_count == 0 and lose_count == 0:
         return 1
     else:
-        return 1    # TODO: DEFINE ME please!
+        return lose_count   # TODO: DEFINE ME please!
