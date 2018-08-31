@@ -25,7 +25,7 @@ def test_checker(client, def_status):
         db.session.commit()
 
     with mock.patch('api.routes.api.get_time_index',  # is that correct?
-                    return_value=1):
+                    return_value=index):
         resp = as_user_get(client, staff['secret_id'],
                            staff['g-recaptcha-response'],
                            f'/checker/{classroom_id}/{secret_id}')
