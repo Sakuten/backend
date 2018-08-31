@@ -26,7 +26,9 @@ def test_checker(client, def_status):
 
     with mock.patch('api.routes.api.get_time_index',  # is that correct?
                     return_value=1):
-        resp = client.get(f'/checker/{classroom_id}/{secret_id}')
+        resp = as_user_get(client, staff['secret_id'],
+                           staff['g-recaptcha-response'],
+                           f'/checker/{classroom_id}/{secret_id}')
 
     assert resp.status == 200
     assert resp.get_json()['status'] == def_status  # This is still not sure
