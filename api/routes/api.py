@@ -142,7 +142,7 @@ def apply_lottery(idx):
                    app.lottery.id != lottery.id
                    for app in previous.all()):
                 msg = "someone in the group is already " \
-                       "applying to a lottery in this period"
+                    "applying to a lottery in this period"
                 return jsonify({"message": msg}), 400
             if any(app.lottery.index == lottery.index and
                    app.lottery.id == lottery.id
@@ -371,4 +371,3 @@ def checker(classroom_id, secret_id):
         return jsonify({"message": "application not found"}), 404
 
     return jsonify({"status": application.status})
-
