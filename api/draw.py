@@ -34,7 +34,7 @@ def draw_one(lottery):
         winners = []
     else:
         for app in applications:
-            app.advantage = calc_advantage(app)
+            app.advantage = calc_advantage(app)     # set a new field
 
         winners_num = current_app.config['WINNERS_NUM']
 
