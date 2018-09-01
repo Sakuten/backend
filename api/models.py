@@ -19,6 +19,7 @@ class User(db.Model):
     public_id = db.Column(db.Integer, unique=True)
     secret_id = db.Column(db.String(40), unique=True)
     authority = db.Column(db.String(20))
+    kind = db.Column(db.String(30))
     first_access = db.Column(db.Date, default=None)
 
     def __repr__(self):
