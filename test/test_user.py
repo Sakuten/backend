@@ -166,8 +166,8 @@ def test_auth_used_user(client):
         target_url: /auth
     """
     login_user = test_user
-    date_before = date(2018, 1, 1)
-    date_login = date(2018, 1, 2)
+    date_before = date(2038, 1, 1)
+    date_login = date(2038, 1, 2)
     with client.application.app_context():
         user = User.query.filter_by(secret_id=login_user['secret_id']).first()
         user.first_access = date_before
