@@ -86,16 +86,17 @@ def draw_one_group_members(applications, winners_num):
         for member in rep.group_members:
             from_apps.remove(member.own_application)
 
-    reps = [app for app in applications if app.is_rep]
-    indexes = [i for i, app in enumerate(applications) if app.is_rep]
+    reps_with_index = [(i, app)
+                       for i, app in enumerate(applications) if app.is_rep]
 
     all_probabilities = calc_probabilities(applications)
 
-    for i, rep in zip(indexes, reps):
+    for i, rep in reps_with_index:
         set_group_result(rep,
                          random.random() < all_probabilities[i] * winners_num)
 
-    n_group_members = sum(len(rep_app.group_members) + 1 for rep_app in reps)
+    n_group_members = sum(len(rep_app.group_members) + 1
+                          for _, rep_app in reps_with_index)
     n_normal_users = len(applications) - n_group_members
 
     # when too few groups accidentally won
