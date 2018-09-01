@@ -1,3 +1,4 @@
+import pytest
 from unittest import mock
 from datetime import date
 from utils import (
@@ -183,3 +184,29 @@ def test_auth_used_user(client):
 
     assert resp.status_code == 400
     assert resp.get_json()['message'] == 'Login Unsuccessful'
+
+
+@pytest.mark.skip(reason="field 'kind' is not added yet")
+def test_auth_overtime_as_student(client):
+    """attempt to use same `user`(which isn't in ONE_DAY_KIND) for 2 days
+    target_url: /auth
+    """
+    login_user = test_student
+    date_before = date(2038, 1, 1)
+    date_login = date(2038, 1, 2)
+    with client.application.app_context():
+        user = User.query.filter_by(secret_id=login_user['secret_id']).first()
+        user.first_access = date_before
+        db.session.add(user)
+        db.session.commit()
+
+    with mock.patch('api.auth.date',
+                    return_value=date_login):
+        resp = client.post('/auth', json={
+                           'id': login_user['secret_id'],
+                           'g-recaptcha-response':
+                               login_user['g-recaptcha-response']
+                           }, follow_redirects=True)
+
+    assert resp.status_code == 200
+    assert resp.get_json()['message'] == 'Login Successful'
