@@ -361,10 +361,12 @@ def checker(classroom_id, secret_id):
     user = User.query.filter_by(secret_id=secret_id).first()
     if not user:
         return jsonify({"message": "user not found"}), 404
+    try:
+        index = get_time_index()
+    except (OutOfHoursError, OutOfAcceptingHoursError):
+        return jsonify({"message": "Not acceptable time"}), 400
     lottery = Lottery.query.filter_by(classroom_id=classroom_id,
-                                      index=get_time_index()).first()
-    if not lottery:
-        return jsonify({"message": "lottery not found"}), 404
+                                      index=index).first()
     application = Application.query.filter_by(user=user,
                                               lottery=lottery).first()
     if not application:

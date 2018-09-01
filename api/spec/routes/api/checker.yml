@@ -23,7 +23,7 @@ response:
           description: the status. can be ["won"|"lose"|"pending"]
           type: string
   '400':
-    description: Malformed Authenication Header has detected
+    description: Malformed Authenication Header has detected / Not acceptable time
     headers:
       WWW-Authenticate:
         description: >-
@@ -44,7 +44,7 @@ response:
       $ref: '#/definitions/ErrorMessage'
 
   '404':
-    description: user not found / lottery not found / application not found
+    description: user not found  / application not found
     schema:
       $ref: '#/definitions/ErrorMessage'
 security:
