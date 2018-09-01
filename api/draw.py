@@ -166,6 +166,12 @@ def draw_all_at_index(index):
 
 
 def calc_probabilities(applications):
+    """
+        calculate the probability of each application
+        return list of the weight of each application showing how likely
+        the application is to be chosen in comparison with others
+        the sum of the list is 1
+    """
     sum_advantage = sum(app.advantage for app in applications)
     return [app.advantage / sum_advantage for app in applications]
 
