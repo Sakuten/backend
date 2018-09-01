@@ -30,7 +30,6 @@ from api.schemas import (
 from api.time_management import mod_time
 from itertools import chain
 from operator import itemgetter
-from collections import defaultdict
 
 
 # ---------- Lottery API
@@ -919,24 +918,24 @@ def test_losers_advantage(client):
         target_url: /lotteries/<id>/draw
     """
     idx = 1
-    win_count = defaultdict(int)
+    win_count = {i: 0 for i in range(1, 7)}
 
-    for _ in range(20):
+    for i in range(10):
+        print(i, win_count)     # display when test failed
         with client.application.app_context():
             target_lottery = Lottery.query.get(idx)
             index = target_lottery.index
 
-            users = User.query.all()
+            users = User.query.order_by(User.id).all()[:6]
             users[0].lose_count = 3
             user0_id = users[0].id
-            win_count = {user.id: 0 for user in users}
 
             apps = (Application(lottery=target_lottery, user_id=user.id)
                     for user in users)
 
             for app in apps:
                 db.session.add(app)
-            # db.session.commit()
+            db.session.commit()
 
             token = login(client, admin['secret_id'],
                           admin['g-recaptcha-response'])['token']
@@ -947,14 +946,72 @@ def test_losers_advantage(client):
                     f'/lotteries/{idx}/draw',
                     headers={'Authorization': f'Bearer {token}'})
 
-                print(resp.get_json())
                 for winner_json in resp.get_json():
                     winner_id = winner_json['id']
                     win_count[winner_id] += 1
+
         # re-configure and reset test environment
         client = next(conftest.client())
 
     won_most = max(win_count.items(), key=itemgetter(1))[0]
+    print(win_count)
+    assert won_most == user0_id
+
+
+def test_group_losers_advantage(client):
+    """
+        user with the lose_count of 3 and others with that of 0 attempt to
+        apply a lottery
+        test loser is more likely to win
+        target_url: /lotteries/<id>/draw
+    """
+    idx = 1
+    groups = [(0, (1,))]
+    win_count = {i: 0 for i in range(1, 7)}
+
+    for i in range(10):
+        print(i, win_count)     # display when test failed
+        with client.application.app_context():
+            target_lottery = Lottery.query.get(idx)
+            index = target_lottery.index
+
+            users = User.query.order_by(User.id).all()[:6]
+            users[0].lose_count = 3
+            user0_id = users[0].id
+
+            rep_apps = (Application(
+                lottery=target_lottery, user_id=users[rep].id,
+                is_rep=True,
+                group_members=[GroupMember(user_id=users[j].id)
+                               for j in members])
+                        for rep, members in groups)
+            normal_apps = (Application(
+                lottery=target_lottery, user_id=users[i].id)
+                for i in range(len(users))
+                for rep, _ in groups if i != rep)  # not rep
+
+            for app in chain(rep_apps, normal_apps):
+                db.session.add(app)
+            db.session.commit()
+
+            token = login(client, admin['secret_id'],
+                          admin['g-recaptcha-response'])['token']
+
+            with mock.patch('api.routes.api.get_draw_time_index',
+                            return_value=index):
+                resp = client.post(
+                    f'/lotteries/{idx}/draw',
+                    headers={'Authorization': f'Bearer {token}'})
+
+                for winner_json in resp.get_json():
+                    winner_id = winner_json['id']
+                    win_count[winner_id] += 1
+
+        # re-configure and reset test environment
+        client = next(conftest.client())
+
+    won_most = max(win_count.items(), key=itemgetter(1))[0]
+    print(win_count)
     assert won_most == user0_id
 
 
