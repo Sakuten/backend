@@ -116,6 +116,8 @@ def todays_user(secret_id='', user_id=''):
 
     if not user:
         return None
+    if user.kind not in current_app.config['ONE_DAY_KIND']:
+        return user
 
     if user.first_access is None:
         user.first_access = date.today()
