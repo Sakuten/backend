@@ -5,7 +5,8 @@ from utils import (
     login_with_form,
     login,
     admin,
-    test_user
+    test_user,
+    test_student
 )
 from api.models import User, db
 from api.schemas import user_schema
