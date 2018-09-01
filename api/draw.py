@@ -34,7 +34,9 @@ def draw_one(lottery):
         winners = []
     else:
         for app in applications:
-            app.advantage = calc_advantage(app)     # set a new field
+            # set a new field
+            app.advantage = calc_advantage(
+                app.user.win_count, app.user.lose_count)
 
         winners_num = current_app.config['WINNERS_NUM']
 
@@ -176,13 +178,11 @@ def calc_probabilities(applications):
     return [app.advantage / sum_advantage for app in applications]
 
 
-def calc_advantage(app):
+def calc_advantage(win_count, lose_count):
     """
         returns multiplier indicating how more likely
         the application is to win
     """
-    win_count = app.user.win_count
-    lose_count = app.user.lose_count
     if win_count == 0 and lose_count == 0:
         return 1
     else:
