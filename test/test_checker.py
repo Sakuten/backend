@@ -24,7 +24,7 @@ def test_checker(client, def_status):
         db.session.add(application)
         db.session.commit()
 
-    with mock.patch('api.routes.api.get_time_index',  # is that correct?
+    with mock.patch('api.routes.api.get_time_index',
                     return_value=index):
         resp = as_user_get(client, staff['secret_id'],
                            staff['g-recaptcha-response'],
@@ -34,7 +34,7 @@ def test_checker(client, def_status):
     assert resp.get_json()['status'] == def_status
 
 
-def test_checker_no_application(client):  # This is still not sure
+def test_checker_no_application(client):
     """attempt to use `/checker` endpoint without application for that
        target_url: /checker/{classroom_id}/{secret_id}
     """
@@ -44,7 +44,7 @@ def test_checker_no_application(client):  # This is still not sure
     secret_id = target_user['secret_id']
     staff = checker
 
-    with mock.patch('api.routes.api.get_time_index',  # is that correct?
+    with mock.patch('api.routes.api.get_time_index',
                     return_value=index):
         resp = as_user_get(client, staff['secret_id'],
                            staff['g-recaptcha-response'],
