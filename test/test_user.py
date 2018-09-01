@@ -177,7 +177,8 @@ def test_auth_used_user(client):
                     return_value=date_login):
         resp = client.post('/auth', json={
                            'id': login_user['secret_id'],
-                           'g-recaptcha-response': login_user['g-recaptcha-response']
+                           'g-recaptcha-response':
+                               login_user['g-recaptcha-response']
                            }, follow_redirects=True)
 
     assert resp.status_code == 400
