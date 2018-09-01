@@ -47,4 +47,9 @@ response:
     description: user not found / lottery not found / application not found
     schema:
       $ref: '#/definitions/ErrorMessage'
-
+security:
+  - checker_auth: []
+tags:
+  - checker
+description: check the user status for lottery of the classroom
+operationId: checkStatus
