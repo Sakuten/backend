@@ -19,9 +19,8 @@ responses:
       type: object
   '400':
     description: >-
-      Invalid Request / Lottery has already done / You're
-      already applying to a lottery in this period / You're not applying
-      for this lottery
+      Invalid Request / You're already applying to a lottery in this period
+      / You're not applying for this lottery
     headers:
       WWW-Authenticate:
         description: >-

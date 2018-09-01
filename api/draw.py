@@ -4,13 +4,6 @@ from api.models import Lottery, Application, db
 from itertools import chain
 
 
-class AlreadyDoneError(Exception):
-    """
-        The Exception that indicates the lottery has already done
-    """
-    pass
-
-
 def draw_one(lottery):
     """
         Draw the specified lottery
@@ -21,9 +14,6 @@ def draw_one(lottery):
         Raises:
             AlreadyDoneError
     """
-    if lottery.done:
-        raise AlreadyDoneError()
-
     lottery.done = True
 
     idx = lottery.id
@@ -133,12 +123,8 @@ def draw_all_at_index(index):
           index(int): zero-based index that indicates the time of lottery
         Return:
           winners([[User]]): The list of list of users who won
-        Raises:
-            AlreadyDoneError
     """
     lotteries = Lottery.query.filter_by(index=index)
-    if any(lottery.done for lottery in lotteries):
-        raise AlreadyDoneError()
 
     winners = [draw_one(lottery)
                for lottery in lotteries]
