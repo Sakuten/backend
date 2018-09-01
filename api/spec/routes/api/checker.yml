@@ -16,7 +16,7 @@ parameters:
     required: true
 response:
   '200':
-    description:  'status' of the application
+    description:  status of the application
     schema:
       properties:
         status:
