@@ -5,6 +5,23 @@ from itertools import chain
 from numpy.random import choice
 
 
+class GroupAdvantage:
+    @staticmethod
+    def minimum(group):
+        return min(app.advantage for app in group)
+
+    @staticmethod
+    def average(group):
+        return sum(app.advantage for app in group) / len(group)
+
+    @staticmethod
+    def rep(group):
+        return next(filter(lambda app: app.is_rep, group))
+
+
+group_advantage_calculation = GroupAdvantage.average
+
+
 def draw_one(lottery):
     """
         Draw the specified lottery
@@ -27,6 +44,7 @@ def draw_one(lottery):
             # set a new field
             app.advantage = calc_advantage(
                 app.user.win_count, app.user.lose_count)
+        set_group_advantage(applications)
 
         winners_num = current_app.config['WINNERS_NUM']
 
@@ -173,3 +191,10 @@ def calc_advantage(win_count, lose_count):
         return 1
     else:
         return lose_count   # TODO: DEFINE ME please!
+
+
+def set_group_advantage(apps):
+    group_apps = [rep.group_members + [rep] for rep in apps if rep.is_rep]
+    for group in group_apps:
+        for app, advantage in zip(group, group_advantage_calculation(group)):
+                app.advantage = advantage
