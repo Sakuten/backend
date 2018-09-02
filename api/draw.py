@@ -16,7 +16,7 @@ class GroupAdvantage:
 
     @staticmethod
     def rep(group):
-        return next(filter(lambda app: app.is_rep, group))
+        return next(filter(lambda app: app.is_rep, group)).advantage
 
 
 group_advantage_calculation = GroupAdvantage.average
@@ -194,7 +194,10 @@ def calc_advantage(win_count, lose_count):
 
 
 def set_group_advantage(apps):
-    group_apps = [rep.group_members + [rep] for rep in apps if rep.is_rep]
+    group_apps = [[rep] + [member.own_application
+                           for member in rep.group_members]
+                  for rep in apps if rep.is_rep]
     for group in group_apps:
-        for app, advantage in zip(group, group_advantage_calculation(group)):
+        advantage = group_advantage_calculation(group)
+        for app in group:
                 app.advantage = advantage
