@@ -169,7 +169,7 @@ def calc_advantage(win_count, lose_count):
         returns multiplier indicating how more likely
         the application is to win
     """
-    if win_count == 0 and lose_count == 0:
+    if lose_count == 0:
         return 1
     else:
-        return lose_count   # TODO: DEFINE ME please!
+        return max(1, lose_count - win_count)
