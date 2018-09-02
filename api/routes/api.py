@@ -345,6 +345,6 @@ def ids_hash():
     """return sha256 hash of `ids.json` used in background
     """
     with open(current_app.config['ID_LIST_FILE'], 'r') as f:
-        checksum = hashlib.sha256(f.read()).hexdigest()
+        checksum = hashlib.sha256(f.read().encode()).hexdigest()
 
     return jsonify({"sha256": checksum})
