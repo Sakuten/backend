@@ -1,6 +1,7 @@
 from itertools import chain
+import hashlib
 
-from flask import Blueprint, jsonify, g, request
+from flask import Blueprint, jsonify, g, request, current_app
 from api.models import Lottery, Classroom, User, Application, db, GroupMember
 from api.schemas import (
     user_schema,
@@ -336,3 +337,14 @@ def translate_secret_to_public(secret_id):
         return jsonify({"message": "no such user found"}), 404
     else:
         return jsonify({"public_id": user.public_id})
+
+
+@bp.route('/ids_hash', methods=['GET'])
+@spec('api/ids_hash.yml')
+def ids_hash():
+    """return sha256 hash of `ids.json` used in background
+    """
+    with open(current_app.config['ID_LIST_FILE'], 'r') as f:
+        checksum = hashlib.sha256(f.read()).hexdigest()
+
+    return jsonify({"sha256": checksum})
