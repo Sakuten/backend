@@ -5,6 +5,7 @@ from ipaddress import ip_address
 from api.models import User
 from api.auth import generate_token
 from api.swagger import spec
+from api.error import error_response
 
 bp = Blueprint(__name__, 'auth')
 
