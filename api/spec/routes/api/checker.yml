@@ -42,7 +42,6 @@ response:
         type: string
     schema:
       $ref: '#/definitions/ErrorMessage'
-
   '404':
     description: user not found  / application not found
     schema:
