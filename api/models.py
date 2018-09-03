@@ -145,10 +145,12 @@ class Error(db.Model):
         DB contents:
             code (int): identical error code, which has a common meaning
                                     between frontend and backend
+            http_code (int): the HTTP status code
             message (str): the description message
     """
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.Integer, unique=True)
+    http_code = db.Column(db.Integer)
     message = db.Column(db.String(200))
 
     def __repr__(self):

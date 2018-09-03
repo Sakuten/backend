@@ -132,8 +132,8 @@ def generate():
     json_path = current_app.config['ERROR_TABLE_FILE']
     with open(json_path, 'r') as f:
         error_list = json.load(f)
-    for (code, message) in error_list.items():
-        error = Error(code=int(code, 10), message=message)
+    for (code, desc) in error_list.items():
+        error = Error(code=int(code, 10), message=desc['message'], http_code=desc['status'])
         db.session.add(error)
 
     db.session.commit()
