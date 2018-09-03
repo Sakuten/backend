@@ -7,6 +7,7 @@ from .models import db
 from cards.id import load_id_json_file, decode_public_id
 import os
 import sys
+import json
 
 config = {
     "development": "api.config.DevelopmentConfig",
@@ -93,7 +94,7 @@ def generate():
         Return:
             no-return given
     """
-    from .models import Lottery, Classroom, User, db
+    from .models import Lottery, Classroom, User, Error, db
     total_index = 4
     grades = [5, 6]
 
