@@ -1,0 +1,14 @@
+return hash of ids.json
+---
+produces:
+  - application/json
+response:
+  '200':
+    description: sha256 hash of `ids.json`
+    schema:
+      type: object
+      propaties:
+        sha256:
+          description: sha256 hash
+          type: string
+          exapmle: fb8278f207c07b3707bb2ffa5dc1ec899beb49620c6bdfe5e70250c46b5ec89f
