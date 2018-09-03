@@ -1,4 +1,4 @@
-from flask import make_response, g, current_app, jsonify, request
+from flask import g, current_app, request
 from cryptography.fernet import Fernet, InvalidToken
 from api.models import User
 from datetime import datetime

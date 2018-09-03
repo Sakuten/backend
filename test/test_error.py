@@ -1,4 +1,3 @@
-import pytest
 from api.error import error_response
 
 
