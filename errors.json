@@ -1,0 +1,20 @@
+{
+  "00": "Authorization failed",
+  "01": "Invalid group member secret id",
+  "02": "Invalid request",
+  "03": "Login unsuccessful",
+  "04": "Malformed authenication header has detected",
+  "05": "No such user found",
+  "06": "Not acceptable time",
+  "07": "Not found",
+  "08": "Someone in the group is already applying to a lottery in this period",
+  "09": "Someone in the group is already applying to this lottery",
+  "10": "The Application has already fullfilled",
+  "11": "This lottery is not acceptable now.",
+  "12": "This lottery is not done yet.",
+  "13": "Unsupported content type",
+  "14": "We're not accepting any application in this hours.",
+  "15": "You have no permission to perform the action",
+  "16": "Your application is already accepted",
+  "17": "You’re already applying to a lottery in this period"
+}
