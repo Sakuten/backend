@@ -352,7 +352,7 @@ def translate_secret_to_public(secret_id):
 @bp.route('/checker/<int:classroom_id>/<string:secret_id>', methods=['GET'])
 @spec('api/checker.yml')
 @login_required('checker')
-def checker(classroom_id, secret_id):
+def check_id(classroom_id, secret_id):
     """return if the user is winner of given classroom
         Args:
             classroom_id (int): target classroom
