@@ -136,7 +136,8 @@ def apply_lottery(idx):
             if any(app.lottery.index == lottery.index and
                    app.lottery.id != lottery.id
                    for app in previous.all()):
-                # Someone in the group is already applying to a lottery in this period
+                # Someone in the group is
+                # already applying to a lottery in this period
                 return error_response(8)
             if any(app.lottery.index == lottery.index and
                    app.lottery.id == lottery.id
