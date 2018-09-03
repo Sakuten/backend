@@ -10,6 +10,6 @@ def error_response(code):
         Returns:
             resp(Response): flask response with error message
     """
-    error = Error.query().filter_by(code=code).first()
+    error = Error.query.filter_by(code=code).first()
     result = error_schema.dump(error)[0]
     return jsonify(result), error.http_code

@@ -51,10 +51,10 @@ def login_required(*required_authority):
         @wraps(f)
         def decorated_function(*args, **kwargs):
             def auth_error(code, headm=None):
-                resp = error_response(code)
+                resp, http_code = error_response(code)
                 if headm:
                     resp.headers['WWW-Authenticate'] = 'Bearer ' + headm
-                return resp
+                return resp, http_code
 
             time = get_current_datetime()
             end = current_app.config['END_DATETIME']
