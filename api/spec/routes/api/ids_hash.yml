@@ -2,13 +2,13 @@ return hash of ids.json
 ---
 produces:
   - application/json
-response:
+responses:
   '200':
     description: sha256 hash of `ids.json`
     schema:
       type: object
-      propaties:
+      properties:
         sha256:
           description: sha256 hash
+          example: fb8278f207c07b3707bb2ffa5dc1ec899beb49620c6bdfe5e70250c46b5ec89f
           type: string
-          exapmle: fb8278f207c07b3707bb2ffa5dc1ec899beb49620c6bdfe5e70250c46b5ec89f
