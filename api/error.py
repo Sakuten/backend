@@ -1,6 +1,7 @@
 from schemas import error_schema
 from models import Error
 
+
 def error_response(code, http_code):
     """
         Construct json response from error code

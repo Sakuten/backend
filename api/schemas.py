@@ -81,8 +81,10 @@ class LotterySchema(Schema):
 lottery_schema = LotterySchema()
 lotteries_schema = LotterySchema(many=True)
 
+
 class ErrorSchema(Schema):
     code = fields.Int()
     message = fields.Str()
+
 
 error_schema = ErrorSchema()
