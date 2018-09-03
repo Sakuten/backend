@@ -133,7 +133,7 @@ def generate():
     with open(json_path, 'r') as f:
         error_list = json.load(f)
     for (code, message) in error_list.items():
-        error = Error(code=code, message=message)
+        error = Error(code=int(code, 10), message=message)
         db.session.add(error)
 
     db.session.commit()
