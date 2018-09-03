@@ -137,3 +137,18 @@ class GroupMember(db.Model):
 
     def __repr__(self):
         return f"<GroupMember {self.user}>"
+
+class Error(db.Model):
+    """
+        Error model
+        DB contents:
+            code (int): identical error code, which has a common meaning
+                                    between frontend and backend
+            message (str): the description message
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.Integer, unique=True)
+    message = db.Column(db.String(200))
+
+    def __repr__(self):
+        return f'<Error {self.code}: "{self.message}">'
