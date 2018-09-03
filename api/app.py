@@ -128,3 +128,12 @@ def generate():
         db.session.add(user)
 
     db.session.commit()
+
+    json_path = current_app.config['ERROR_TABLE_FILE']
+    with open(json_path, 'r') as f:
+        error_list = json.load(f)
+    for (code, message) in error_list.items():
+        error = Error(code=code, message=message)
+        db.session.add(error)
+
+    db.session.commit()
