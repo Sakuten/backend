@@ -25,7 +25,7 @@ def test_login(client):
                  test_user['g-recaptcha-response'])
     assert 'Login Successful' in resp['message']
     resp = login(client, 'notexist', 'notexist')
-    assert 'Login Unsuccessful' in resp['message']
+    assert 'Login unsuccessful' in resp['message']
 
 
 def test_login_form(client):
@@ -43,7 +43,7 @@ def test_login_form(client):
         client, test_user['secret_id'], test_user['g-recaptcha-response'])
     assert 'Login Successful' in resp['message']
     resp = login_with_form(client, 'notexist', 'notexist')
-    assert 'Login Unsuccessful' in resp['message']
+    assert 'Login unsuccessful' in resp['message']
 
 
 def test_login_invalid(client):
@@ -153,4 +153,4 @@ def test_translate_user_ids_invalid_secret_id(client):
                       headers={'Authorization': f'Bearer {token}'})
 
     assert resp.status_code == 404
-    assert 'no such user found' in resp.get_json()['message']
+    assert 'No such user found' in resp.get_json()['message']
