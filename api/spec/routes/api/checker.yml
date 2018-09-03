@@ -20,7 +20,8 @@ response:
     schema:
       properties:
         status:
-          description: the status. can be ["won"|"lose"|"pending"]
+          description: the status
+          enum: [won, lose, pending]
           type: string
   '400':
     description: Malformed Authenication Header has detected / Not acceptable time
