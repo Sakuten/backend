@@ -116,7 +116,8 @@ def apply_lottery(idx):
     try:
         current_index = get_time_index()
     except (OutOfHoursError, OutOfAcceptingHoursError):
-        return error_response(14)  # We're not accepting any application in this hours.
+        # We're not accepting any application in this hours.
+        return error_response(14)
     if lottery.index != current_index:
         return error_response(11)  # This lottery is not acceptable now.
 

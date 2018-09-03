@@ -2,6 +2,7 @@ from api.schemas import error_schema
 from api.models import Error
 from flask import jsonify
 
+
 def error_response(code):
     """
         Construct json response from error code

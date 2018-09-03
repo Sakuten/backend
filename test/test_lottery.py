@@ -809,7 +809,8 @@ def test_draw_noperm(client):
                        headers={'Authorization': f'Bearer {token}'})
 
     assert resp.status_code == 403
-    assert 'You have no permission to perform the action' in resp.get_json()['message']
+    assert 'You have no permission to perform the action' in \
+        resp.get_json()['message']
 
 
 def test_draw_invalid(client):
@@ -955,7 +956,8 @@ def test_draw_all_noperm(client):
                        headers={'Authorization': f'Bearer {token}'})
 
     assert resp.status_code == 403
-    assert 'You have no permission to perform the action' in resp.get_json()['message']
+    assert 'You have no permission to perform the action' in \
+        resp.get_json()['message']
 
 
 def test_draw_all_invalid(client):

@@ -134,7 +134,8 @@ def generate():
     with open(json_path, 'r') as f:
         error_list = json.load(f)
     for (code, desc) in error_list.items():
-        error = Error(code=int(code, 10), message=desc['message'], http_code=desc['status'])
+        error = Error(code=int(code, 10),
+                      message=desc['message'], http_code=desc['status'])
         db.session.add(error)
 
     db.session.commit()

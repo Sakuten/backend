@@ -1,6 +1,7 @@
 import pytest
 from api.error import error_response
 
+
 def test_error_response(client):
     with client.application.app_context():
         resp, http_code = error_response(0)

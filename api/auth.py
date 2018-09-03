@@ -7,6 +7,7 @@ import json
 from api.time_management import get_current_datetime
 from api.error import error_response
 
+
 def generate_token(obj):
     """
         generate token and expiration, return it.
