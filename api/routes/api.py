@@ -1,5 +1,4 @@
 from itertools import chain
-import hashlib
 
 from flask import Blueprint, jsonify, g, request, current_app
 from api.models import Lottery, Classroom, User, Application, db, GroupMember
@@ -25,6 +24,7 @@ from api.draw import (
     draw_one,
     draw_all_at_index,
 )
+from api.utils import calc_sha256
 
 bp = Blueprint(__name__, 'api')
 
@@ -344,7 +344,8 @@ def translate_secret_to_public(secret_id):
 def ids_hash():
     """return sha256 hash of `ids.json` used in background
     """
-    with open(current_app.config['ID_LIST_FILE'], 'r') as f:
-        checksum = hashlib.sha256(f.read().encode()).hexdigest()
-
+    try:
+        checksum = calc_sha256(current_app.config['ID_LIST_FILE'])
+    except FileNotFoundError:
+        checksum = ""
     return jsonify({"sha256": checksum})
