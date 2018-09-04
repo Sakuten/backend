@@ -1,7 +1,9 @@
+import tempfile
 from flask import current_app
 import datetime
 from unittest import mock
 from utils import login, test_user
+from api.utils import calc_sha256
 
 
 def test_trailing_slash(client):
@@ -43,4 +45,16 @@ def test_token_revoke(client):
         assert resp.status_code == 403
 
 
+def test_calc_sha256(client):
+    """test `calc_sha256`
     """
+    val_list = [{'value': 'abcdef',
+                'hash': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'},  # noqa: E501
+                {'value': 'testoftest',
+                 'hash': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}  # noqa: E501
+               ]
+    for val in val_list:
+        with tempfile.NamedTemporaryFile(mode='w', prefix='test') as f:
+            f.write(val['value'])
+
+            assert calc_sha256(f.name) == val['hash']
