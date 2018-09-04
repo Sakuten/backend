@@ -1,4 +1,3 @@
-import hashlib
 from flask import current_app
 import datetime
 from unittest import mock
@@ -44,15 +43,4 @@ def test_token_revoke(client):
         assert resp.status_code == 403
 
 
-def test_ids_hash(client):
-    """test `/ids_hash`
-        target_url: /ids_hash
     """
-    ids_json = client.application.config['ID_LIST_FILE']
-    with open(ids_json, 'r') as f:
-        checksum = hashlib.sha256(f.read().encode()).hexdigest()
-
-    resp = client.get('/ids_hash')
-
-    assert resp.status_code == 200
-    assert resp.get_json()['sha256'] == checksum
