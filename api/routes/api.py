@@ -347,5 +347,5 @@ def ids_hash():
     try:
         checksum = calc_sha256(current_app.config['ID_LIST_FILE'])
     except FileNotFoundError:
-        checksum = ""
+        return jsonify({"message": "ID_LIST_FILE is not found"}), 404
     return jsonify({"sha256": checksum})
