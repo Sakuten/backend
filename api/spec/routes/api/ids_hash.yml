@@ -12,3 +12,7 @@ responses:
           description: sha256 hash
           example: fb8278f207c07b3707bb2ffa5dc1ec899beb49620c6bdfe5e70250c46b5ec89f
           type: string
+  '404':
+    description: ID_LIST_FILE is not found
+    schema:
+      $ref: '#/definitions/ErrorMessage'
