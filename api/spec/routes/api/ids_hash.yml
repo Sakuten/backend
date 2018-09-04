@@ -16,3 +16,5 @@ responses:
     description: ID_LIST_FILE is not found
     schema:
       $ref: '#/definitions/ErrorMessage'
+operationId: idsHash
+summary: return sha256 hash of ids.json used in backend
