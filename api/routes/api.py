@@ -1,6 +1,6 @@
 from itertools import chain
 
-from flask import Blueprint, jsonify, g, request
+from flask import Blueprint, jsonify, g, request, current_app
 from api.models import Lottery, Classroom, User, Application, db, GroupMember
 from api.schemas import (
     user_schema,
@@ -24,6 +24,7 @@ from api.draw import (
     draw_one,
     draw_all_at_index,
 )
+from api.utils import calc_sha256
 
 bp = Blueprint(__name__, 'api')
 
@@ -336,6 +337,18 @@ def translate_secret_to_public(secret_id):
         return jsonify({"message": "no such user found"}), 404
     else:
         return jsonify({"public_id": user.public_id})
+
+
+@bp.route('/ids_hash', methods=['GET'])
+@spec('api/ids_hash.yml')
+def ids_hash():
+    """return sha256 hash of `ids.json` used in background
+    """
+    try:
+        checksum = calc_sha256(current_app.config['ID_LIST_FILE'])
+    except FileNotFoundError:
+        return jsonify({"message": "ID_LIST_FILE is not found"}), 404
+    return jsonify({"sha256": checksum})
 
 
 @bp.route('/checker/<int:classroom_id>/<string:secret_id>', methods=['GET'])
