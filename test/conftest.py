@@ -8,8 +8,8 @@ sys.path.append(os.getcwd())  # noqa: E402
 from api import app
 from cards.id import load_id_json_file
 
-from utils import admin, test_user, test_user1, \
-                  test_user2, test_user3, test_user4, test_user5
+from utils import admin, checker, test_user, test_user1, \
+    test_user2, test_user3, test_user4, test_user5
 
 pre_config = os.environ.get('FLASK_CONFIGURATION', None)
 
@@ -32,6 +32,8 @@ def client():
     id_list = load_id_json_file(json_path)
     admin_cred = next(i for i in id_list if i['authority'] == 'admin')
     admin['secret_id'] = admin_cred['secret_id']
+    checker_cred = next(i for i in id_list if i['authority'] == 'checker')
+    checker['secret_id'] = checker_cred['secret_id']
     test_creds = (i for i in id_list if i['authority'] != 'admin')
     for user in [test_user, test_user1, test_user2, test_user3,
                  test_user4, test_user5]:

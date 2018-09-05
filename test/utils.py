@@ -5,6 +5,8 @@ from api.models import User, Application, db
 # secret_id is to be set in the fixture
 admin = {'secret_id': '',
          'g-recaptcha-response': ''}
+checker = {'secret_id': '',
+           'g-recaptcha-response': ''}
 test_user = {'secret_id': '',
              'g-recaptcha-response': ''}
 test_user1 = {'secret_id': '',
