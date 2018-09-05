@@ -349,3 +349,29 @@ def ids_hash():
     except FileNotFoundError:
         return jsonify({"message": "ID_LIST_FILE is not found"}), 404
     return jsonify({"sha256": checksum})
+
+  
+@bp.route('/checker/<int:classroom_id>/<string:secret_id>', methods=['GET'])
+@spec('api/checker.yml')
+@login_required('checker')
+def check_id(classroom_id, secret_id):
+    """return if the user is winner of given classroom
+        Args:
+            classroom_id (int): target classroom
+            secret_id (string): secret id of target user
+    """
+    user = User.query.filter_by(secret_id=secret_id).first()
+    if not user:
+        return jsonify({"message": "user not found"}), 404
+    try:
+        index = get_time_index()
+    except (OutOfHoursError, OutOfAcceptingHoursError):
+        return jsonify({"message": "Not acceptable time"}), 400
+    lottery = Lottery.query.filter_by(classroom_id=classroom_id,
+                                      index=index).first()
+    application = Application.query.filter_by(user=user,
+                                              lottery=lottery).first()
+    if not application:
+        return jsonify({"message": "application not found"}), 404
+
+    return jsonify({"status": application.status})
