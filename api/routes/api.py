@@ -350,7 +350,7 @@ def ids_hash():
         return jsonify({"message": "ID_LIST_FILE is not found"}), 404
     return jsonify({"sha256": checksum})
 
-  
+
 @bp.route('/checker/<int:classroom_id>/<string:secret_id>', methods=['GET'])
 @spec('api/checker.yml')
 @login_required('checker')
