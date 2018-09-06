@@ -56,7 +56,7 @@
     {
         "secret_id": "bzF2xstsEc7SmiV0RCGiIml8TvlcWbGb",
         "public_id": "6JGL",
-        "authority": "normal",
+        "authority": "checker",
         "kind": "checker"
     },
     {

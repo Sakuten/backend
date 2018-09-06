@@ -33,6 +33,7 @@ class DevelopmentConfig(BaseConfig):
     DEBUG = True
     TESTING = True
     ENV = 'development'
+    ID_LIST_FILE = BaseConfig.ROOT_DIR / 'cards/test_users.json'
 
 
 class TestingConfig(BaseConfig):
