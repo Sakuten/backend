@@ -1,5 +1,4 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.schema import UniqueConstraint
 from cards.id import encode_public_id
 
 db = SQLAlchemy()
@@ -89,8 +88,6 @@ class Application(db.Model):
             is_rep (bool): whether rep of a group or not
     """
     __tablename__ = 'application'
-    __table_args__ = (UniqueConstraint(
-        "lottery_id", "user_id", name="unique_idx_lottery_user"),)
 
     id = db.Column(db.Integer, primary_key=True)
     lottery_id = db.Column(db.Integer, db.ForeignKey(
