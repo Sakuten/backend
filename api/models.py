@@ -23,6 +23,8 @@ class User(db.Model):
     authority = db.Column(db.String(20))
     win_count = db.Column(db.Integer, default=0)
     lose_count = db.Column(db.Integer, default=0)
+    kind = db.Column(db.String(30))
+    first_access = db.Column(db.Date, default=None)
 
     def __repr__(self):
         authority_str = f'({self.authority})' if self.authority else ''
@@ -110,9 +112,9 @@ class Application(db.Model):
 
     def __repr__(self):
         return "<Application {}{}{} {}>".format(
-                                            self.lottery, self.user,
-                                            " (rep)" if self.is_rep else "",
-                                            self.status)
+            self.lottery, self.user,
+            " (rep)" if self.is_rep else "",
+            self.status)
 
 
 class GroupMember(db.Model):
@@ -126,9 +128,9 @@ class GroupMember(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(
-            db.Integer,
-            db.ForeignKey('user.id', ondelete='CASCADE'),
-            db.ForeignKey('application.user_id', ondelete='CASCADE'))
+        db.Integer,
+        db.ForeignKey('user.id', ondelete='CASCADE'),
+        db.ForeignKey('application.user_id', ondelete='CASCADE'))
     user = db.relationship('User')
     own_application = db.relationship('Application',
                                       foreign_keys=[user_id],

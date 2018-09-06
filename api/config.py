@@ -26,12 +26,14 @@ class BaseConfig(object):
         (time(12, 25), time(12, 55)),
         (time(13, 50), time(14, 20)),
     ]
+    ONE_DAY_KIND = ['visitor']
 
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
     TESTING = True
     ENV = 'development'
+    ID_LIST_FILE = BaseConfig.ROOT_DIR / 'cards/test_users.json'
 
 
 class TestingConfig(BaseConfig):
