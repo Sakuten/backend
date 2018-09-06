@@ -11,6 +11,7 @@ import sys
 import argparse
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
+import hashlib
 
 parser = argparse.ArgumentParser(
     description='Draw currently available lotteries')
@@ -48,6 +49,14 @@ def post_json(path, data=None, token=None):
         response_body = response.read().decode("utf-8")
         response.close()
         return json.loads(response_body)
+
+
+with open(args.list, 'r') as f:
+    local_checksum = hashlib.sha256(f.read().encode()).hexdigest()
+    server_checksum = post_json('ids_hash')['sha256']
+    if local_checksum != server_checksum:
+        print('local ids.json is different from servers', file=sys.stderr)
+        sys.exit(70)  # we should decide error code
 
 
 # Login as admin
