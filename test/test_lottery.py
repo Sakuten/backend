@@ -678,7 +678,7 @@ def test_draw_group(client):
         rep_application = Application(
             lottery=target_lottery,
             user_id=users[0].id, is_rep=True,
-            group_members=[GroupMember(user_id=user.id)
+            group_members=[GroupMember(user_id=user.id, lottery_id=idx)
                            for user in users[1:group_size]])
 
         db.session.add(rep_application)
@@ -731,7 +731,8 @@ def test_draw_lots_of_groups(client, cnt):
         reps_app = [Application(
                     lottery=target_lottery,
                     user_id=users[i].id, is_rep=True,
-                    group_members=[GroupMember(user_id=users[j].id)])
+                    group_members=[GroupMember(user_id=users[j].id,
+                                               lottery_id=target_lottery.id)])
                     for i, j in zip(reps, members)]
 
         for application in chain(members_app, reps_app):
@@ -789,7 +790,8 @@ def test_draw_lots_of_groups_and_normal(client, cnt):
         reps_app = [Application(
                     lottery=target_lottery,
                     user_id=users[i].id, is_rep=True,
-                    group_members=[GroupMember(user_id=users[j].id)])
+                    group_members=[GroupMember(user_id=users[j].id,
+                                               lottery_id=target_lottery.id)])
                     for i, j in zip(reps, members)]
 
         for application in chain(members_app, reps_app):

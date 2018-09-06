@@ -92,10 +92,10 @@ class Application(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     lottery_id = db.Column(db.Integer, db.ForeignKey(
-        'lottery.id', ondelete='CASCADE'), unique=True)
+        'lottery.id', ondelete='CASCADE'))
     lottery = db.relationship('Lottery', backref='application')
     user_id = db.Column(db.Integer, db.ForeignKey(
-        'user.id', ondelete='CASCADE'), unique=True)
+        'user.id', ondelete='CASCADE'))
     user = db.relationship('User')
     # status: [ pending, won, lose ]
     status = db.Column(db.String,
@@ -105,9 +105,9 @@ class Application(db.Model):
 
     def __repr__(self):
         return "<Application {}{}{} {}>".format(
-                                            self.lottery, self.user,
-                                            " (rep)" if self.is_rep else "",
-                                            self.status)
+            self.lottery, self.user,
+            " (rep)" if self.is_rep else "",
+            self.status)
 
 
 class GroupMember(db.Model):
@@ -121,13 +121,17 @@ class GroupMember(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(
-            db.Integer,
-            db.ForeignKey('user.id', ondelete='CASCADE'),
-            db.ForeignKey('application.user_id', ondelete='CASCADE'))
+        db.Integer,
+        db.ForeignKey('user.id', ondelete='CASCADE'),
+        db.ForeignKey('application.user_id', ondelete='CASCADE'))
+    lottery_id = db.Column(db.Integer, db.ForeignKey(
+        'application.lottery_id', ondelete='CASCADE'))
     user = db.relationship('User')
-    own_application = db.relationship('Application',
-                                      foreign_keys=[user_id],
-                                      viewonly=True)
+    own_application = db.relationship(
+        'Application',
+        primaryjoin='and_(Application.lottery_id == GroupMember.lottery_id,'
+                    '     Application.user_id == GroupMember.user_id)',
+        viewonly=True)
 
     rep_application_id = db.Column(db.Integer, db.ForeignKey(
         'application.id', ondelete='CASCADE'))

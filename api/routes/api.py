@@ -182,7 +182,8 @@ def apply_lottery(idx):
             rep_application = Application(
                 lottery_id=lottery.id, user_id=rep_user.id, status="pending",
                 is_rep=True,
-                group_members=[GroupMember(user_id=member.id)
+                group_members=[GroupMember(user_id=member.id,
+                                           lottery_id=lottery.id)
                                for member in group_members])
             db.session.add(rep_application)
     # 8.
