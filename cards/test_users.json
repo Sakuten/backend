@@ -9,13 +9,13 @@
         "secret_id": "excGkN88o8eN61NbZpHMfJK0HgThsX9N",
         "public_id": "5RAX",
         "authority": "normal",
-        "kind": "student"
+        "kind": "visitor"
     },
     {
         "secret_id": "zmPplhO29m7dMNDdLnt4MtO_aFONrViC",
         "public_id": "4YMY",
         "authority": "normal",
-        "kind": "student"
+        "kind": "visitor"
     },
     {
         "secret_id": "TFdC-Ckz30CmhRS8PozhwgT5qM6t1q3I",
