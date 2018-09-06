@@ -1,7 +1,7 @@
 from itertools import chain
 
 from flask import Blueprint, jsonify, g, request, current_app
-from api.models import Lottery, Classroom, User, Application, db, GroupMember
+from api.models import Lottery, Classroom, User, Application, db, group_member
 from api.schemas import (
     user_schema,
     users_schema,
@@ -68,6 +68,26 @@ def list_lotteries():
 #     sort = request.args.get('sort')
 
     lotteries = Lottery.query.all()
+    result = lotteries_schema.dump(lotteries)[0]
+    return jsonify(result)
+
+
+@bp.route('/lotteries/available')
+@spec('api/lotteries/available.yml')
+def list_available_lotteries():
+    """
+        return available lotteries list.
+    """
+# those two values will be used in the future. now, not used. see issue #62 #63
+#     filter = request.args.get('filter')
+#     sort = request.args.get('sort')
+
+    try:
+        index = get_time_index()
+    except OutOfAcceptingHoursError:
+        return jsonify({"message": "Not acceptable time"}), 400
+    lotteries = Lottery.query.filter_by(index=index)
+
     result = lotteries_schema.dump(lotteries)[0]
     return jsonify(result)
 
@@ -177,17 +197,20 @@ def apply_lottery(idx):
             result = application_schema.dump(newapplication)[0]
             return jsonify(result)
         else:
+            # 8.
+            members_app = [Application(
+                    lottery_id=lottery.id, user_id=member.id, status="pending")
+                    for member in group_members]
+
+            for application in members_app:
+                db.session.add(application)
+            db.session.commit()
             rep_application = Application(
                 lottery_id=lottery.id, user_id=rep_user.id, status="pending",
                 is_rep=True,
-                group_members=[GroupMember(user_id=member.id)
-                               for member in group_members])
+                group_members=[group_member(app)
+                               for app in members_app])
             db.session.add(rep_application)
-    # 8.
-    for member in group_members:
-        newapplication = Application(
-            lottery_id=lottery.id, user_id=member.id, status="pending")
-        db.session.add(newapplication)
 
     # 9.
     db.session.commit()
