@@ -15,6 +15,7 @@ class BaseConfig(object):
     ID_LIST_FILE = ROOT_DIR / Path('cards/ids.json')
     WINNERS_NUM = 90
     RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY')
+    RECAPTCHA_THRESHOLD = 0.09  # more than 0.09
     TIMEZONE = timezone(timedelta(hours=+9), 'JST')
     START_DATETIME = datetime(2018, 9, 16, 8,  40, 0, tzinfo=TIMEZONE)
     END_DATETIME = datetime(2018, 9, 17, 16, 00, 0, tzinfo=TIMEZONE)
