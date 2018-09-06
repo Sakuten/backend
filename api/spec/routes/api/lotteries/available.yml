@@ -1,0 +1,18 @@
+return list of available lotteries
+---
+produces:
+  - application/json
+responses:
+  '200':
+    description: list of available lotteries
+    schema:
+      items:
+        $ref: '#/definitions/Lottery'
+      type: object
+  '400':
+    description: Not acceptable time
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+tags:
+  -lottery
+operationId: getAvailabeleLotteries
