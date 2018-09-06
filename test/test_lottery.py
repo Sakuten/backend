@@ -187,29 +187,6 @@ def test_apply_invalid(client):
     assert 'Lottery could not be found.' in resp.get_json()['message']
 
 
-def test_apply_already_done(client):
-    """attempt to apply previously drawn application.
-        1. test: error is returned
-        target_url: /lotteries/<id> [POST]
-    """
-    idx = 1
-    token = login(client, test_user['secret_id'],
-                  test_user['g-recaptcha-response'])['token']
-
-    with client.application.app_context():
-        target_lottery = Lottery.query.filter_by(id=idx).first()
-        target_lottery.done = True
-        db.session.add(target_lottery)
-        db.session.commit()
-
-    resp = client.post(f'/lotteries/{idx}',
-                       headers={'Authorization': f'Bearer {token}'},
-                       json={'group_members': []})
-
-    assert resp.status_code == 400
-    assert 'already done' in resp.get_json()['message']
-
-
 def test_apply_same_period(client):
     """attempt to apply to the same period with the previous application
         1. test: error is returned
@@ -883,31 +860,6 @@ def test_draw_time_invalid(client):
     res = datetime.timedelta.resolution
     try_with_datetime(mod_time(en, -res))
     try_with_datetime(mod_time(en, +ext+res))
-
-
-def test_draw_already_done(client):
-    """attempt to draw previously drawn lottery.
-        1. test: error is returned
-        target_url: /lotteries/<id>/draw [POST]
-    """
-    idx = 1
-    token = login(client, admin['secret_id'],
-                  admin['g-recaptcha-response'])['token']
-
-    with client.application.app_context():
-        target_lottery = Lottery.query.get(idx)
-        target_lottery.done = True
-        db.session.add(target_lottery)
-
-        db.session.commit()
-
-        with mock.patch('api.routes.api.get_draw_time_index',
-                        return_value=target_lottery.index):
-            resp = client.post(f'/lotteries/{idx}/draw',
-                               headers={'Authorization': f'Bearer {token}'})
-
-    assert resp.status_code == 400
-    assert 'already done' in resp.get_json()['message']
 
 
 @pytest.mark.skip(reason='not implemented yet')

@@ -19,6 +19,8 @@ class User(db.Model):
     public_id = db.Column(db.Integer, unique=True)
     secret_id = db.Column(db.String(40), unique=True)
     authority = db.Column(db.String(20))
+    kind = db.Column(db.String(30))
+    first_access = db.Column(db.Date, default=None)
 
     def __repr__(self):
         authority_str = f'({self.authority})' if self.authority else ''
@@ -115,6 +117,7 @@ class GroupMember(db.Model):
         DB contents:
             id (int): group member unique id
             user_id (int): user id of this member
+            lottery_id (int): lottery id of this application
             rep_application_id (int): rep application id
     """
     __tablename__ = 'group_members'
