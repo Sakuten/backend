@@ -73,7 +73,7 @@ def list_lotteries():
 
 
 @bp.route('/lotteries/available')
-@spec('api/lotteries.yml')
+@spec('api/lotteries/available.yml')
 def list_available_lotteries():
     """
         return available lotteries list.
