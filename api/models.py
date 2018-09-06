@@ -143,6 +143,5 @@ class GroupMember(db.Model):
 
 
 def group_member(application):
-    print(application)
-    return GroupMember(user_id=application.user.id,
-                       own_application_id=application.id)
+    return GroupMember(user_id=application.user_id,
+                       own_application=application)
