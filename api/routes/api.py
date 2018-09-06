@@ -72,6 +72,26 @@ def list_lotteries():
     return jsonify(result)
 
 
+@bp.route('/lotteries/available')
+@spec('api/lotteries/available.yml')
+def list_available_lotteries():
+    """
+        return available lotteries list.
+    """
+# those two values will be used in the future. now, not used. see issue #62 #63
+#     filter = request.args.get('filter')
+#     sort = request.args.get('sort')
+
+    try:
+        index = get_time_index()
+    except OutOfAcceptingHoursError:
+        return jsonify({"message": "Not acceptable time"}), 400
+    lotteries = Lottery.query.filter_by(index=index)
+
+    result = lotteries_schema.dump(lotteries)[0]
+    return jsonify(result)
+
+
 @bp.route('/lotteries/<int:idx>', methods=['GET'])
 @spec('api/lotteries/idx.yml')
 def list_lottery(idx):
