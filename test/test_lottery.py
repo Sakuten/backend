@@ -86,6 +86,21 @@ def test_get_alllotteries(client):
     assert resp.get_json() == lottery_list
 
 
+def test_get_all_available_lotteries(client):
+    """test proper infomation is returned from the API
+        target_url: /lotteries/available
+    """
+    index = 1
+    with client.application.app_context():
+        lotteries = Lottery.query.filter_by(index=index)
+        current_lotteries = lotteries_schema.dump(lotteries)[0]
+    with mock.patch('api.routes.api.get_time_index',
+                    return_value=index):
+        resp = client.get('/lotteries/available')
+
+    assert current_lotteries == resp.get_json()
+
+
 def test_get_specific_lottery(client):
     """test proper infomation is returned from the API
         target_url: /lotteries/<id>
