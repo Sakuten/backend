@@ -14,5 +14,5 @@ responses:
     schema:
       $ref: '#/definitions/ErrorMessage'
 tags:
-  -lottery
+  - lottery
 operationId: getAvailabeleLotteries
