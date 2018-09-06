@@ -6,9 +6,9 @@ responses:
   '200':
     description: list of available lotteries
     schema:
+      type: array
       items:
         $ref: '#/definitions/Lottery'
-      type: object
   '400':
     description: Not acceptable time
     schema:
