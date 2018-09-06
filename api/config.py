@@ -26,6 +26,7 @@ class BaseConfig(object):
         (time(12, 25), time(12, 55)),
         (time(13, 50), time(14, 20)),
     ]
+    ONE_DAY_KIND = ['visitor']
 
 
 class DevelopmentConfig(BaseConfig):

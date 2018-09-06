@@ -12,7 +12,7 @@ from api.schemas import (
     lotteries_schema,
     lottery_schema
 )
-from api.auth import login_required
+from api.auth import login_required, todays_user
 from api.swagger import spec
 from api.time_management import (
     get_draw_time_index,
@@ -127,7 +127,7 @@ def apply_lottery(idx):
     group_members = []
     if len(group_members_secret_id) != 0:
         for sec_id in group_members_secret_id:
-            user = User.query.filter_by(secret_id=sec_id).first()
+            user = todays_user(secret_id=sec_id)
             if user is not None:
                 group_members.append(user)
             else:

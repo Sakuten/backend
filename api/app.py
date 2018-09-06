@@ -124,7 +124,8 @@ def generate():
     for ids in id_list:
         user = User(secret_id=ids['secret_id'],
                     public_id=decode_public_id(ids['public_id']),
-                    authority=ids['authority'])
+                    authority=ids['authority'],
+                    kind=ids['kind'])
         db.session.add(user)
 
     db.session.commit()
