@@ -98,7 +98,6 @@ def test_get_all_available_lotteries(client):
         resp = client.get('/lotteries/available')
 
     assert current_lotteries == resp.get_json()
-    assert len(resp.get_json()) == 8
 
 
 def test_get_specific_lottery(client):
