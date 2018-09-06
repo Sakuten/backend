@@ -70,7 +70,6 @@ class PreviewDeploymentConfig(BaseConfig):
 class DeploymentConfig(BaseConfig):
     DEBUG = False
     TESTING = False
-    # None, to be configured in config.cfg in instance directory
-    SQLALCHEMY_DATABASE_URI = None
-    SECRET_KEY = None
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    SECRET_KEY = os.environ.get('SECRET_KEY')
     ENV = 'production'
