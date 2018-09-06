@@ -872,14 +872,14 @@ def test_losers_advantage(client):
     idx = 1
     win_count = {i: 0 for i in range(1, 7)}
 
-    for i in range(20):
+    for i in range(6):
         print(i, win_count)     # display when test failed
         with client.application.app_context():
             target_lottery = Lottery.query.get(idx)
             index = target_lottery.index
 
             users = User.query.order_by(User.id).all()[:6]
-            users[0].lose_count = 3
+            users[0].lose_count = 6
             user0_id = users[0].id
 
             apps = (Application(lottery=target_lottery, user_id=user.id)
@@ -921,14 +921,14 @@ def test_group_losers_advantage(client):
     groups = [(0, (1,))]
     win_count = {i: 0 for i in range(1, 7)}
 
-    for i in range(20):
+    for i in range(6):
         print(i, win_count)     # display when test failed
         with client.application.app_context():
             target_lottery = Lottery.query.get(idx)
             index = target_lottery.index
 
             users = User.query.order_by(User.id).all()[:6]
-            users[0].lose_count = 3
+            users[0].lose_count = 6
             user0_id = users[0].id
 
             rep_apps = (Application(
