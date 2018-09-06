@@ -1,4 +1,3 @@
-import pytest
 from unittest import mock
 from datetime import date
 from utils import (
@@ -186,7 +185,6 @@ def test_auth_used_user(client):
     assert resp.get_json()['message'] == 'Login Unsuccessful'
 
 
-@pytest.mark.skip(reason="field 'kind' is not added yet")
 def test_auth_overtime_as_student(client):
     """attempt to use same `user`(which isn't in ONE_DAY_KIND) for 2 days
     target_url: /auth
