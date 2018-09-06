@@ -68,10 +68,11 @@ def get_draw_time_index(time=None):
           OutOfHoursError, OutOfAcceptingHoursError
     """
     time = _validate_and_get_time(time)
+    ext = current_app.config['DRAWING_TIME_EXTENSION']
+    en_margin = current_app.config['TIMEPOINT_END_MARGIN']
 
     for i, (_, en) in enumerate(current_app.config['TIMEPOINTS']):
-        ext = current_app.config['DRAWING_TIME_EXTENSION']
-        if en <= time <= mod_time(en, ext):
+        if mod_time(en, en_margin) <= time <= mod_time(en, ext):
             return i
 
     raise OutOfAcceptingHoursError()
@@ -88,9 +89,10 @@ def get_time_index(time=None):
           OutOfHoursError, OutOfAcceptingHoursError
     """
     time = _validate_and_get_time(time)
+    en_margin = current_app.config['TIMEPOINT_END_MARGIN']
 
     for i, (st, en) in enumerate(current_app.config['TIMEPOINTS']):
-        if st <= time <= en:
+        if st <= time <= mod_time(en, en_margin):
             return i
 
     raise OutOfAcceptingHoursError()

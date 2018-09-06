@@ -2,56 +2,67 @@
     {
         "secret_id": "nCGX_hMrMZxRAak-W36kIzzxrup_SIKI",
         "public_id": "6YGW",
-        "authority": "normal"
+        "authority": "normal",
+        "kind": "student"
     },
     {
         "secret_id": "excGkN88o8eN61NbZpHMfJK0HgThsX9N",
         "public_id": "5RAX",
-        "authority": "normal"
+        "authority": "normal",
+        "kind": "visitor"
     },
     {
         "secret_id": "zmPplhO29m7dMNDdLnt4MtO_aFONrViC",
         "public_id": "4YMY",
-        "authority": "normal"
+        "authority": "normal",
+        "kind": "visitor"
     },
     {
         "secret_id": "TFdC-Ckz30CmhRS8PozhwgT5qM6t1q3I",
         "public_id": "7XHT",
-        "authority": "normal"
+        "authority": "normal",
+        "kind": "visitor"
     },
     {
         "secret_id": "RPb2_WV96OfmibLyE-5GXVLz7b71YORY",
         "public_id": "4FEJ",
-        "authority": "normal"
+        "authority": "normal",
+        "kind": "visitor"
     },
     {
         "secret_id": "lr73g9neHNfaI215I6b4Av8Z-jFtWHK6",
         "public_id": "9FXK",
-        "authority": "normal"
+        "authority": "normal",
+        "kind": "visitor"
     },
     {
         "secret_id": "3l7KWak-CfGI5pQtyT-tMkphJQhftDoe",
         "public_id": "5EJK",
-        "authority": "normal"
+        "authority": "normal",
+        "kind": "visitor"
     },
     {
         "secret_id": "6ys5vXbm_J4WKXlvdVEFhLIM_b9XMtca",
         "public_id": "3EPE",
-        "authority": "normal"
+        "authority": "normal",
+        "kind": "checker"
     },
     {
         "secret_id": "c148WsrQP5xFKUNNvUWCL1gxAVDRJ_KZ",
         "public_id": "6FEH",
-        "authority": "normal"
+        "authority": "normal",
+        "kind": "checker"
     },
     {
         "secret_id": "bzF2xstsEc7SmiV0RCGiIml8TvlcWbGb",
         "public_id": "6JGL",
-        "authority": "normal"
+        "authority": "checker",
+        "kind": "checker"
     },
     {
         "secret_id": "GfVf96Ns9-NW9WI_Kc5KE8D4J4-ega9w",
         "public_id": "7TCY",
-        "authority": "admin"
+        "authority": "admin",
+        "kind": "admin"
     }
 ]
