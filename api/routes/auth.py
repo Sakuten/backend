@@ -35,7 +35,9 @@ def home():
             secret_key = current_app.config['RECAPTCHA_SECRET_KEY']
             request_uri = f'https://www.google.com/recaptcha/api/siteverify?secret={secret_key}&response={recaptcha_code}'  # noqa: E501
             recaptcha_auth = urlopen(request_uri).read()
-            success = json.loads(recaptcha_auth)['success']
+            auth_resp = json.loads(recaptcha_auth)
+            success = auth_resp['success'] and \
+                auth_resp['score'] > current_app.config['RECAPTCHA_THRESHOLD']
         else:
             current_app.logger.warn(
                 f'Skipping request from {request.remote_addr}')
