@@ -18,6 +18,7 @@ from utils import (
 
 
 from api.models import Lottery, Classroom, User, Application, GroupMember, db
+from api.models import group_member
 from api.schemas import (
     classrooms_schema,
     classroom_schema,
@@ -663,15 +664,16 @@ def test_draw_group(client):
         target_lottery = Lottery.query.get(idx)
         index = target_lottery.index
         users = User.query.all()
-        for user in users[1:]:
-            application = Application(lottery=target_lottery,
-                                      user_id=user.id)
+        members_app = [Application(lottery=target_lottery,
+                                   user_id=user.id)
+                       for user in users[1:]]
+        for application in members_app:
             db.session.add(application)
         rep_application = Application(
             lottery=target_lottery,
             user_id=users[0].id, is_rep=True,
-            group_members=[GroupMember(user_id=user.id)
-                           for user in users[1:group_size]])
+            group_members=[group_member(app)
+                           for app in members_app])
 
         db.session.add(rep_application)
         db.session.commit()
@@ -722,9 +724,9 @@ def test_draw_lots_of_groups(client, cnt):
                        for i in members]
         reps_app = [Application(
                     lottery=target_lottery,
-                    user_id=users[i].id, is_rep=True,
-                    group_members=[GroupMember(user_id=users[j].id)])
-                    for i, j in zip(reps, members)]
+                    user_id=users[reps[i]].id, is_rep=True,
+                    group_members=[group_member(members_app[i])])
+                    for i in range(2)]
 
         for application in chain(members_app, reps_app):
             db.session.add(application)
@@ -780,9 +782,9 @@ def test_draw_lots_of_groups_and_normal(client, cnt):
                        for i in chain(members, normal)]
         reps_app = [Application(
                     lottery=target_lottery,
-                    user_id=users[i].id, is_rep=True,
-                    group_members=[GroupMember(user_id=users[j].id)])
-                    for i, j in zip(reps, members)]
+                    user_id=users[reps[i]].id, is_rep=True,
+                    group_members=[group_member(members_app[i])])
+                    for i in range(2)]
 
         for application in chain(members_app, reps_app):
             db.session.add(application)
