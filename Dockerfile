@@ -6,11 +6,15 @@ COPY . /code
 WORKDIR /code
 
 RUN apk update && apk upgrade \
-    && apk add --update --no-cache libev-dev libffi libffi-dev build-base jpeg jpeg-dev libpng-dev postgresql-dev \
-    && rm -rf /var/cache/apk/* \
+    && apk add --update --no-cache \
+      --virtual .build-deps \
+      libffi-dev build-base jpeg-dev libpng-dev postgresql-dev \
+    && apk add --update --no-cache libffi jpeg \
     && pip install pipenv \
     && pipenv install --system \
-    && pip uninstall -y pipenv
+    && pip uninstall -y pipenv \
+    && apk del --purge .build-deps \
+    && rm -rf /var/cache/apk/*
 
 EXPOSE 80
 
