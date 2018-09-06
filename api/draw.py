@@ -59,14 +59,14 @@ def draw_one_group_members(applications, winners_num):
         to_reps.append(rep)
 
         for member in rep.group_members:
-            member.application.status = status
-            to_apps.append(member.application)
+            member.own_application.status = status
+            to_apps.append(member.own_application)
 
     def unset_group_result(rep, from_apps, from_reps):
         from_apps.remove(rep)
         from_reps.remove(rep)
         for member in rep.group_members:
-            from_apps.remove(member.application)
+            from_apps.remove(member.own_application)
 
     reps = [app for app in applications if app.is_rep]
 

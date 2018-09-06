@@ -101,9 +101,9 @@ class Application(db.Model):
                        default="pending",
                        nullable=False)
     is_rep = db.Column(db.Boolean, default=False)
-    groupmember_id = db.Column(db.Integer, db.ForeignKey(
-        'group_members.id', ondelete='CASCADE'))
-    me_group_member = db.relationship('GroupMember', backref='application')
+    # groupmember_id = db.Column(db.Integer, db.ForeignKey(
+    #     'group_members.id', ondelete='CASCADE'))
+    # me_group_member = db.relationship('GroupMember', backref='application')
 
     def __repr__(self):
         return "<Application {}{}{} {}>".format(
@@ -127,6 +127,11 @@ class GroupMember(db.Model):
         db.ForeignKey('user.id', ondelete='CASCADE'))
     user = db.relationship('User')
 
+    own_application_id = db.Column(db.Integer, db.ForeignKey(
+        'application.id', ondelete='CASCADE'))
+    own_application = db.relationship('Application',
+                                      foreign_keys=[own_application_id])
+
     rep_application_id = db.Column(db.Integer, db.ForeignKey(
         'application.id', ondelete='CASCADE'))
     rep_application = db.relationship('Application',
@@ -135,3 +140,9 @@ class GroupMember(db.Model):
 
     def __repr__(self):
         return f"<GroupMember {self.user}>"
+
+
+def group_member(application):
+    print(application)
+    return GroupMember(user_id=application.user.id,
+                       own_application_id=application.id)
