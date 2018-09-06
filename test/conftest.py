@@ -34,7 +34,7 @@ def client():
     admin['secret_id'] = admin_cred['secret_id']
     student_cred = next(i for i in id_list if i['kind'] == 'student')
     test_student['secret_id'] = student_cred['secret_id']
-    test_creds = (i for i in id_list if i['authority'] != 'admin')
+    test_creds = (i for i in id_list if i['kind'] == 'visitor')
     for user in [test_user, test_user1, test_user2, test_user3,
                  test_user4, test_user5]:
         test_cred = next(test_creds)
