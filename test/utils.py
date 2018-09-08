@@ -15,10 +15,6 @@ test_user2 = {'secret_id': '',
               'g-recaptcha-response': ''}
 test_user3 = {'secret_id': '',
               'g-recaptcha-response': ''}
-test_user4 = {'secret_id': '',
-              'g-recaptcha-response': ''}
-test_user5 = {'secret_id': '',
-              'g-recaptcha-response': ''}
 test_student = {'secret_id': '',
                 'g-recaptcha-response': ''}
 
