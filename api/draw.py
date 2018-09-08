@@ -12,6 +12,7 @@ class GroupAdvantage:
 
     @staticmethod
     def average(group):
+        group = list(group)
         return sum(app.advantage for app in group) / len(group)
 
     @staticmethod
@@ -194,9 +195,9 @@ def calc_advantage(win_count, lose_count):
 
 
 def set_group_advantage(apps):
-    group_apps = [[rep] + [member.own_application
-                           for member in rep.group_members]
-                  for rep in apps if rep.is_rep]
+    group_apps = (chain([rep], (member.own_application
+                                for member in rep.group_members))
+                  for rep in apps if rep.is_rep)
     for group in group_apps:
         advantage = group_advantage_calculation(group)
         for app in group:

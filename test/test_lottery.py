@@ -926,7 +926,6 @@ def test_losers_advantage(client):
     print('final results of applications (1 is rep)')
     print(win_count)
     assert won_most == user0_id
-    assert False
 
 
 def test_group_losers_advantage(client):
