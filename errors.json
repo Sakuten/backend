@@ -82,5 +82,9 @@
   "20": {
     "message": "ID_LIST_FILE not found",
     "status": 404
+  },
+  "21": {
+    "message": "gruop members should be less than 3",
+    "status": 400
   }
 }
