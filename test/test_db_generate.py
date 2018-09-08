@@ -61,3 +61,6 @@ def test_db_generate_always(client):
         event.remove(db.session, 'before_commit', detect_change)
 
         assert changed
+        assert len(User.query.all()) != 0
+        assert len(Classroom.query.all()) != 0
+        assert len(Lottery.query.all()) != 0
