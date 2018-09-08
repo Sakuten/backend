@@ -1,7 +1,7 @@
 import pytest
 
 from api.models import db, Classroom
-from api.app import create_app, init_and_generate
+from api.app import init_and_generate
 
 
 @pytest.mark.parametrize("force_init", [True, False])
