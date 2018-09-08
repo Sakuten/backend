@@ -141,6 +141,7 @@ class GroupMember(db.Model):
     def __repr__(self):
         return f"<GroupMember {self.user}>"
 
+
 class Error(db.Model):
     """
         Error model
@@ -157,6 +158,7 @@ class Error(db.Model):
 
     def __repr__(self):
         return f'<Error {self.code}: "{self.message}">'
+
 
 def group_member(application):
     return GroupMember(user_id=application.user_id,
