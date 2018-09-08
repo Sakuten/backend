@@ -70,8 +70,7 @@ def create_app():
     app.register_blueprint(auth.bp)
     app.register_blueprint(api.bp)
 
-    with app.app_context():
-        init_and_generate()
+    app.before_first_request(init_and_generate)
 
     return app
 
