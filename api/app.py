@@ -70,8 +70,8 @@ def create_app():
     app.register_blueprint(auth.bp)
     app.register_blueprint(api.bp)
 
-    policy = os.getenv('DB_GEN_POLICY', 'first_time')
-    force_init = os.getenv('DB_FORCE_INIT', 'false') == 'true'
+    policy = app.config['DB_GEN_POLICY']
+    force_init = app.config['DB_FORCE_INIT']
     with app.app_context():
         is_empty = sqlalchemy.inspect(db.engine).get_table_names() == []
         if force_init and not is_empty:
