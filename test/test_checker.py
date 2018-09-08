@@ -50,7 +50,7 @@ def test_checker_no_application(client):
                            staff['g-recaptcha-response'],
                            f'/checker/{classroom_id}/{secret_id}')
     assert resp.status_code == 404
-    assert resp.get_json()['message'] == 'application not found'
+    assert resp.get_json()['message'] == 'No application found'
 
 
 def test_checker_invalid_user(client):
@@ -68,4 +68,4 @@ def test_checker_invalid_user(client):
                            f'/checker/{classroom_id}/{secret_id}')
 
     assert resp.status_code == 404
-    assert resp.get_json()['message'] == 'user not found'
+    assert resp.get_json()['message'] == 'No such user found'
