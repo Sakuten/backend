@@ -891,7 +891,6 @@ def test_losers_advantage(client):
     win_count = {i: 0 for i in range(1, 7)}
 
     for i in range(6):
-        print(i, win_count)     # display when test failed
         with client.application.app_context():
             target_lottery = Lottery.query.get(idx)
             index = target_lottery.index
@@ -924,8 +923,10 @@ def test_losers_advantage(client):
         client = next(conftest.client())
 
     won_most = max(win_count.items(), key=itemgetter(1))[0]
+    print('final results of applications (1 is rep)')
     print(win_count)
     assert won_most == user0_id
+    assert False
 
 
 def test_group_losers_advantage(client):
