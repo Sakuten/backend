@@ -101,10 +101,10 @@ def init_and_generate():
     is_empty = len(sqlalchemy.inspect(db.engine).get_table_names()) == 0
     if force_init and not is_empty:
         current_app.logger.warning('Dropping all tables because '
-                                   f'DB_FORCE_INIT == true')
+                                   'DB_FORCE_INIT == true')
         db.drop_all()
     if force_init or is_empty:
-        current_app.logger.warning(f'Creating all tables')
+        current_app.logger.warning('Creating all tables')
         db.create_all()
     if policy == 'always' or \
             (policy == 'first_time' and len(User.query.all()) == 0):
