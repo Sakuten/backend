@@ -1,6 +1,10 @@
 FROM python:3.6-alpine3.8
 
-ENV PIP_NO_CACHE_DIR false
+ENV PIP_NO_CACHE_DIR=false \
+    DB_GEN_POLICY=never \
+    FLASK_CONFIGURATION=deployment \
+    FLASK_APP=app.py \
+    FLASK_ENV=production
 
 COPY . /code
 WORKDIR /code
@@ -16,11 +20,6 @@ RUN apk update && apk upgrade \
     && apk del --purge .build-deps \
     && rm -rf /var/cache/apk/*
 
-ENV DB_GEN_POLICY never
-
-ENV FLASK_CONFIGURATION deployment
-ENV FLASK_APP app.py
-ENV FLASK_ENV production
 
 EXPOSE 80
 
