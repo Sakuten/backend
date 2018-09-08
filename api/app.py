@@ -87,7 +87,7 @@ def create_app():
                 'Generating Initial Data for Database '
                 f'(DB_GEN_POLICY: {policy})')
             generate()
-        elif policy != 'never':
+        elif policy != 'never' and policy != 'first_time':
             app.logger.warning(
                 f'Unknown DB_GEN_POLICY: {policy}. Treated as \'never\'.')
 
