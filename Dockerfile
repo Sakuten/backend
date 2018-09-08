@@ -23,7 +23,7 @@ RUN apk update && apk upgrade \
     && apk add --update --no-cache \
       --virtual .build-deps \
       libffi-dev build-base jpeg-dev libpng-dev postgresql-dev \
-    && apk add --update --no-cache libffi jpeg \
+    && apk add --update --no-cache libffi jpeg postgresql \
     && pip install pipenv \
     && pipenv install --system \
     && pip uninstall -y pipenv \
