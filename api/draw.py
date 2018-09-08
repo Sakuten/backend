@@ -200,4 +200,4 @@ def set_group_advantage(apps):
     for group in group_apps:
         advantage = group_advantage_calculation(group)
         for app in group:
-                app.advantage = advantage
+            app.advantage = advantage
