@@ -3,7 +3,7 @@ from flask_cors import CORS
 import sqlalchemy
 from .routes import auth, api
 from .swagger import swag
-from .models import db
+from .models import db, User
 from cards.id import load_id_json_file, decode_public_id
 import os
 import sys
