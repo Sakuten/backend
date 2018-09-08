@@ -368,7 +368,7 @@ def ids_hash():
     try:
         checksum = calc_sha256(current_app.config['ID_LIST_FILE'])
     except FileNotFoundError:
-        return error_response(20) # ID_LIST_FILE not found
+        return error_response(20)  # ID_LIST_FILE not found
     return jsonify({"sha256": checksum})
 
 
@@ -383,16 +383,16 @@ def check_id(classroom_id, secret_id):
     """
     user = User.query.filter_by(secret_id=secret_id).first()
     if not user:
-        return error_response(5) # no such user found
+        return error_response(5)  # no such user found
     try:
         index = get_time_index()
     except (OutOfHoursError, OutOfAcceptingHoursError):
-        return error_response(6) # not acceptable time
+        return error_response(6)  # not acceptable time
     lottery = Lottery.query.filter_by(classroom_id=classroom_id,
                                       index=index).first()
     application = Application.query.filter_by(user=user,
                                               lottery=lottery).first()
     if not application:
-        return error_response(19) # no application found
+        return error_response(19)  # no application found
 
     return jsonify({"status": application.status})
