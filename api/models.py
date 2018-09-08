@@ -27,8 +27,7 @@ class User(db.Model):
 
     def __repr__(self):
         authority_str = f'({self.authority})' if self.authority else ''
-        return f'<User ({self.lose_count}) ' \
-               f'{encode_public_id(self.public_id)} {authority_str}>'
+        return f'<User {encode_public_id(self.public_id)} {authority_str}>'
 
 
 class Classroom(db.Model):
