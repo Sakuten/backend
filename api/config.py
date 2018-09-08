@@ -10,9 +10,12 @@ class BaseConfig(object):
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:password@db/postgres'
+    DB_GEN_POLICY = os.getenv('DB_GEN_POLICY', 'first_time')
+    DB_FORCE_INIT = os.getenv('DB_FORCE_INIT', 'false') == 'true'
     SECRET_KEY = Fernet.generate_key()
     ROOT_DIR = Path(api.__file__).parent.parent
     ID_LIST_FILE = ROOT_DIR / Path('cards/ids.json')
+    ERROR_TABLE_FILE = ROOT_DIR / Path('errors.json')
     WINNERS_NUM = 90
     RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY')
     RECAPTCHA_THRESHOLD = 0.09  # more than 0.09

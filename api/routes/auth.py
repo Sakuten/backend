@@ -4,6 +4,7 @@ import json
 from ipaddress import ip_address
 from api.auth import generate_token, todays_user
 from api.swagger import spec
+from api.error import error_response
 
 bp = Blueprint(__name__, 'auth')
 
@@ -21,10 +22,11 @@ def home():
     elif request.headers['Content-Type'] == 'application/json':
         data = request.json
     else:
-        return jsonify({"message": "Unsupported content type"}), 400
+        # Unsupported content type
+        return error_response(13)
 
     if 'id' not in data or 'g-recaptcha-response' not in data:
-        return jsonify({"message": "Invalid request"}), 400
+        return error_response(2)  # Invalid request
 
     # login flow
     secret_id = data.get('id')
@@ -47,4 +49,4 @@ def home():
             token = generate_token({'user_id': user.id})
             return jsonify({"message": "Login Successful",
                             "token": token.decode()})
-    return jsonify({"message": "Login Unsuccessful"}), 400
+    return error_response(3)  # Login unsuccessful

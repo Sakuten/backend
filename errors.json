@@ -1,0 +1,86 @@
+{
+  "00": {
+    "message": "Unauthorized",
+    "status": 401
+  },
+  "01": {
+    "message": "Invalid group member secret id",
+    "status": 401
+  },
+  "02": {
+    "message": "Invalid request",
+    "status": 400
+  },
+  "03": {
+    "message": "Login unsuccessful",
+    "status": 400
+  },
+  "04": {
+    "message": "Malformed authenication header has detected",
+    "status": 400
+  },
+  "05": {
+    "message": "No such user found",
+    "status": 404
+  },
+  "06": {
+    "message": "Not acceptable time",
+    "status": 400
+  },
+  "07": {
+    "message": "Not found",
+    "status": 404
+  },
+  "08": {
+    "message": "Someone in the group is already applying to a lottery in this period",
+    "status": 400
+  },
+  "09": {
+    "message": "Someone in the group is already applying to this lottery",
+    "status": 400
+  },
+  "10": {
+    "message": "The Application has already fullfilled",
+    "status": 400
+  },
+  "11": {
+    "message": "This lottery is not acceptable now.",
+    "status": 400
+  },
+  "12": {
+    "message": "This lottery is not done yet.",
+    "status": 400
+  },
+  "13": {
+    "message": "Unsupported content type",
+    "status": 400
+  },
+  "14": {
+    "message": "We're not accepting any application in this hours.",
+    "status": 400
+  },
+  "15": {
+    "message": "You have no permission to perform the action",
+    "status": 403
+  },
+  "16": {
+    "message": "Your application is already accepted",
+    "status": 400
+  },
+  "17": {
+    "message": "You’re already applying to a lottery in this period",
+    "status": 400
+  },
+  "18": {
+    "message": "We're not authorizing in this hours.",
+    "status": 403
+  },
+  "19": {
+    "message": "No application found",
+    "status": 404
+  },
+  "20": {
+    "message": "ID_LIST_FILE not found",
+    "status": 404
+  }
+}

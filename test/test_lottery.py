@@ -72,7 +72,7 @@ def test_get_specific_classroom_invalid_id(client):
     resp = client.get(f'/classrooms/{idx}')
 
     assert resp.status_code == 404
-    assert 'Classroom could not be found.' in resp.get_json()['message']
+    assert 'Not found' in resp.get_json()['message']
 
 
 def test_get_alllotteries(client):
@@ -125,7 +125,7 @@ def test_get_specific_lottery_invalid_id(client):
     resp = client.get(f'/lotteries/{idx}')
 
     assert resp.status_code == 404
-    assert 'Lottery could not be found.' in resp.get_json()['message']
+    assert 'Not found' in resp.get_json()['message']
 
 
 def test_apply_normal(client):
@@ -202,7 +202,7 @@ def test_apply_invalid(client):
                        json={'group_members': []})
 
     assert resp.status_code == 404
-    assert 'Lottery could not be found.' in resp.get_json()['message']
+    assert 'Not found' in resp.get_json()['message']
 
 
 def test_apply_same_period(client):
@@ -421,7 +421,7 @@ def test_apply_group_same_lottery(client):
                            json={'group_members': members})
 
         assert resp.status_code == 400
-        assert 'someone in the group is already applying to this lottery' in \
+        assert 'Someone in the group is already applying to this lottery' in \
             resp.get_json()['message']
 
 
@@ -511,7 +511,7 @@ def test_get_specific_application_invaild_id(client):
                        f'/applications/{idx}')
 
     assert resp.status_code == 404
-    assert 'Application could not be found.' in resp.get_json()['message']
+    assert 'Not found' in resp.get_json()['message']
 
 
 def test_cancel_normal(client):
@@ -828,7 +828,8 @@ def test_draw_noperm(client):
                        headers={'Authorization': f'Bearer {token}'})
 
     assert resp.status_code == 403
-    assert 'Forbidden' in resp.get_json()['message']
+    assert 'You have no permission to perform the action' in \
+        resp.get_json()['message']
 
 
 def test_draw_invalid(client):
@@ -843,7 +844,7 @@ def test_draw_invalid(client):
                        headers={'Authorization': f'Bearer {token}'})
 
     assert resp.status_code == 404
-    assert 'Lottery could not be found.' in resp.get_json()['message']
+    assert 'Not found' in resp.get_json()['message']
 
 
 def test_draw_time_invalid(client):
@@ -1079,7 +1080,8 @@ def test_draw_all_noperm(client):
                        headers={'Authorization': f'Bearer {token}'})
 
     assert resp.status_code == 403
-    assert 'Forbidden' in resp.get_json()['message']
+    assert 'You have no permission to perform the action' in \
+        resp.get_json()['message']
 
 
 def test_draw_all_invalid(client):
