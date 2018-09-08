@@ -1,9 +1,8 @@
-import pytest
-
 from sqlalchemy import event
 
 from api.models import db, Classroom, Lottery, User, Error
-from api.app import create_app, init_and_generate
+from api.app import init_and_generate
+
 
 def test_db_generate_never(client):
     with client.application.app_context():
