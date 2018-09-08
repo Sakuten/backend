@@ -16,6 +16,7 @@ def test_db_generate_never(client):
         assert len(Lottery.query.all()) == 0
         assert len(Error.query.all()) == 0
 
+
 def test_db_generate_first_time(client):
     with client.application.app_context():
         client.application.config['DB_FORCE_INIT'] = True
@@ -28,7 +29,7 @@ def test_db_generate_first_time(client):
         changed = False
 
         @event.listens_for(db.session, 'before_commit')
-        def detect_change(*args,**kw):
+        def detect_change(*args, **kw):
             nonlocal changed
             changed = True
 
@@ -46,6 +47,7 @@ def test_db_generate_first_time(client):
 
         assert not changed
 
+
 def test_db_generate_always(client):
     with client.application.app_context():
         client.application.config['DB_GEN_POLICY'] = 'always'
@@ -53,7 +55,7 @@ def test_db_generate_always(client):
         changed = False
 
         @event.listens_for(db.session, 'before_commit')
-        def detect_change(*args,**kw):
+        def detect_change(*args, **kw):
             nonlocal changed
             changed = True
 

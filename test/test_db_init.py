@@ -3,6 +3,7 @@ import pytest
 from api.models import db, Classroom
 from api.app import create_app, init_and_generate
 
+
 @pytest.mark.parametrize("force_init", [True, False])
 def test_db_init(client, force_init):
     with client.application.app_context():
