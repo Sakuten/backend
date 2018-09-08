@@ -182,7 +182,7 @@ def test_auth_used_user(client):
                            }, follow_redirects=True)
 
     assert resp.status_code == 400
-    assert resp.get_json()['message'] == 'Login Unsuccessful'
+    assert resp.get_json()['message'] == 'Login unsuccessful'
 
 
 def test_auth_overtime_as_student(client):
