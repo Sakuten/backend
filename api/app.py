@@ -79,7 +79,7 @@ def create_app():
 def init_and_generate():
     policy = current_app.config['DB_GEN_POLICY']
     force_init = current_app.config['DB_FORCE_INIT']
-    is_empty = sqlalchemy.inspect(db.engine).get_table_names() == []
+    is_empty = len(sqlalchemy.inspect(db.engine).get_table_names()) == 0
     if force_init and not is_empty:
         current_app.logger.warning('Dropping all tables because '
                                    f'DB_FORCE_INIT == true')
@@ -88,7 +88,7 @@ def init_and_generate():
         current_app.logger.warning(f'Creating all tables')
         db.create_all()
     if policy == 'always' or \
-            (policy == 'first_time' and User.query.all() == []):
+            (policy == 'first_time' and len(User.query.all()) == 0):
         current_app.logger.warning(
             'Generating Initial Data for Database '
             f'(DB_GEN_POLICY: {policy})')
