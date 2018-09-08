@@ -70,12 +70,15 @@ def create_app():
     app.register_blueprint(auth.bp)
     app.register_blueprint(api.bp)
 
-    with app.app_context():
-        if sqlalchemy.inspect(db.engine).get_table_names() == []:
-            app.logger.warning(
-                'Generating Initial Data for Database in the first run')
-            db.create_all()
-            generate()
+    db_gen = os.getenv('DB_GEN', 'first_time')
+    if db_gen != 'never':
+        with app.app_context():
+            is_empty = sqlalchemy.inspect(db.engine).get_table_names() == []
+            if db_gen == 'always' or (db_gen == 'first_time' and is_empty):
+                app.logger.warning(
+                        f'Generating Initial Data for Database (DB_GEN: {db_gen})')
+                db.create_all()
+                generate()
 
     return app
 
