@@ -10,7 +10,6 @@ def test_db_init(client, force_init):
         db.session.add(dummy)
         db.session.commit()
         dummy_id = dummy.id
-        assert Classroom.query.get(dummy_id) is not None
 
         client.application.config['DB_FORCE_INIT'] = force_init
         init_and_generate()
