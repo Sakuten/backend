@@ -2,7 +2,7 @@ import pytest
 
 from sqlalchemy import event
 
-from api.models import db, Classroom, Lottery, User
+from api.models import db, Classroom, Lottery, User, Error
 from api.app import create_app, init_and_generate
 
 def test_db_generate_never(client):
@@ -14,6 +14,7 @@ def test_db_generate_never(client):
         assert len(User.query.all()) == 0
         assert len(Classroom.query.all()) == 0
         assert len(Lottery.query.all()) == 0
+        assert len(Error.query.all()) == 0
 
 def test_db_generate_first_time(client):
     with client.application.app_context():
@@ -37,6 +38,7 @@ def test_db_generate_first_time(client):
         assert len(User.query.all()) != 0
         assert len(Classroom.query.all()) != 0
         assert len(Lottery.query.all()) != 0
+        assert len(Error.query.all()) != 0
 
         changed = False
         init_and_generate()  # initial data is already generated, so does nothing
@@ -64,3 +66,4 @@ def test_db_generate_always(client):
         assert len(User.query.all()) != 0
         assert len(Classroom.query.all()) != 0
         assert len(Lottery.query.all()) != 0
+        assert len(Error.query.all()) != 0
