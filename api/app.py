@@ -77,6 +77,25 @@ def create_app():
 
 
 def init_and_generate():
+    """
+        Intialize and generate DB if needed,
+        depends on DB_GEN_POLICY and DB_FORCE_INIT.
+
+        application context is required.
+
+        * DB_GEN_POLICY=[always|first_time|never]
+          * always: Generates initial data every time.
+                    (existing User, Classroom, Lottery, Error is deleted)
+          * first_time: When initial data is not generated yes, generates.
+          * never: Never generates initial data (for deployments)
+
+        * DB_FORCE_INIT=[true|false]
+          * true: Deletes all tables and re-creates
+          * false: If there is no tables, creates them
+
+        Args:
+        Return:
+    """
     policy = current_app.config['DB_GEN_POLICY']
     force_init = current_app.config['DB_FORCE_INIT']
     is_empty = len(sqlalchemy.inspect(db.engine).get_table_names()) == 0
