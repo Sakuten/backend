@@ -70,29 +70,31 @@ def create_app():
     app.register_blueprint(auth.bp)
     app.register_blueprint(api.bp)
 
-    policy = app.config['DB_GEN_POLICY']
-    force_init = app.config['DB_FORCE_INIT']
     with app.app_context():
-        is_empty = sqlalchemy.inspect(db.engine).get_table_names() == []
-        if force_init and not is_empty:
-            app.logger.warning('Dropping all tables because '
-                               f'DB_FORCE_INIT == true')
-            db.drop_all()
-        if force_init or is_empty:
-            app.logger.warning(f'Creating all tables')
-            db.create_all()
-        if policy == 'always' or \
-                (policy == 'first_time' and User.query.all() == []):
-            app.logger.warning(
-                'Generating Initial Data for Database '
-                f'(DB_GEN_POLICY: {policy})')
-            generate()
-        elif policy != 'never' and policy != 'first_time':
-            app.logger.warning(
-                f'Unknown DB_GEN_POLICY: {policy}. Treated as \'never\'.')
+        init_and_generate()
 
     return app
 
+def init_and_generate():
+    policy = current_app.config['DB_GEN_POLICY']
+    force_init = current_app.config['DB_FORCE_INIT']
+    is_empty = sqlalchemy.inspect(db.engine).get_table_names() == []
+    if force_init and not is_empty:
+        current_app.logger.warning('Dropping all tables because '
+                           f'DB_FORCE_INIT == true')
+        db.drop_all()
+    if force_init or is_empty:
+        current_app.logger.warning(f'Creating all tables')
+        db.create_all()
+    if policy == 'always' or \
+            (policy == 'first_time' and User.query.all() == []):
+        current_app.logger.warning(
+            'Generating Initial Data for Database '
+            f'(DB_GEN_POLICY: {policy})')
+        generate()
+    elif policy != 'never' and policy != 'first_time':
+        current_app.logger.warning(
+            f'Unknown DB_GEN_POLICY: {policy}. Treated as \'never\'.')
 
 def initdb(app, db):
     from api.models import db
