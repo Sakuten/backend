@@ -383,16 +383,16 @@ def check_id(classroom_id, secret_id):
     """
     user = User.query.filter_by(secret_id=secret_id).first()
     if not user:
-        return jsonify({"message": "user not found"}), 404
+        return error_response(5) # no such user found
     try:
         index = get_time_index()
     except (OutOfHoursError, OutOfAcceptingHoursError):
-        return jsonify({"message": "Not acceptable time"}), 400
+        return error_response(6) # not acceptable time
     lottery = Lottery.query.filter_by(classroom_id=classroom_id,
                                       index=index).first()
     application = Application.query.filter_by(user=user,
                                               lottery=lottery).first()
     if not application:
-        return jsonify({"message": "application not found"}), 404
+        return error_response(19) # no application found
 
     return jsonify({"status": application.status})
