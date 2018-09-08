@@ -42,6 +42,9 @@ def client():
         test_cred = next(test_creds)
         user['secret_id'] = test_cred['secret_id']
 
+    with client.app_context():
+        app.init_and_generate()
+
     test_client = client.test_client()
 
     yield test_client
