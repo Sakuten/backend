@@ -74,5 +74,9 @@
   "18": {
     "message": "We're not authorizing in this hours.",
     "status": 403
+  },
+  "19": {
+    "message": "No application found",
+    "status": 404
   }
 }
