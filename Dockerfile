@@ -17,6 +17,11 @@ RUN apk update && apk upgrade \
     && rm -rf /var/cache/apk/*
 
 ENV DB_GEN_POLICY never
+
+ENV FLASK_CONFIGURATION deployment
+ENV FLASK_APP app.py
+ENV FLASK_ENV production
+
 EXPOSE 80
 
 CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:80"]
