@@ -75,21 +75,21 @@ def create_app():
     with app.app_context():
         is_empty = sqlalchemy.inspect(db.engine).get_table_names() == []
         if force_init and not is_empty:
-            app.logger.warning(
-                f'Dropping all tables because DB_FORCE_INIT == true')
+            app.logger.warning('Dropping all tables because '
+                               f'DB_FORCE_INIT == true')
             db.drop_all()
         if force_init or is_empty:
-            app.logger.warning(
-                f'Creating all tables')
+            app.logger.warning(f'Creating all tables')
             db.create_all()
-        if policy == 'always' or (policy == 'first_time' and User.query.all() == []):
+        if policy == 'always' or \
+                (policy == 'first_time' and User.query.all() == []):
             app.logger.warning(
-                    f'Generating Initial Data for Database (DB_GEN_POLICY: {policy})')
+                'Generating Initial Data for Database '
+                f'(DB_GEN_POLICY: {policy})')
             generate()
         elif policy != 'never':
             app.logger.warning(
-                    f'Unknown DB_GEN_POLICY: {policy}. Treated as \'never\'.')
-
+                f'Unknown DB_GEN_POLICY: {policy}. Treated as \'never\'.')
 
     return app
 
