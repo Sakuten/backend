@@ -1,0 +1,55 @@
+checker endpoint.
+check user's status for that classroom.
+---
+produces:
+  - application/json
+parameters:
+  - description: classroom's id to check.
+    in: path
+    type: int
+    name: classroom_id
+    required: true
+  - description: secret_id of visitor
+    in: path
+    type: string
+    name: secret_id
+    required: true
+response:
+  '200':
+    description:  status of the application
+    schema:
+      properties:
+        status:
+          description: the status
+          enum: [won, lose, pending]
+          type: string
+  '400':
+    description: Malformed Authenication Header has detected / Not acceptable time
+    headers:
+      WWW-Authenticate:
+        description: >-
+          Authenication Error Code. For details, please refer to RFC 6750
+          3. The WWW-Authenticate Response Header Field
+        type: string
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+  '401':
+    description: Authorization Failed
+    headers:
+      WWW-Authenticate:
+        description: >-
+          Authenication Error Code. For details, please refer to RFC 6750
+          3. The WWW-Authenticate Response Header Field
+        type: string
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+  '404':
+    description: user not found  / application not found
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+security:
+  - checker_auth: []
+tags:
+  - checker
+description: check the user status for lottery of the classroom
+operationId: checkStatus

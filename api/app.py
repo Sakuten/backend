@@ -53,13 +53,15 @@ def create_app():
     if app.config.get('SQLALCHEMY_DATABASE_URI', None) is None:
         app.logger.error(
             "SQLALCHEMY_DATABASE_URI is not set."
-            "Didn't you forget to set it in instance/config.cfg?")
+            "Didn't you forget to set it in "
+            "DATABASE_URL environmental variable?")
         sys.exit(4)  # Return 4 to exit gunicorn
 
     if app.config.get('SECRET_KEY', None) is None:
         app.logger.error(
             "SECRET_KEY is not set."
-            "Didn't you forget to set it in instance/config.cfg?")
+            "Didn't you forget to set it in "
+            "SECRET_KEY environmental variable?")
         sys.exit(4)  # Return 4 to exit gunicorn
 
     db.init_app(app)
@@ -125,7 +127,8 @@ def generate():
     for ids in id_list:
         user = User(secret_id=ids['secret_id'],
                     public_id=decode_public_id(ids['public_id']),
-                    authority=ids['authority'])
+                    authority=ids['authority'],
+                    kind=ids['kind'])
         db.session.add(user)
 
     db.session.commit()

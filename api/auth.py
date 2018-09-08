@@ -1,7 +1,7 @@
 from flask import g, current_app, request
 from cryptography.fernet import Fernet, InvalidToken
-from api.models import User
-from datetime import datetime
+from api.models import User, db
+from datetime import datetime, date
 from functools import wraps
 import json
 from api.time_management import get_current_datetime
@@ -76,7 +76,9 @@ def login_required(*required_authority):
             data = decrypt_token(token)
             if not data:
                 return auth_error(0, 'error="invalid_token"')
-            user = User.query.filter_by(id=data['data']['user_id']).first()
+            user = todays_user(user_id=data['data']['user_id'])
+            if user is None:
+                return auth_error(0, 'realm="id_disabled"')
             if required_authority and \
                     (user.authority not in required_authority):
                 return auth_error(15, 'error="insufficient_scope"')
@@ -85,3 +87,37 @@ def login_required(*required_authority):
             return f(*args, **kwargs)
         return decorated_function
     return login_required_impl
+
+
+def todays_user(secret_id='', user_id=''):
+    """confirm the user id isn't used in other day
+        and return `User` object
+        Args:
+            secret_id (str): secret id of target user
+        Return:
+            User (api.models.User): the user object of 'secret_id'
+            None : when given 'secret_id' is used in other day
+
+        References are here:
+            https://github.com/Sakuten/backend/issues/78#issuecomment-416609508
+    """
+
+    if secret_id:
+        user = User.query.filter_by(secret_id=secret_id).first()
+    elif user_id:
+        user = User.query.get(user_id)
+
+    if not user:
+        return None
+    if user.kind not in current_app.config['ONE_DAY_KIND']:
+        return user
+
+    if user.first_access is None:
+        user.first_access = date.today()
+        db.session.add(user)
+        db.session.commit
+        return user
+    elif user.first_access == date.today():
+        return user
+    else:
+        return None

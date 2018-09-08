@@ -1,7 +1,7 @@
 from itertools import chain
 
-from flask import Blueprint, jsonify, g, request
-from api.models import Lottery, Classroom, User, Application, db, GroupMember
+from flask import Blueprint, jsonify, g, request, current_app
+from api.models import Lottery, Classroom, User, Application, db, group_member
 from api.schemas import (
     user_schema,
     users_schema,
@@ -12,7 +12,7 @@ from api.schemas import (
     lotteries_schema,
     lottery_schema
 )
-from api.auth import login_required
+from api.auth import login_required, todays_user
 from api.swagger import spec
 from api.time_management import (
     get_draw_time_index,
@@ -25,6 +25,7 @@ from api.draw import (
     draw_all_at_index,
 )
 from api.error import error_response
+from api.utils import calc_sha256
 
 bp = Blueprint(__name__, 'api')
 
@@ -68,6 +69,26 @@ def list_lotteries():
 #     sort = request.args.get('sort')
 
     lotteries = Lottery.query.all()
+    result = lotteries_schema.dump(lotteries)[0]
+    return jsonify(result)
+
+
+@bp.route('/lotteries/available')
+@spec('api/lotteries/available.yml')
+def list_available_lotteries():
+    """
+        return available lotteries list.
+    """
+# those two values will be used in the future. now, not used. see issue #62 #63
+#     filter = request.args.get('filter')
+#     sort = request.args.get('sort')
+
+    try:
+        index = get_time_index()
+    except OutOfAcceptingHoursError:
+        return jsonify({"message": "Not acceptable time"}), 400
+    lotteries = Lottery.query.filter_by(index=index)
+
     result = lotteries_schema.dump(lotteries)[0]
     return jsonify(result)
 
@@ -125,7 +146,7 @@ def apply_lottery(idx):
     group_members = []
     if len(group_members_secret_id) != 0:
         for sec_id in group_members_secret_id:
-            user = User.query.filter_by(secret_id=sec_id).first()
+            user = todays_user(secret_id=sec_id)
             if user is not None:
                 group_members.append(user)
             else:
@@ -175,17 +196,20 @@ def apply_lottery(idx):
             result = application_schema.dump(newapplication)[0]
             return jsonify(result)
         else:
+            # 8.
+            members_app = [Application(
+                    lottery_id=lottery.id, user_id=member.id, status="pending")
+                    for member in group_members]
+
+            for application in members_app:
+                db.session.add(application)
+            db.session.commit()
             rep_application = Application(
                 lottery_id=lottery.id, user_id=rep_user.id, status="pending",
                 is_rep=True,
-                group_members=[GroupMember(user_id=member.id)
-                               for member in group_members])
+                group_members=[group_member(app)
+                               for app in members_app])
             db.session.add(rep_application)
-    # 8.
-    for member in group_members:
-        newapplication = Application(
-            lottery_id=lottery.id, user_id=member.id, status="pending")
-        db.session.add(newapplication)
 
     # 9.
     db.session.commit()
@@ -334,3 +358,41 @@ def translate_secret_to_public(secret_id):
         return error_response(5)  # no such user found
     else:
         return jsonify({"public_id": user.public_id})
+
+
+@bp.route('/ids_hash', methods=['GET'])
+@spec('api/ids_hash.yml')
+def ids_hash():
+    """return sha256 hash of `ids.json` used in background
+    """
+    try:
+        checksum = calc_sha256(current_app.config['ID_LIST_FILE'])
+    except FileNotFoundError:
+        return jsonify({"message": "ID_LIST_FILE is not found"}), 404
+    return jsonify({"sha256": checksum})
+
+
+@bp.route('/checker/<int:classroom_id>/<string:secret_id>', methods=['GET'])
+@spec('api/checker.yml')
+@login_required('checker')
+def check_id(classroom_id, secret_id):
+    """return if the user is winner of given classroom
+        Args:
+            classroom_id (int): target classroom
+            secret_id (string): secret id of target user
+    """
+    user = User.query.filter_by(secret_id=secret_id).first()
+    if not user:
+        return jsonify({"message": "user not found"}), 404
+    try:
+        index = get_time_index()
+    except (OutOfHoursError, OutOfAcceptingHoursError):
+        return jsonify({"message": "Not acceptable time"}), 400
+    lottery = Lottery.query.filter_by(classroom_id=classroom_id,
+                                      index=index).first()
+    application = Application.query.filter_by(user=user,
+                                              lottery=lottery).first()
+    if not application:
+        return jsonify({"message": "application not found"}), 404
+
+    return jsonify({"status": application.status})

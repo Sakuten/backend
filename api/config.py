@@ -16,6 +16,7 @@ class BaseConfig(object):
     ERROR_TABLE_FILE = ROOT_DIR / Path('errors.json')
     WINNERS_NUM = 90
     RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY')
+    RECAPTCHA_THRESHOLD = 0.09  # more than 0.09
     TIMEZONE = timezone(timedelta(hours=+9), 'JST')
     START_DATETIME = datetime(2018, 9, 16, 8,  40, 0, tzinfo=TIMEZONE)
     END_DATETIME = datetime(2018, 9, 17, 16, 00, 0, tzinfo=TIMEZONE)
@@ -27,12 +28,14 @@ class BaseConfig(object):
         (time(12, 25), time(12, 55)),
         (time(13, 50), time(14, 20)),
     ]
+    ONE_DAY_KIND = ['visitor']
 
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
     TESTING = True
     ENV = 'development'
+    ID_LIST_FILE = BaseConfig.ROOT_DIR / 'cards/test_users.json'
 
 
 class TestingConfig(BaseConfig):
@@ -68,7 +71,6 @@ class PreviewDeploymentConfig(BaseConfig):
 class DeploymentConfig(BaseConfig):
     DEBUG = False
     TESTING = False
-    # None, to be configured in config.cfg in instance directory
-    SQLALCHEMY_DATABASE_URI = None
-    SECRET_KEY = None
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    SECRET_KEY = os.environ.get('SECRET_KEY')
     ENV = 'production'
