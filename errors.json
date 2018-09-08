@@ -84,7 +84,7 @@
     "status": 404
   },
   "21": {
-    "message": "gruop members should be less than 3",
+    "message": "too many group members",
     "status": 400
   }
 }

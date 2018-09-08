@@ -438,7 +438,7 @@ def test_apply_group_toomany(client):
                            json={'group_members': members})
 
     assert resp.status_code == 400
-    assert 'gruop members should be less than 3' in resp.get_json()['message']
+    assert 'too many group members' in resp.get_json()['message']
 
 
 def test_get_allapplications(client):
