@@ -145,15 +145,14 @@ def apply_lottery(idx):
     # 2. 3. 4.
     group_members = []
     if len(group_members_secret_id) != 0:
-        if len(group_members_secret_id) <= 3:
-            for sec_id in group_members_secret_id:
-                user = todays_user(secret_id=sec_id)
-                if user is not None:
-                    group_members.append(user)
-                else:
-                    return error_response(1)  # Invalid group member secret id
-        else:
+        if len(group_members_secret_id) > 3:
             return error_response(21)
+        for sec_id in group_members_secret_id:
+            user = todays_user(secret_id=sec_id)
+            if user is not None:
+                group_members.append(user)
+            else:
+                return error_response(1)  # Invalid group member secret id
 
         for user in group_members:
             previous = Application.query.filter_by(user_id=user.id)
