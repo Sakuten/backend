@@ -949,16 +949,16 @@ def test_group_losers_advantage(client):
             users[0].lose_count = 6
             user0_id = users[0].id
 
-            rep_apps = (Application(
-                lottery=target_lottery, user_id=users[rep].id,
-                is_rep=True,
-                group_members=[GroupMember(user_id=users[j].id)
-                               for j in members])
-                        for rep, members in groups)
             normal_apps = (Application(
                 lottery=target_lottery, user_id=users[i].id)
                 for i in range(len(users))
                 for rep, _ in groups if i != rep)  # not rep
+            rep_apps = (Application(
+                lottery=target_lottery, user_id=users[rep].id,
+                is_rep=True,
+                group_members=[group_member(app)
+                               for app in normal_apps])
+                        for rep, members in groups)
 
             for app in chain(rep_apps, normal_apps):
                 db.session.add(app)
