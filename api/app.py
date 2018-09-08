@@ -133,11 +133,15 @@ def generate():
                               index=perf_index, done=False)
             db.session.add(lottery)
 
+    Classroom.query.delete()
     classloop(create_classrooms)
     db.session.commit()
+
+    Lottery.query.delete()
     classloop(create_lotteries)
     db.session.commit()
 
+    User.query.delete()
     json_path = current_app.config['ID_LIST_FILE']
     id_list = load_id_json_file(json_path)
     for ids in id_list:
@@ -149,6 +153,7 @@ def generate():
 
     db.session.commit()
 
+    Error.query.delete()
     json_path = current_app.config['ERROR_TABLE_FILE']
     with open(json_path, 'r') as f:
         error_list = json.load(f)
