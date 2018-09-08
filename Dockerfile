@@ -1,3 +1,13 @@
+# Sakuten backend image
+#
+# Following environment variable must be supplied:
+# * DATABASE_URL
+# * SECRET_KEY
+# * RECAPTCHA_SECRET_KEY
+#
+# Following environment variable MAY be supplied:
+# * DB_FORCE_INIT
+
 FROM python:3.6-alpine3.8
 
 ENV PIP_NO_CACHE_DIR=false \
