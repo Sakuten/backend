@@ -78,5 +78,9 @@
   "19": {
     "message": "No application found",
     "status": 404
+  },
+  "20": {
+    "message": "ID_LIST_FILE not found",
+    "status": 404
   }
 }
