@@ -41,7 +41,10 @@ def test_db_generate_first_time(client):
         assert len(Error.query.all()) != 0
 
         changed = False
-        init_and_generate()  # initial data is already generated, so does nothing
+
+        # initial data is already generated,
+        # so does nothing
+        init_and_generate()
         event.remove(db.session, 'before_commit', detect_change)
 
         assert not changed
