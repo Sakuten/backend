@@ -8,8 +8,6 @@ from utils import (
     test_user1,
     test_user2,
     test_user3,
-    test_user4,
-    test_user5,
     as_user_get,
     invalid_classroom_id,
     invalid_lottery_id,
@@ -291,9 +289,7 @@ def test_apply_group(client):
     user = test_user
     members = [test_user1['secret_id'],
                test_user2['secret_id'],
-               test_user3['secret_id'],
-               test_user4['secret_id'],
-               test_user5['secret_id']
+               test_user3['secret_id']
                ]
     with client.application.app_context():
         members_id = [User.query.filter_by(secret_id=member_secret).first().id
@@ -329,8 +325,6 @@ def test_apply_group_invalid(client):
     user = test_user
     members = [test_user1['secret_id'],
                test_user2['secret_id'],
-               test_user3['secret_id'],
-               test_user4['secret_id'],
                "wrong_secret_id"
                ]
     token = login(client, user['secret_id'],
@@ -359,9 +353,7 @@ def test_apply_group_same_period(client):
     user = test_user
     members = [test_user1['secret_id'],
                test_user2['secret_id'],
-               test_user3['secret_id'],
-               test_user4['secret_id'],
-               test_user5['secret_id']
+               test_user3['secret_id']
                ]
     token = login(client, user['secret_id'],
                   user['g-recaptcha-response'])['token']
@@ -397,9 +389,7 @@ def test_apply_group_same_lottery(client):
     user = test_user
     members = [test_user1['secret_id'],
                test_user2['secret_id'],
-               test_user3['secret_id'],
-               test_user4['secret_id'],
-               test_user5['secret_id']
+               test_user3['secret_id']
                ]
     token = login(client, user['secret_id'],
                   user['g-recaptcha-response'])['token']
