@@ -71,9 +71,14 @@ def create_app():
     app.register_blueprint(api.bp)
 
     policy = os.getenv('DB_GEN_POLICY', 'first_time')
+    force_init = os.getenv('DB_FORCE_INIT', 'false') == 'true'
     with app.app_context():
         is_empty = sqlalchemy.inspect(db.engine).get_table_names() == []
-        if is_empty:
+        if force_init and not is_empty:
+            app.logger.warning(
+                f'Dropping all tables because DB_FORCE_INIT == true')
+            db.drop_all()
+        if force_init or is_empty:
             app.logger.warning(
                 f'Creating all tables')
             db.create_all()
