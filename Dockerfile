@@ -16,6 +16,7 @@ RUN apk update && apk upgrade \
     && apk del --purge .build-deps \
     && rm -rf /var/cache/apk/*
 
+ENV DB_GEN_POLICY never
 EXPOSE 80
 
 CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:80"]

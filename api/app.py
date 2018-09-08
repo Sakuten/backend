@@ -3,7 +3,7 @@ from flask_cors import CORS
 import sqlalchemy
 from .routes import auth, api
 from .swagger import swag
-from .models import db
+from .models import db, User
 from cards.id import load_id_json_file, decode_public_id
 import os
 import sys
@@ -71,13 +71,50 @@ def create_app():
     app.register_blueprint(api.bp)
 
     with app.app_context():
-        if sqlalchemy.inspect(db.engine).get_table_names() == []:
-            app.logger.warning(
-                'Generating Initial Data for Database in the first run')
-            db.create_all()
-            generate()
+        init_and_generate()
 
     return app
+
+
+def init_and_generate():
+    """
+        Intialize and generate DB if needed,
+        depends on DB_GEN_POLICY and DB_FORCE_INIT.
+
+        application context is required.
+
+        * DB_GEN_POLICY=[always|first_time|never]
+          * always: Generates initial data every time.
+                    (existing User, Classroom, Lottery, Error is deleted)
+          * first_time: When initial data is not generated yes, generates.
+          * never: Never generates initial data (for deployments)
+
+        * DB_FORCE_INIT=[true|false]
+          * true: Deletes all tables and re-creates
+          * false: If there is no tables, creates them
+
+        Args:
+        Return:
+    """
+    policy = current_app.config['DB_GEN_POLICY']
+    force_init = current_app.config['DB_FORCE_INIT']
+    is_empty = len(sqlalchemy.inspect(db.engine).get_table_names()) == 0
+    if force_init and not is_empty:
+        current_app.logger.warning('Dropping all tables because '
+                                   'DB_FORCE_INIT == true')
+        db.drop_all()
+    if force_init or is_empty:
+        current_app.logger.warning('Creating all tables')
+        db.create_all()
+    if policy == 'always' or \
+            (policy == 'first_time' and len(User.query.all()) == 0):
+        current_app.logger.warning(
+            'Generating Initial Data for Database '
+            f'(DB_GEN_POLICY: {policy})')
+        generate()
+    elif policy != 'never' and policy != 'first_time':
+        current_app.logger.warning(
+            f'Unknown DB_GEN_POLICY: {policy}. Treated as \'never\'.')
 
 
 def initdb(app, db):
@@ -117,11 +154,15 @@ def generate():
                               index=perf_index, done=False)
             db.session.add(lottery)
 
+    Classroom.query.delete()
     classloop(create_classrooms)
     db.session.commit()
+
+    Lottery.query.delete()
     classloop(create_lotteries)
     db.session.commit()
 
+    User.query.delete()
     json_path = current_app.config['ID_LIST_FILE']
     id_list = load_id_json_file(json_path)
     for ids in id_list:
@@ -133,6 +174,7 @@ def generate():
 
     db.session.commit()
 
+    Error.query.delete()
     json_path = current_app.config['ERROR_TABLE_FILE']
     with open(json_path, 'r') as f:
         error_list = json.load(f)
