@@ -77,11 +77,14 @@ def create_app():
             app.logger.warning(
                 f'Creating all tables')
             db.create_all()
-        if policy != 'never':
-            if policy == 'always' or (policy == 'first_time' and is_empty):
-                app.logger.warning(
-                        f'Generating Initial Data for Database (DB_GEN_POLICY: {policy})')
-                generate()
+        if policy == 'always' or (policy == 'first_time' and User.query.all() == []):
+            app.logger.warning(
+                    f'Generating Initial Data for Database (DB_GEN_POLICY: {policy})')
+            generate()
+        elif policy != 'never':
+            app.logger.warning(
+                    f'Unknown DB_GEN_POLICY: {policy}. Treated as \'never\'.')
+
 
     return app
 
