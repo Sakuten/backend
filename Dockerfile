@@ -33,4 +33,5 @@ RUN apk update && apk upgrade \
 
 EXPOSE 80
 
-CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:80", "--workers", "4"]
+ENTRYPOINT ["gunicorn", "app:app"]
+CMD ["--bind", "0.0.0.0:80", "--workers", "4"]
