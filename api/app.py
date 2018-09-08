@@ -71,13 +71,16 @@ def create_app():
     app.register_blueprint(api.bp)
 
     policy = os.getenv('DB_GEN_POLICY', 'first_time')
-    if policy != 'never':
-        with app.app_context():
-            is_empty = sqlalchemy.inspect(db.engine).get_table_names() == []
+    with app.app_context():
+        is_empty = sqlalchemy.inspect(db.engine).get_table_names() == []
+        if is_empty:
+            app.logger.warning(
+                f'Creating all tables')
+            db.create_all()
+        if policy != 'never':
             if policy == 'always' or (policy == 'first_time' and is_empty):
                 app.logger.warning(
                         f'Generating Initial Data for Database (DB_GEN_POLICY: {policy})')
-                db.create_all()
                 generate()
 
     return app
