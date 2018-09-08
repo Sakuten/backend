@@ -5,6 +5,11 @@ from api.app import init_and_generate
 
 
 def test_db_generate_never(client):
+    """
+        Test if `DB_GEN_POLICY == 'never'` is working.
+        See the definition of `init_and_generate`
+        for expected behavior.
+    """
     with client.application.app_context():
         client.application.config['DB_FORCE_INIT'] = True
         client.application.config['DB_GEN_POLICY'] = 'never'
@@ -17,6 +22,11 @@ def test_db_generate_never(client):
 
 
 def test_db_generate_first_time(client):
+    """
+        Test if `DB_GEN_POLICY == 'first_time'` is working.
+        See the definition of `init_and_generate`
+        for expected behavior.
+    """
     with client.application.app_context():
         client.application.config['DB_FORCE_INIT'] = True
         client.application.config['DB_GEN_POLICY'] = 'never'
@@ -51,6 +61,11 @@ def test_db_generate_first_time(client):
 
 
 def test_db_generate_always(client):
+    """
+        Test if `DB_GEN_POLICY == 'always'` is working.
+        See the definition of `init_and_generate`
+        for expected behavior.
+    """
     with client.application.app_context():
         client.application.config['DB_GEN_POLICY'] = 'always'
 
