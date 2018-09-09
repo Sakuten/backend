@@ -15,7 +15,7 @@ class User(db.Model):
             secret_id (int): secret id.
     """
     id = db.Column(db.Integer, primary_key=True)
-    public_id = db.Column(db.Integer, unique=True)
+    public_id = db.Column(db.Integer)
     secret_id = db.Column(db.String(40), unique=True)
     authority = db.Column(db.String(20))
     kind = db.Column(db.String(30))
