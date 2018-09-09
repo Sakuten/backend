@@ -9,7 +9,6 @@ from utils import (
     test_user2,
     test_user3,
     test_user4,
-    test_user5,
     as_user_get,
     invalid_classroom_id,
     invalid_lottery_id,
@@ -315,9 +314,7 @@ def test_apply_group(client):
     user = test_user
     members = [test_user1['secret_id'],
                test_user2['secret_id'],
-               test_user3['secret_id'],
-               test_user4['secret_id'],
-               test_user5['secret_id']
+               test_user3['secret_id']
                ]
     with client.application.app_context():
         members_id = [User.query.filter_by(secret_id=member_secret).first().id
@@ -353,8 +350,6 @@ def test_apply_group_invalid(client):
     user = test_user
     members = [test_user1['secret_id'],
                test_user2['secret_id'],
-               test_user3['secret_id'],
-               test_user4['secret_id'],
                "wrong_secret_id"
                ]
     token = login(client, user['secret_id'],
@@ -383,9 +378,7 @@ def test_apply_group_same_period(client):
     user = test_user
     members = [test_user1['secret_id'],
                test_user2['secret_id'],
-               test_user3['secret_id'],
-               test_user4['secret_id'],
-               test_user5['secret_id']
+               test_user3['secret_id']
                ]
     token = login(client, user['secret_id'],
                   user['g-recaptcha-response'])['token']
@@ -421,9 +414,7 @@ def test_apply_group_same_lottery(client):
     user = test_user
     members = [test_user1['secret_id'],
                test_user2['secret_id'],
-               test_user3['secret_id'],
-               test_user4['secret_id'],
-               test_user5['secret_id']
+               test_user3['secret_id']
                ]
     token = login(client, user['secret_id'],
                   user['g-recaptcha-response'])['token']
@@ -445,6 +436,33 @@ def test_apply_group_same_lottery(client):
         assert resp.status_code == 400
         assert 'Someone in the group is already applying to this lottery' in \
             resp.get_json()['message']
+
+
+def test_apply_group_toomany(client):
+    """attempt to apply as group which has too many peoples
+        target_url: /lotteries/<id>/apply [POST]
+    """
+    lottery_id = 1
+    user = test_user
+    members = [test_user1['secret_id'],
+               test_user2['secret_id'],
+               test_user3['secret_id'],
+               test_user4['secret_id']
+               ]
+    token = login(client, user['secret_id'],
+                  user['g-recaptcha-response'])['token']
+
+    with client.application.app_context():
+        index = Lottery.query.get(lottery_id).index
+
+    with mock.patch('api.routes.api.get_time_index',
+                    return_value=index):
+        resp = client.post(f'/lotteries/{lottery_id}',
+                           headers={'Authorization': f'Bearer {token}'},
+                           json={'group_members': members})
+
+    assert resp.status_code == 400
+    assert 'too many group members' in resp.get_json()['message']
 
 
 def test_get_allapplications(client):

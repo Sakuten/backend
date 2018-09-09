@@ -145,6 +145,8 @@ def apply_lottery(idx):
     # 2. 3. 4.
     group_members = []
     if len(group_members_secret_id) != 0:
+        if len(group_members_secret_id) > 3:
+            return error_response(21)
         for sec_id in group_members_secret_id:
             user = todays_user(secret_id=sec_id)
             if user is not None:
