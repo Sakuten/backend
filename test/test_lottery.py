@@ -104,12 +104,12 @@ def test_get_all_available_lotteries(client):
 
     assert current_lotteries == resp.get_json()
 
+
 def test_get_all_available_lotteries_out_of_time(client):
     """test proper infomation is returned from the API
         when it is out of time
         target_url: /lotteries/available
     """
-    index = 1
     with mock.patch('api.routes.api.get_time_index',
                     side_effect=OutOfHoursError()):
         resp = client.get('/lotteries/available')
@@ -121,6 +121,7 @@ def test_get_all_available_lotteries_out_of_time(client):
         resp = client.get('/lotteries/available')
 
     assert [] == resp.get_json()
+
 
 def test_get_specific_lottery(client):
     """test proper infomation is returned from the API
