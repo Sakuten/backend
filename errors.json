@@ -81,6 +81,6 @@
   },
   "20": {
     "message": "ID_LIST_FILE not found",
-    "status": 404
+    "status": 500
   }
 }
