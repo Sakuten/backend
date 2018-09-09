@@ -85,7 +85,7 @@ def list_available_lotteries():
 
     try:
         index = get_time_index()
-    except OutOfAcceptingHoursError:
+    except (OutOfAcceptingHoursError, OutOfHoursError):
         return jsonify({"message": "Not acceptable time"}), 400
     lotteries = Lottery.query.filter_by(index=index)
 
