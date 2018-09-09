@@ -27,7 +27,11 @@ from api.schemas import (
     lotteries_schema,
     lottery_schema
 )
-from api.time_management import mod_time
+from api.time_management import (
+    mod_time,
+    OutOfHoursError,
+    OutOfAcceptingHoursError
+)
 from itertools import chain
 from operator import itemgetter
 
@@ -100,6 +104,24 @@ def test_get_all_available_lotteries(client):
         resp = client.get('/lotteries/available')
 
     assert current_lotteries == resp.get_json()
+
+
+def test_get_all_available_lotteries_out_of_time(client):
+    """test proper infomation is returned from the API
+        when it is out of time
+        target_url: /lotteries/available
+    """
+    with mock.patch('api.routes.api.get_time_index',
+                    side_effect=OutOfHoursError()):
+        resp = client.get('/lotteries/available')
+
+    assert [] == resp.get_json()
+
+    with mock.patch('api.routes.api.get_time_index',
+                    side_effect=OutOfAcceptingHoursError()):
+        resp = client.get('/lotteries/available')
+
+    assert [] == resp.get_json()
 
 
 def test_get_specific_lottery(client):
