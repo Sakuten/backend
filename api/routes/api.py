@@ -27,6 +27,8 @@ from api.draw import (
 from api.error import error_response
 from api.utils import calc_sha256
 
+from cards.id import encode_public_id
+
 bp = Blueprint(__name__, 'api')
 
 
@@ -359,7 +361,7 @@ def translate_secret_to_public(secret_id):
     if not user:
         return error_response(5)  # no such user found
     else:
-        return jsonify({"public_id": user.public_id})
+        return jsonify({"public_id": encode_public_id(user.public_id)})
 
 
 @bp.route('/ids_hash', methods=['GET'])
