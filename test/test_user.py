@@ -208,3 +208,12 @@ def test_auth_overtime_as_student(client):
 
     assert resp.status_code == 200
     assert resp.get_json()['message'] == 'Login Successful'
+
+
+def test_auth_admin(client):
+    """test to login as admin without reCAPTCHA
+        target_url: /auth
+    """
+    resp = login(client, admin['secret_id'], '')
+
+    assert resp['message'] == 'Login Successful'
