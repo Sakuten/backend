@@ -27,7 +27,11 @@ from api.schemas import (
     lotteries_schema,
     lottery_schema
 )
-from api.time_management import mod_time, OutOfHoursError, OutOfAcceptingHoursError
+from api.time_management import (
+    mod_time,
+    OutOfHoursError,
+    OutOfAcceptingHoursError
+)
 from itertools import chain
 
 
