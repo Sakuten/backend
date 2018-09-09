@@ -29,6 +29,10 @@ def test_login(client):
     assert 'Login Successful' in resp['message']
     resp = login(client, 'notexist', 'notexist')
     assert 'Login unsuccessful' in resp['message']
+    with mock.patch('api.routes.auth.json.loads',
+                    return_value={'success': False,
+                                  'error-codes': ['invalid-input-secret']}):
+        assert 'Login unsuccessful' in resp['message']
 
 
 def test_login_form(client):
