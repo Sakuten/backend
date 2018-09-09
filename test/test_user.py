@@ -11,6 +11,7 @@ from utils import (
 from api.models import User, db
 from api.schemas import user_schema
 from api.auth import decrypt_token
+from cards.id import encode_public_id
 # ---------- User API
 
 
@@ -147,7 +148,7 @@ def test_translate_user_ids(client):
                                          ).first().public_id
 
     assert resp.status_code == 200
-    assert resp.get_json()['public_id'] == public_id
+    assert resp.get_json()['public_id'] == encode_public_id(public_id)
 
 
 def test_translate_user_ids_invalid_secret_id(client):

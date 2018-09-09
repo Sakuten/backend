@@ -27,6 +27,8 @@ from api.draw import (
 from api.error import error_response
 from api.utils import calc_sha256
 
+from cards.id import encode_public_id
+
 bp = Blueprint(__name__, 'api')
 
 
@@ -85,8 +87,8 @@ def list_available_lotteries():
 
     try:
         index = get_time_index()
-    except OutOfAcceptingHoursError:
-        return jsonify({"message": "Not acceptable time"}), 400
+    except (OutOfAcceptingHoursError, OutOfHoursError):
+        return jsonify([])
     lotteries = Lottery.query.filter_by(index=index)
 
     result = lotteries_schema.dump(lotteries)[0]
@@ -145,6 +147,8 @@ def apply_lottery(idx):
     # 2. 3. 4.
     group_members = []
     if len(group_members_secret_id) != 0:
+        if len(group_members_secret_id) > 3:
+            return error_response(21)
         for sec_id in group_members_secret_id:
             user = todays_user(secret_id=sec_id)
             if user is not None:
@@ -357,7 +361,7 @@ def translate_secret_to_public(secret_id):
     if not user:
         return error_response(5)  # no such user found
     else:
-        return jsonify({"public_id": user.public_id})
+        return jsonify({"public_id": encode_public_id(user.public_id)})
 
 
 @bp.route('/ids_hash', methods=['GET'])
