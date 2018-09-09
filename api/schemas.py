@@ -9,6 +9,8 @@ class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     secret_id = fields.Str()
     public_id = fields.Method("get_public_id_str", dump_only=True)
+    win_count = fields.Int()
+    lose_count = fields.Int()
 
     def get_public_id_str(self, user):
         return encode_public_id(user.public_id)

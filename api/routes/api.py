@@ -85,8 +85,8 @@ def list_available_lotteries():
 
     try:
         index = get_time_index()
-    except OutOfAcceptingHoursError:
-        return jsonify({"message": "Not acceptable time"}), 400
+    except (OutOfAcceptingHoursError, OutOfHoursError):
+        return jsonify([])
     lotteries = Lottery.query.filter_by(index=index)
 
     result = lotteries_schema.dump(lotteries)[0]
@@ -145,6 +145,8 @@ def apply_lottery(idx):
     # 2. 3. 4.
     group_members = []
     if len(group_members_secret_id) != 0:
+        if len(group_members_secret_id) > 3:
+            return error_response(21)
         for sec_id in group_members_secret_id:
             user = todays_user(secret_id=sec_id)
             if user is not None:
