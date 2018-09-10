@@ -119,7 +119,7 @@ def get_prev_time_index(time=None):
     ends = [mod_time(time_point[1], en_margin) for time_point
             in current_app.config['TIMEPOINTS']]
 
-    for i in range(len(ends)):
+    for i in range(len(ends)-1):
         if ends[i] <= time <= ends[i+1]:
             return i
 
