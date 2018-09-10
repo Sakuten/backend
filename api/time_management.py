@@ -120,7 +120,7 @@ def get_prev_time_index(time=None):
             in current_app.config['TIMEPOINTS']]
 
     for i in range(len(ends)-1):
-        if ends[i] <= time <= ends[i+1]:
+        if ends[i] <= time < ends[i+1]:
             return i
 
     raise OutOfAcceptingHoursError()
