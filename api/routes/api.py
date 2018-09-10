@@ -340,7 +340,7 @@ def get_winners_id(idx):
 
 @bp.route('/status', methods=['GET'])
 @spec('api/status.yml')
-@login_required('normal')
+@login_required('normal', 'checker')
 def get_status():
     """
         return user's id and applications
