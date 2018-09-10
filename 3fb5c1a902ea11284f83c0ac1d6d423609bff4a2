@@ -1,0 +1,19 @@
+This method would work like this:
+
+|-- TIME_POINTS[0]
+|
+|             |-- TIME_POINTS[1]
+|             |
+|             ||-- TIMEPOINT_END_MARGIN
+|             ||
+|             ||   |-- DRAWWING_TIME EXTENSION
+|             ||   |
+|             ||   |       |-- Void time (annoucements, the show is going...)
+|             ||   |       |
+v  index: x   vv   v       v          index: y                      index: z
+|=============|-|******|         |=============|-|******|         |=============|-|
+              |++++++++++++++++++++++++++++++++|
+                                               |________________________________|
+
+In the range of |+|, `get_prev_time_index` will return `x`.
+In the range of |_|, `get_prev_time_index` will return `y`.
