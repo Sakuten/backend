@@ -114,3 +114,16 @@ def test_prev_time_index_ooa(client):
             get_prev_time_index(mod_time(start_of_first_index, res))
         with pytest.raises(OutOfAcceptingHoursError):
             get_prev_time_index(mod_time(end_of_last_index, res))
+
+
+def test_prev_time_index_lim(client):
+    with client.application.app_context():
+        res = datetime.timedelta.resolution
+        en_margin = client.application.config['TIMEPOINT_END_MARGIN']
+        ends = [mod_time(tp[1], en_margin) for tp
+                in client.application.config['TIMEPOINTS']]
+        for i in range(len(ends)-1):
+            idx_l = get_prev_time_index(mod_time(ends[i], res))
+            assert i == idx_l
+            idx_r = get_prev_time_index(mod_time(ends[i+1], -res))
+            assert i == idx_r
