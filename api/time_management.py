@@ -96,3 +96,25 @@ def get_time_index(time=None):
             return i
 
     raise OutOfAcceptingHoursError()
+
+
+def get_prev_time_index(time=None):
+    """
+        get the previous lottery index from the time
+        args:
+          time(datetime.time|datetime.datetime): the time
+        return:
+          i(int): the lottery index
+        raises:
+          OutOfHoursError, OutOfAcceptingHoursError
+    """
+    time = _validate_and_get_time(time)
+    en_margin = current_app.config['TIMEPOINT_END_MARGIN']
+    ends = [mod_time(time_point[1], en_margin) for time_point
+            in current_app.config['TIMEPOINTS']]
+
+    for i in range(len(ends)):
+        if ends[i] <= time <= ends[i+1]:
+            return i
+
+    raise OutOfAcceptingHoursError()
