@@ -12,8 +12,11 @@ This method would work like this:
 |             ||   |       |
 v  index: x   vv   v       v          index: y                      index: z
 |=============|-|******|         |=============|-|******|         |=============|-|
-              |++++++++++++++++++++++++++++++++|
-                                               |________________________________|
+                |++++++++++++++++++++++++++++++++|
+                                                 |________________________________|
 
 In the range of |+|, `get_prev_time_index` will return `x`.
 In the range of |_|, `get_prev_time_index` will return `y`.
+
+*the model on commit message was wrong!!*
+Please refer to this instead !!
