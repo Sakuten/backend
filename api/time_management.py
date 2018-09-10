@@ -109,9 +109,10 @@ def get_prev_time_index(time=None):
           OutOfHoursError, OutOfAcceptingHoursError
 
         the graphical description for this method is
-        in the commit message of commit 3fb5c1a .
+        in the commit note of commit 3fb5c1a .
         See it if you confusing how to imagine this work.
-        And also, it lives in notes for that commit.
+        And also, it lived in the commit message,
+        but it was wrong. so DON'T REFER TO COMMIT MESSAGE
     """
     time = _validate_and_get_time(time)
     en_margin = current_app.config['TIMEPOINT_END_MARGIN']
