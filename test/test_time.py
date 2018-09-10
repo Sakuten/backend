@@ -5,6 +5,7 @@ from api.time_management import (
     mod_time,
     get_draw_time_index,
     get_time_index,
+    get_prev_time_index,
     OutOfHoursError,
     OutOfAcceptingHoursError
 )
@@ -101,3 +102,47 @@ def test_time_index_same(client):
             assert i == idx_l
             idx_r = get_time_index(point[1])
             assert i == idx_r
+
+
+def test_prev_time_index_ooa(client):
+    with client.application.app_context():
+        start_of_first_index = client.application.config['TIMEPOINTS'][0][0]
+        end_of_last_index = client.application.config['TIMEPOINTS'][-1][1]
+        en_margin = client.application.config['TIMEPOINT_END_MARGIN']
+        res = mod_time(datetime.timedelta.resolution, en_margin)
+        with pytest.raises(OutOfAcceptingHoursError):
+            get_prev_time_index(mod_time(start_of_first_index, res))
+        with pytest.raises(OutOfAcceptingHoursError):
+            get_prev_time_index(mod_time(end_of_last_index, res))
+
+
+def test_prev_time_index_lim(client):
+    with client.application.app_context():
+        res = datetime.timedelta.resolution
+        en_margin = client.application.config['TIMEPOINT_END_MARGIN']
+        ends = [mod_time(tp[1], en_margin) for tp
+                in client.application.config['TIMEPOINTS']]
+        for i in range(len(ends)-1):
+            idx_l = get_prev_time_index(mod_time(ends[i], res))
+            assert i == idx_l
+            idx_r = get_prev_time_index(mod_time(ends[i+1], -res))
+            assert i == idx_r
+
+
+def test_prev_time_index_same(client):
+    with client.application.app_context():
+        res = datetime.timedelta.resolution
+        en_margin = client.application.config['TIMEPOINT_END_MARGIN']
+        ends = [mod_time(tp[1], en_margin) for tp
+                in client.application.config['TIMEPOINTS']]
+        for i in range(len(ends)-1):
+            if i == len(ends)-1:
+                idx_l = get_prev_time_index(ends[i])
+                assert i == idx_l
+                with pytest.raises(OutOfAcceptingHoursError):
+                                get_prev_time_index(ends[i+1])
+            else:
+                idx_l = get_prev_time_index(ends[i])
+                assert i == idx_l
+                idx_r = get_prev_time_index(mod_time(ends[i+1], -res))
+                assert i == idx_r
