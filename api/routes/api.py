@@ -428,3 +428,5 @@ def results():
         index = get_prev_time_index()
     except (OutOfHoursError, OutOfAcceptingHoursError):
         return error_response(6)  # not acceptable time
+    # 2.
+    lotteries = Lottery.query.filter_by(index=index)
