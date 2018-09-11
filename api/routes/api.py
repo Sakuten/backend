@@ -416,13 +416,11 @@ def results():
     #  2. Get previous lotteries using index
     #  3. Search for caches for those lotteries
     #  4. If cache was found, return it
-    #  5. Get winners' public_id for each
-    #  6. Get winners' `user`
-    #  7. Make 2 lists, based on user's 'kind'('student', 'visitor)
-    #  8. Send them to the jinja template
-    #  9. From jinja template, generate PDF
-    # 10. Caches that file locally
-    # 11. Return PDF
+    #  5. Make 2 public_id lists, based on user's 'kind'('student', 'visitor')
+    #  6. Send them to the jinja template
+    #  7. From jinja template, generate PDF
+    #  8. Caches that file locally
+    #  9. Return PDF
 
     def public_id_generator(lottery, kind):
         """return list of winners' public_id for selected 'kind'
