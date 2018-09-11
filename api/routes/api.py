@@ -423,6 +423,15 @@ def results():
     #  9. From jinja template, generate PDF
     # 10. Caches that file locally
     # 11. Return PDF
+
+    def public_id_generator(lottery, kind):
+        """return list of winners' public_id for selected 'kind'
+            original at: L.336, written by @tamazasa
+        """
+        for app in lottery.application:
+            if app.status == 'won' and app.user.kind == kind:
+                yield app.user.public_id
+
     # 1.
     try:
         index = get_prev_time_index()
