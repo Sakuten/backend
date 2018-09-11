@@ -1,26 +1,27 @@
-<body>
-  {% for kind in kinds %}
-    For: {{ kind['kind'] }}
-    {% for lottery in lotteries %}
-      <div class="classroom">
-        class: {{ lottery['classroom_id'] }}
-      </div>
-      {% for row in range(lottery['winners']|length // horizontal) %}
-      <div class="row">
-        {% for column in range(1,horizontal +1) %}
-          {% set winners_index = (row * horizontal) + column %}
-          {% set winner = lottery['winners'][winners_index -1]|default("") %}
-            <div class="winner">
-              <strong>{{winner}}</strong>
-            </div>
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8">
   </head>
+  <body>
+    {% for kind in kinds %}
+      For: {{ kind['kind'] }}
+      {% for lottery in kind['lotteries'] %}
+        <div class="classroom">
+          class: {{ lottery['classroom_id'] }}
+        </div>
+        {% for row in range(lottery['winners']|length // horizontal +1) %}
+          <div class="row">
+            {% for column in range(1,horizontal +1) %}
+              {% set winners_index = (row * horizontal) + column %}
+              {% set winner = lottery['winners'][winners_index -1]|default("") %}
+                <div class="winner">
+                  <strong>{{winner}}</strong>
+                </div>
+            {% endfor %}
+          </div>
         {% endfor %}
-      </div>
+      {% endfor %}
     {% endfor %}
-  {% endfor %}
-</body>
+  </body>
 </html>
