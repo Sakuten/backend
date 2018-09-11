@@ -438,6 +438,19 @@ def results():
         return error_response(6)  # not acceptable time
     # 2.
     lotteries = Lottery.query.filter_by(index=index)
+
+    # 5.
+    whole_results = {'visitor': [], 'student': []}
+    for kind in whole_results.keys():
+        for lottery in lotteries:
+            public_ids = list(public_id_generator(lottery, kind))
+            result = {'classroom_id': lottery.classroom_id,
+                      'winners': public_ids}
+            whole_results[kind].append(result)
+    data = {'kinds': [], 'horizontal': 3}
+    for key, value in whole_results.items():
+        data['kinds'].append({'lotteries': value, 'kind': key})
+
     # data structure of 'data'
     # data = {'kinds':
     #           [{'lotteries':
