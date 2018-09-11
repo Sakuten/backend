@@ -469,7 +469,7 @@ def results():
     #        }
     # This is too complicated, so do REFACTORING in the future
 
-    # 8.
+    # 6.
     env = Environment(loader=FileSystemLoader('../templates'))
     template = env.get_template('results.html')
     html = template.render(data)
