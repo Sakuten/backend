@@ -401,3 +401,9 @@ def check_id(classroom_id, secret_id):
         return error_response(19)  # no application found
 
     return jsonify({"status": application.status})
+
+
+@bp.route('/health')
+@spec('api/health.yml')
+def health():
+    return jsonify({'message': 'good to go'})
