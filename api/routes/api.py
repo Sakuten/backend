@@ -404,7 +404,7 @@ def check_id(classroom_id, secret_id):
     return jsonify({"status": application.status})
 
 
-@bp.route('/results', methods=['GET'])
+@bp.route('/render_results', methods=['GET'])
 @spec('api/results.yml')
 def results():
     """return PDF file that contains the results of previous lotteries
