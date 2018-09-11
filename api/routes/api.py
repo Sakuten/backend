@@ -18,7 +18,8 @@ from api.time_management import (
     get_draw_time_index,
     OutOfHoursError,
     OutOfAcceptingHoursError,
-    get_time_index
+    get_time_index,
+    get_prev_time_index
 )
 from api.draw import (
     draw_one,
@@ -422,3 +423,8 @@ def results():
     #  9. From jinja template, generate PDF
     # 10. Caches that file locally
     # 11. Return PDF
+    # 1.
+    try:
+        index = get_prev_time_index()
+    except (OutOfHoursError, OutOfAcceptingHoursError):
+        return error_response(6)  # not acceptable time
