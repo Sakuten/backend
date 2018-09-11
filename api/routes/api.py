@@ -456,3 +456,11 @@ def results():
     #         'horizontal': 3
     #        }
     # This is too complicated, so do REFACTORING in the future
+
+    # 8.
+    env = Environment(loader=FileSystemLoader('../templates'))
+    template = env.get_template('results.html')
+    html = template.render(data)
+
+
+
