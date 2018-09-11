@@ -1,4 +1,5 @@
 from itertools import chain
+from jinja2 import Environment, FileSystemLoader
 
 from flask import Blueprint, jsonify, g, request, current_app
 from api.models import Lottery, Classroom, User, Application, db, group_member
