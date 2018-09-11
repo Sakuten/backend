@@ -439,3 +439,20 @@ def results():
         return error_response(6)  # not acceptable time
     # 2.
     lotteries = Lottery.query.filter_by(index=index)
+    # data structure of 'data'
+    # data = {'kinds':
+    #           [{'lotteries':
+    #               [{'classroom_id': lottery.classroom_id,
+    #                 'winners': [lottery.application.user.public_id(has 'visitor' kind)]
+    #                }],
+    #             'kind': 'visitor'
+    #            },
+    #            {'lotteries':
+    #               [{'classroom_id': lottery.classroom_id,
+    #                 'winners': [lottery.application.user.public_id(has 'student' kind)]
+    #                }],
+    #                 'kind': 'student'
+    #           }],
+    #         'horizontal': 3
+    #        }
+    # This is too complicated, so do REFACTORING in the future
