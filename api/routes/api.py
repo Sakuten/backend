@@ -400,3 +400,25 @@ def check_id(classroom_id, secret_id):
         return error_response(19)  # no application found
 
     return jsonify({"status": application.status})
+
+
+@bp.route('/results', methods=['GET'])
+@spec('api/results.yml')
+def results():
+    """return PDF file that contains the results of previous lotteries
+        This endpoint will be used for printing PDF
+        which will be put on the wall.
+        whoever access here can get the PDF. This is not a problem because
+        those infomations are public.
+    """
+    #  1. Get previous time index
+    #  2. Get previous lotteries using index
+    #  3. Search for caches for those lotteries
+    #  4. If cache was found, return it
+    #  5. Get winners' public_id for each
+    #  6. Get winners' `user`
+    #  7. Make 2 lists, based on user's 'kind'('student', 'visitor)
+    #  8. Send them to the jinja template
+    #  9. From jinja template, generate PDF
+    # 10. Caches that file locally
+    # 11. Return PDF
