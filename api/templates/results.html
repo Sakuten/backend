@@ -4,25 +4,71 @@
     <title></title>
     <meta charset="UTF-8">
   </head>
+    <style>
+      body {
+        background: black;
+        color: gray;
+      }
+      .outer-container {
+        border-style: solid;
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .kind {
+        font-size: 2rem;
+          width: 100%;
+      }
+      .winner {
+        padding: 10px 30px 0px 10px;
+        width: 100%;
+        font-size: 1rem;
+      }
+      .container {
+        display: flex;
+      }
+      .row {
+        page-break-before: always;
+      }
+      .classroom {
+        font-size: 1.5rem;
+        padding: 10px 10px 5px 10px;
+      }
+      ul {
+        width: 75%;
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+      }
+      li {
+      }
+    </style>
   <body>
     {% for kind in kinds %}
-      For: {{ kind['kind'] }}
-      {% for lottery in kind['lotteries'] %}
-        <div class="classroom">
           class: {{ lottery['classroom_id'] }}
-        </div>
-        {% for row in range(lottery['winners']|length // horizontal +1) %}
-          <div class="row">
-            {% for column in range(1,horizontal +1) %}
-              {% set winners_index = (row * horizontal) + column %}
-              {% set winner = lottery['winners'][winners_index -1]|default("") %}
-                <div class="winner">
-                  <strong>{{winner}}</strong>
-                </div>
-            {% endfor %}
+    <div class="outer-container">
+      <div class="kind">
+        For: {{ kind['kind'] }}
+      </div>
+        {% for lottery in kind['lotteries'] %}
+          <div class="classroom">
+          {% for row in range(lottery['winners']|length // horizontal +1) %}
+            <div class="row">
+              <ul>
+              <div class="container">
+              {% for column in range(1,horizontal +1) %}
+                {% set winners_index = (row * horizontal) + column %}
+                {% set winner = lottery['winners'][winners_index -1]|default("") %}
+                  <li class="winner">
+                    <strong>{{winner}}</strong>
+                  </li>
+              {% endfor %}
+              </div>
+              </ul>
+            </div>
+          {% endfor %}
           </div>
         {% endfor %}
-      {% endfor %}
+    </div>
     {% endfor %}
   </body>
 </html>
