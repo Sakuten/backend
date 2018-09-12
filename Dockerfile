@@ -47,7 +47,7 @@ killall Xvfb\
     && unzip ipag00303.zip \
     && mkdir -p /usr/share/fonts/ipa \
     && cp ipag00303/ipag.ttf /usr/share/fonts/ipa \
-    && fc-cache -fv
+    && fc-cache -fv \
 
     && pip install pipenv \
     && pipenv install --system \
