@@ -50,7 +50,7 @@
       </div>
         {% for lottery in kind['lotteries'] %}
           <div class="classroom">
-            class: {{ lottery['classroom'] }}
+            <span style="text-decoration: underline;">class: {{ lottery['classroom'] }}</span>
           {% for row in range(lottery['winners']|length // horizontal +1) %}
             <div class="row">
               <ul>
