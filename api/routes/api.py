@@ -428,7 +428,7 @@ def results():
         """
         for app in lottery.application:
             if app.status == 'won' and app.user.kind == kind:
-                yield app.user.public_id
+                yield encode_public_id(app.user.public_id)
 
     # 1.
     try:
