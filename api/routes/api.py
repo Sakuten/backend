@@ -470,7 +470,7 @@ def results():
     # This is too complicated, so do REFACTORING in the future
 
     # 6.
-    env = Environment(loader=FileSystemLoader('../templates'))
+    env = Environment(loader=FileSystemLoader('api/templates'))
     template = env.get_template('results.html')
     html = template.render(data)
 
