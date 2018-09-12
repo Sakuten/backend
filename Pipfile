@@ -18,7 +18,6 @@ watchdog = "*"
 pillow = "*"
 qrcode = "*"
 numpy = "*"
-pdfkit = "*"
 
 [dev-packages]
 "flake8" = "*"

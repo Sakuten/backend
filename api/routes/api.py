@@ -407,10 +407,10 @@ def check_id(classroom_id, secret_id):
 @bp.route('/render_results', methods=['GET'])
 @spec('api/results.yml')
 def results():
-    """return PDF file that contains the results of previous lotteries
+    """return HTML file that contains the results of previous lotteries
         This endpoint will be used for printing PDF
         which will be put on the wall.
-        whoever access here can get the PDF. This is not a problem because
+        whoever access here can get the file. This is not a problem because
         those infomations are public.
     """
     #  1. Get previous time index
@@ -419,9 +419,8 @@ def results():
     #  4. If cache was found, return it
     #  5. Make 2 public_id lists, based on user's 'kind'('student', 'visitor')
     #  6. Send them to the jinja template
-    #  7. From jinja template, generate PDF
     #  8. Caches that file locally
-    #  9. Return PDF
+    #  9. Return file
 
     def public_id_generator(lottery, kind):
         """return list of winners' public_id for selected 'kind'
@@ -472,7 +471,7 @@ def results():
     # 6.
     env = Environment(loader=FileSystemLoader('api/templates'))
     template = env.get_template('results.html')
-    html = template.render(data)
+    return template.render(data)
 
 
 
