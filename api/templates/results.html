@@ -10,18 +10,24 @@
         color: gray;
       }
       .outer-container {
-        border-style: solid;
-        display: flex;
-        flex-wrap: wrap;
+      }
+      .one_page {
+        width: 297mm;
+        height: 210mm;
+      }
       }
       .kind {
-        font-size: 2rem;
-          width: 100%;
+        font-size: 5rem;
+        float: left;
+        border: 0.5rem solid;
+        padding: 1rem 1rem 0rem 1rem;
       }
       .winner {
-        padding: 10px 30px 0px 10px;
+        padding: 0rem 1rem 0rem 1rem;
         width: 100%;
-        font-size: 1rem;
+        font-size: 2rem;
+      }
+      .winner:nth-child(odd) {
       }
       .container {
         display: flex;
@@ -30,14 +36,14 @@
         page-break-before: always;
       }
       .classroom {
-        font-size: 1.5rem;
-        padding: 10px 10px 5px 10px;
+        font-size: 5rem;
+        padding: 1rem 1rem 0rem 1rem;
       }
       ul {
-        width: 75%;
+        width: 50%;
+        height: 1rem;
         list-style: none;
-        display: flex;
-        flex-wrap: wrap;
+        padding: 0rem;
       }
       li {
       }
