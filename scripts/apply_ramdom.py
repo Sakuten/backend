@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import sys
 import os
 sys.path.append(os.getcwd())  # noqa: E402
@@ -46,7 +47,6 @@ class client():
             response_body = response.read().decode("utf-8")
             response.close()
             return json.loads(response_body)
-
 
 
 def login(client, secret_id, rresp):
