@@ -96,7 +96,9 @@ def todays_user(secret_id='', user_id=''):
             secret_id (str): secret id of target user
         Return:
             User (api.models.User): the user object of 'secret_id'
-            None : when given 'secret_id' is used in other day
+            (None, error_num) (tuple):
+                this is returned when some error has been occured
+                error_num (int): error_code defined in error.json. [5|22]
 
         References are here:
             https://github.com/Sakuten/backend/issues/78#issuecomment-416609508
@@ -108,7 +110,7 @@ def todays_user(secret_id='', user_id=''):
         user = User.query.get(user_id)
 
     if not user:
-        return None
+        return (None, 3)
     if user.kind not in current_app.config['ONE_DAY_KIND']:
         return user
 
@@ -120,4 +122,4 @@ def todays_user(secret_id='', user_id=''):
     elif user.first_access == date.today():
         return user
     else:
-        return None
+        return (None, 22)
