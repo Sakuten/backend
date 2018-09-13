@@ -110,16 +110,16 @@ def todays_user(secret_id='', user_id=''):
         user = User.query.get(user_id)
 
     if not user:
-        return (None, 3)
+        return None, 3
     if user.kind not in current_app.config['ONE_DAY_KIND']:
-        return user
+        return user, None
 
     if user.first_access is None:
         user.first_access = date.today()
         db.session.add(user)
         db.session.commit
-        return user
+        return user, None
     elif user.first_access == date.today():
-        return user
+        return user, None
     else:
-        return (None, 22)
+        return None, 22
