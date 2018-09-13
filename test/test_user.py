@@ -11,6 +11,7 @@ from utils import (
 from api.models import User, db
 from api.schemas import user_schema
 from api.auth import decrypt_token
+from cards.id import encode_public_id
 # ---------- User API
 
 
@@ -29,6 +30,10 @@ def test_login(client):
     assert 'Login Successful' in resp['message']
     resp = login(client, 'notexist', 'notexist')
     assert 'Login unsuccessful' in resp['message']
+    with mock.patch('api.routes.auth.json.loads',
+                    return_value={'success': False,
+                                  'error-codes': ['invalid-input-secret']}):
+        assert 'Login unsuccessful' in resp['message']
 
 
 def test_login_form(client):
@@ -143,7 +148,7 @@ def test_translate_user_ids(client):
                                          ).first().public_id
 
     assert resp.status_code == 200
-    assert resp.get_json()['public_id'] == public_id
+    assert resp.get_json()['public_id'] == encode_public_id(public_id)
 
 
 def test_translate_user_ids_invalid_secret_id(client):
@@ -208,3 +213,12 @@ def test_auth_overtime_as_student(client):
 
     assert resp.status_code == 200
     assert resp.get_json()['message'] == 'Login Successful'
+
+
+def test_auth_admin(client):
+    """test to login as admin without reCAPTCHA
+        target_url: /auth
+    """
+    resp = login(client, admin['secret_id'], '')
+
+    assert resp['message'] == 'Login Successful'

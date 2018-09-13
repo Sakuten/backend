@@ -18,7 +18,8 @@ from api.time_management import (
     get_draw_time_index,
     OutOfHoursError,
     OutOfAcceptingHoursError,
-    get_time_index
+    get_time_index,
+    get_prev_time_index
 )
 from api.draw import (
     draw_one,
@@ -26,6 +27,8 @@ from api.draw import (
 )
 from api.error import error_response
 from api.utils import calc_sha256
+
+from cards.id import encode_public_id
 
 bp = Blueprint(__name__, 'api')
 
@@ -85,8 +88,8 @@ def list_available_lotteries():
 
     try:
         index = get_time_index()
-    except OutOfAcceptingHoursError:
-        return jsonify({"message": "Not acceptable time"}), 400
+    except (OutOfAcceptingHoursError, OutOfHoursError):
+        return jsonify([])
     lotteries = Lottery.query.filter_by(index=index)
 
     result = lotteries_schema.dump(lotteries)[0]
@@ -145,6 +148,8 @@ def apply_lottery(idx):
     # 2. 3. 4.
     group_members = []
     if len(group_members_secret_id) != 0:
+        if len(group_members_secret_id) > 3:
+            return error_response(21)
         for sec_id in group_members_secret_id:
             user = todays_user(secret_id=sec_id)
             if user is not None:
@@ -336,7 +341,7 @@ def get_winners_id(idx):
 
 @bp.route('/status', methods=['GET'])
 @spec('api/status.yml')
-@login_required('normal')
+@login_required('normal', 'checker')
 def get_status():
     """
         return user's id and applications
@@ -357,7 +362,7 @@ def translate_secret_to_public(secret_id):
     if not user:
         return error_response(5)  # no such user found
     else:
-        return jsonify({"public_id": user.public_id})
+        return jsonify({"public_id": encode_public_id(user.public_id)})
 
 
 @bp.route('/ids_hash', methods=['GET'])
@@ -385,7 +390,7 @@ def check_id(classroom_id, secret_id):
     if not user:
         return error_response(5)  # no such user found
     try:
-        index = get_time_index()
+        index = get_prev_time_index()
     except (OutOfHoursError, OutOfAcceptingHoursError):
         return error_response(6)  # not acceptable time
     lottery = Lottery.query.filter_by(classroom_id=classroom_id,
@@ -396,3 +401,9 @@ def check_id(classroom_id, secret_id):
         return error_response(19)  # no application found
 
     return jsonify({"status": application.status})
+
+
+@bp.route('/health')
+@spec('api/health.yml')
+def health():
+    return jsonify({'message': 'good to go'})

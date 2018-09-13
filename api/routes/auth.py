@@ -41,11 +41,11 @@ def home():
             success = auth_resp['success'] and \
                 auth_resp['score'] > current_app.config['RECAPTCHA_THRESHOLD']
         else:
-            current_app.logger.warn(
+            current_app.logger.warning(
                 f'Skipping request from {request.remote_addr}')
             success = True
 
-        if success:
+        if success or user.authority == 'admin':
             token = generate_token({'user_id': user.id})
             return jsonify({"message": "Login Successful",
                             "token": token.decode()})
