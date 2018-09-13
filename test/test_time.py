@@ -121,8 +121,10 @@ def test_prev_time_index_lim(client):
         ends = [mod_time(tp[1], en_margin) for tp
                 in client.application.config['TIMEPOINTS']]
         for i in range(len(ends)-1):
-            idx_l = get_prev_time_index(mod_time(ends[i], res))
+            idx_l = get_prev_time_index(ends[i])
             assert i == idx_l
             idx_r = get_prev_time_index(mod_time(ends[i+1], -res))
             assert i == idx_r
 
+        idx_l = get_prev_time_index(ends[-1])
+        assert len(ends)-1 == idx_l
