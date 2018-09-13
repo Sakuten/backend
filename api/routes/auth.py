@@ -31,7 +31,7 @@ def home():
     # login flow
     secret_id = data.get('id')
     recaptcha_code = data.get('g-recaptcha-response')
-    (user, err_num) = todays_user(secret_id=secret_id)
+    user, err_num = todays_user(secret_id=secret_id)
     if not user:
         return error_response(err_num)
     if not ip_address(request.remote_addr).is_private:

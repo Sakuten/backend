@@ -76,7 +76,7 @@ def login_required(*required_authority):
             data = decrypt_token(token)
             if not data:
                 return auth_error(0, 'error="invalid_token"')
-            user = todays_user(user_id=data['data']['user_id'])
+            user, _ = todays_user(user_id=data['data']['user_id'])
             if user is None:
                 return auth_error(0, 'realm="id_disabled"')
             if required_authority and \
