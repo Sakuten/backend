@@ -9,13 +9,13 @@
         "secret_id": "excGkN88o8eN61NbZpHMfJK0HgThsX9N",
         "public_id": "5RAX",
         "authority": "normal",
-        "kind": "visitor"
+        "kind": "student"
     },
     {
         "secret_id": "zmPplhO29m7dMNDdLnt4MtO_aFONrViC",
         "public_id": "4YMY",
         "authority": "normal",
-        "kind": "visitor"
+        "kind": "student"
     },
     {
         "secret_id": "TFdC-Ckz30CmhRS8PozhwgT5qM6t1q3I",
@@ -45,13 +45,13 @@
         "secret_id": "6ys5vXbm_J4WKXlvdVEFhLIM_b9XMtca",
         "public_id": "3EPE",
         "authority": "normal",
-        "kind": "checker"
+        "kind": "visitor"
     },
     {
         "secret_id": "c148WsrQP5xFKUNNvUWCL1gxAVDRJ_KZ",
         "public_id": "6FEH",
         "authority": "normal",
-        "kind": "checker"
+        "kind": "visitor"
     },
     {
         "secret_id": "bzF2xstsEc7SmiV0RCGiIml8TvlcWbGb",

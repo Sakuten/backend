@@ -342,7 +342,7 @@ def get_winners_id(idx):
 
 @bp.route('/status', methods=['GET'])
 @spec('api/status.yml')
-@login_required('normal')
+@login_required('normal', 'checker')
 def get_status():
     """
         return user's id and applications
@@ -391,7 +391,7 @@ def check_id(classroom_id, secret_id):
     if not user:
         return error_response(5)  # no such user found
     try:
-        index = get_time_index()
+        index = get_prev_time_index()
     except (OutOfHoursError, OutOfAcceptingHoursError):
         return error_response(6)  # not acceptable time
     lottery = Lottery.query.filter_by(classroom_id=classroom_id,
@@ -475,4 +475,7 @@ def results():
     return template.render(data)
 
 
-
+@bp.route('/health')
+@spec('api/health.yml')
+def health():
+    return jsonify({'message': 'good to go'})
