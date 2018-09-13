@@ -6,46 +6,67 @@
   </head>
     <style>
       body {
-        background: black;
         color: gray;
+      }
+      :root {
+        --a4-width: 297mm;
+        --a4-height: 210mm;
+        --a0-width: 1189mm;
+        --a0-height: 841mm;
+      }
+      html {
+        font-size: 100%;
+        padding: 0%;
       }
       .outer-container {
       }
       .one_page {
-        width: 297mm;
-        height: 210mm;
+        --page-width: var(--a0-width);
+        --page-height: var(--a0-height);
+        width: var(--page-width);
+        height: var(--page-height);
+        background: gray;
+        color: black;
+        font-size: calc(var(--page-width) * 20%);
+        box-shadow: 0 .5mm 2mm rgba(0,0,0,.3); /* ドロップシャドウ */
+          margin: 5mm;
       }
+      .one_page:nth-child(odd) {
+        background: blue;
       }
       .kind {
-        font-size: 5rem;
+        font-size: 3em;
         float: left;
         border: 0.5rem solid;
-        padding: 1rem 1rem 0rem 1rem;
+        padding: 0em 1em 0em 1em;
       }
       .winner {
-        padding: 0rem 1rem 0rem 1rem;
-        width: 100%;
-        font-size: 2rem;
+        padding: 0em 3em 0em 1em;
+        width: 1em;
+        height: -2em;
+        font-size: 0.5em;
       }
       .winner:nth-child(odd) {
+        background: gray;
       }
       .container {
         display: flex;
       }
       .row {
         page-break-before: always;
+        border: solid;
       }
       .classroom {
-        font-size: 5rem;
-        padding: 1rem 1rem 0rem 1rem;
+        width: 100%;
+        font-size: 3em;
+        padding: 0rem 1rem 0rem 1rem;
       }
       ul {
-        width: 50%;
-        height: 1rem;
-        list-style: none;
+        width: 10%;
+        height: 0.5em;
+        list-style: ;
         padding: 0rem;
-      }
-      li {
+        margin: 3rem 0rem 0rem 0rem;
       }
     </style>
   <body>
