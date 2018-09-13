@@ -151,7 +151,7 @@ def apply_lottery(idx):
         if len(group_members_secret_id) > 3:
             return error_response(21)
         for sec_id in group_members_secret_id:
-            user = todays_user(secret_id=sec_id)
+            (user, _) = todays_user(secret_id=sec_id)
             if user is not None:
                 group_members.append(user)
             else:
