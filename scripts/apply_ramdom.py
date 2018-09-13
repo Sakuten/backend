@@ -68,8 +68,8 @@ for lottery in lotteries:
     print(f'applying to {lottery["id"]}: ', end='')
     for user in users:
         token = login(client, user['secret_id'], '')['token']
-        client.post(f'/lotteries/{lottery["id"]}', _json={"group_members":""},
-                    headers={'Authorization': f'Bearer {token}'})
+        client.post(f'/lotteries/{lottery["id"]}', _json={"group_members": ""},
+                    headers={"Authorization": f"Bearer {token}"})
         print('.', end='')
     print(' DONE')
 
