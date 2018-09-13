@@ -45,9 +45,6 @@
   <body>
     {% for kind in kinds %}
     <div class="outer-container">
-      <div class="kind">
-        For: {{ kind['kind'] }}
-      </div>
         {% for lottery in kind['lotteries'] %}
           <div class="classroom">
             <span style="text-decoration: underline;">class: {{ lottery['classroom'] }}</span>
@@ -62,6 +59,10 @@
                     <strong>{{winner}}</strong>
                   </li>
               {% endfor %}
+            <div class="kind">
+              {% set kind = '来場者' if kind['kind'] == 'visitor' else '生徒' %}
+              {{ kind }}
+            </div>
               </div>
               </ul>
             </div>
