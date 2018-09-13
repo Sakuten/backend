@@ -107,7 +107,6 @@ def test_time_index_same(client):
 def test_prev_time_index_ooa(client):
     with client.application.app_context():
         start_of_first_index = client.application.config['TIMEPOINTS'][0][0]
-        end_of_last_index = client.application.config['TIMEPOINTS'][-1][1]
         en_margin = client.application.config['TIMEPOINT_END_MARGIN']
         res = mod_time(datetime.timedelta.resolution, en_margin)
         with pytest.raises(OutOfAcceptingHoursError):
