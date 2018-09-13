@@ -31,22 +31,24 @@ def home():
     # login flow
     secret_id = data.get('id')
     recaptcha_code = data.get('g-recaptcha-response')
-    user = todays_user(secret_id=secret_id)
-    if user:
-        if not ip_address(request.remote_addr).is_private:
-            secret_key = current_app.config['RECAPTCHA_SECRET_KEY']
-            request_uri = f'https://www.google.com/recaptcha/api/siteverify?secret={secret_key}&response={recaptcha_code}'  # noqa: E501
-            recaptcha_auth = urlopen(request_uri).read()
-            auth_resp = json.loads(recaptcha_auth)
-            success = auth_resp['success'] and \
-                auth_resp['score'] > current_app.config['RECAPTCHA_THRESHOLD']
-        else:
-            current_app.logger.warning(
-                f'Skipping request from {request.remote_addr}')
-            success = True
+    (user, err_num) = todays_user(secret_id=secret_id)
+    if not user:
+        return error_response(err_num)
+    if not ip_address(request.remote_addr).is_private:
+        secret_key = current_app.config['RECAPTCHA_SECRET_KEY']
+        request_uri = f'https://www.google.com/recaptcha/api/siteverify?secret={secret_key}&response={recaptcha_code}'  # noqa: E501
+        recaptcha_auth = urlopen(request_uri).read()
+        auth_resp = json.loads(recaptcha_auth)
+        success = auth_resp['success'] and \
+            auth_resp['score'] > current_app.config['RECAPTCHA_THRESHOLD']
+    else:
+        current_app.logger.warning(
+            f'Skipping request from {request.remote_addr}')
+        success = True
 
-        if success or user.authority == 'admin':
-            token = generate_token({'user_id': user.id})
-            return jsonify({"message": "Login Successful",
-                            "token": token.decode()})
+    if success or user.authority == 'admin':
+        token = generate_token({'user_id': user.id})
+        return jsonify({"message": "Login Successful",
+                        "token": token.decode()})
+
     return error_response(3)  # Login unsuccessful
