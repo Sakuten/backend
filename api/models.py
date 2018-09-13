@@ -17,7 +17,7 @@ class User(db.Model):
             lose_count (int): how many times the user lost
     """
     id = db.Column(db.Integer, primary_key=True)
-    public_id = db.Column(db.Integer, unique=True)
+    public_id = db.Column(db.Integer)
     secret_id = db.Column(db.String(40), unique=True)
     authority = db.Column(db.String(20))
     win_count = db.Column(db.Integer, default=0)
