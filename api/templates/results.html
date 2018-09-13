@@ -46,27 +46,29 @@
     {% for kind in kinds %}
     <div class="outer-container">
         {% for lottery in kind['lotteries'] %}
-          <div class="classroom">
-            <span style="text-decoration: underline;">class: {{ lottery['classroom'] }}</span>
-          {% for row in range(lottery['winners']|length // horizontal +1) %}
-            <div class="row">
-              <ul>
-              <div class="container">
-              {% for column in range(1,horizontal +1) %}
-                {% set winners_index = (row * horizontal) + column %}
-                {% set winner = lottery['winners'][winners_index -1]|default("") %}
-                  <li class="winner">
-                    <strong>{{winner}}</strong>
-                  </li>
-              {% endfor %}
+          <div class="one_page">
             <div class="kind">
               {% set kind = '来場者' if kind['kind'] == 'visitor' else '生徒' %}
               {{ kind }}
             </div>
+            <div class="classroom">
+              <span style="text-decoration: underline;">class: {{ lottery['classroom'] }}</span>
+            {% for row in range(lottery['winners']|length // horizontal +1) %}
+              <div class="row">
+                <ul>
+                <div class="container">
+                {% for column in range(1,horizontal +1) %}
+                  {% set winners_index = (row * horizontal) + column %}
+                  {% set winner = lottery['winners'][winners_index -1]|default("") %}
+                    <li class="winner">
+                      <strong>{{winner}}</strong>
+                    </li>
+                {% endfor %}
+                </div>
+                </ul>
               </div>
-              </ul>
+            {% endfor %}
             </div>
-          {% endfor %}
           </div>
         {% endfor %}
     </div>
