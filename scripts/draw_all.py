@@ -62,5 +62,5 @@ client = client()
 id_list = load_id_json_file(Path(__file__).parent.parent / Path('cards/test_users.json'))
 admin = [i for i in id_list if i['authority'] == 'admin']
 
-token = login(client, admin['secret_id'], admin['g-recaptcha-response'])['token']
+token = login(client, admin["secret_id"], '')["token"]
 client.post('/draw_all', headers={"Authorization": f'Bearer {token}'})
