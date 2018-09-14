@@ -135,9 +135,9 @@ def generate():
     """
     from .models import Lottery, Classroom, User, Error, db
     total_index = 4
-    grades = [5, 6]
 
     Classroom.query.delete()
+    Lottery.query.delete()
     cl_list_path = current_app.config['CLASSROOM_TABLE_FILE']
     classroom_list = load_id_json_file(cl_list_path)
     for idx, class_data in classroom_list.items():
@@ -148,17 +148,11 @@ def generate():
                          title=title_enc)
         db.session.add(room)
 
-    def create_lotteries(grade, class_index):
-        room = Classroom.query.filter_by(
-            grade=grade, index=class_index).first()
+        # add lotteries
         for perf_index in range(total_index):
-            lottery = Lottery(classroom_id=room.id,
+            lottery = Lottery(classroom_id=idx,
                               index=perf_index, done=False)
             db.session.add(lottery)
-
-    Lottery.query.delete()
-    classloop(create_lotteries)
-    db.session.commit()
 
     User.query.delete()
     json_path = current_app.config['ID_LIST_FILE']
