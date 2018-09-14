@@ -59,7 +59,8 @@ def login(client, secret_id, rresp):
 client = client()
 
 
-id_list = load_id_json_file(Path(__file__).parent.parent / Path('cards/test_users.json'))
+id_list = load_id_json_file(Path(__file__).parent.parent /
+                            Path('cards/test_users.json'))
 admin = next(i for i in id_list if i['authority'] == 'admin')
 
 token = login(client, admin["secret_id"], '')["token"]
