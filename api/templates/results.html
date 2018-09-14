@@ -4,101 +4,77 @@
     <title></title>
     <meta charset="UTF-8">
   </head>
-    <style>
+  <style>
       body {
         color: gray;
       }
       :root {
-        --a4-width: 297mm;
-        --a4-height: 210mm;
-        --a0-width: 1189mm;
-        --a0-height: 841mm;
+        --a0-height: 1133.5mm;
+        --a0-width: 806mm;
       }
       html {
-        font-size: 100%;
-        padding: 0%;
-      }
-      .outer-container {
+        font-size: 15mm;
+        font-family: 'MS Gothic';
       }
       .one_page {
-        --page-width: var(--a0-width);
-        --page-height: var(--a0-height);
-        width: var(--page-width);
-        height: var(--page-height);
-        background: gray;
+        height: var(--a0-height);
         color: black;
-        font-size: calc(var(--page-width) * 20%);
-        box-shadow: 0 .5mm 2mm rgba(0,0,0,.3); /* ドロップシャドウ */
-          margin: 5mm;
       }
-      .one_page:nth-child(odd) {
-        background: blue;
+      .inner-page {
+        margin: 35mm;
       }
       .kind {
         font-size: 3em;
-        float: left;
-        border: 0.5rem solid;
-        padding: 0em 1em 0em 1em;
+        border: 1.5mm solid;
+        padding: 7mm 10mm;
       }
       .winner {
-        padding: 0em 3em 0em 1em;
-        width: 1em;
-        height: -2em;
-        font-size: 0.5em;
-      }
-      .winner:nth-child(odd) {
-        background: gray;
-      }
-      .container {
-        display: flex;
-      }
-      .row {
-        page-break-before: always;
-        border: solid;
+        font-size: 2em;
+        font-weight: bold;
+        line-height: 1.7;
+        margin: 3mm 20mm 7mm 30mm;
       }
       .classroom {
-        width: 100%;
         font-size: 3em;
-        padding: 0rem 1rem 0rem 1rem;
+        font-weight: bold;
+        margin: 90mm 45mm;
       }
-      ul {
-        width: 10%;
-        height: 0.5em;
-        list-style: ;
-        padding: 0rem;
-        margin: 3rem 0rem 0rem 0rem;
+      li {
+        display: inline;
       }
-    </style>
+  </style>
   <body>
     {% for kind in kinds %}
-    <div class="outer-container">
-        {% for lottery in kind['lotteries'] %}
-          <div class="one_page">
-            <div class="kind">
-              {% set kind = '来場者' if kind['kind'] == 'visitor' else '生徒' %}
-              {{ kind }}
-            </div>
-            <div class="classroom">
-              <span style="text-decoration: underline;">class: {{ lottery['classroom'] }}</span>
-            {% for row in range(lottery['winners']|length // horizontal +1) %}
-              <div class="row">
-                <ul>
-                <div class="container">
-                {% for column in range(1,horizontal +1) %}
-                  {% set winners_index = (row * horizontal) + column %}
-                  {% set winner = lottery['winners'][winners_index -1]|default("") %}
-                    <li class="winner">
-                      <strong>{{winner}}</strong>
-                    </li>
-                {% endfor %}
-                </div>
-                </ul>
-              </div>
+    {% for lottery in kind['lotteries'] %}
+    <div class="one_page">
+      <div class="inner-page">
+        <p style="margin-bottom: 30mm">
+        <span class="kind">
+          {% set kind = '来場者' if kind['kind'] == 'visitor' else '生徒' %}
+          {{ kind }}
+        </span>
+        </p>
+        <p>
+        <span class="classroom" style="text-decoration: underline;">
+          {{ lottery['classroom'] }}
+        </span>
+        </p>
+        {% for row in range(lottery['winners']|length // horizontal +1) %}
+        <div class="container">
+          <ul>
+            {% for column in range(1,horizontal +1) %}
+            {% set winners_index = (row * horizontal) + column %}
+            {% set winner = lottery['winners'][winners_index -1]|default("") %}
+            <li>
+              <span class="winner">{{winner}}</span>
+            </li>
             {% endfor %}
-            </div>
-          </div>
+          </ul>
+        </div>
         {% endfor %}
+      </div>
     </div>
+    {% endfor %}
     {% endfor %}
   </body>
 </html>

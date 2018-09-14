@@ -444,30 +444,12 @@ def results():
         for lottery in lotteries:
             public_ids = list(public_id_generator(lottery, kind))
             cl = Classroom.query.get(lottery.classroom_id)
-            result = {'classroom': f'{cl.grade}-{cl.get_classroom_name()}',
+            result = {'classroom': f'{cl.grade}{cl.get_classroom_name()}',
                       'winners': public_ids}
             whole_results[kind].append(result)
     data = {'kinds': [], 'horizontal': 3}
     for key, value in whole_results.items():
         data['kinds'].append({'lotteries': value, 'kind': key})
-
-    # data structure of 'data'
-    # data = {'kinds':
-    #           [{'lotteries':
-    #               [{'classroom_id': lottery.classroom_id,
-    #                 'winners': [lottery.application.user.public_id(has 'visitor' kind)]
-    #                }],
-    #             'kind': 'visitor'
-    #            },
-    #            {'lotteries':
-    #               [{'classroom_id': lottery.classroom_id,
-    #                 'winners': [lottery.application.user.public_id(has 'student' kind)]
-    #                }],
-    #                 'kind': 'student'
-    #           }],
-    #         'horizontal': 3
-    #        }
-    # This is too complicated, so do REFACTORING in the future
 
     # 6.
     env = Environment(loader=FileSystemLoader('api/templates'))
