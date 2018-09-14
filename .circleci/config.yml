@@ -1,0 +1,21 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: docker:17.07.0-ce-git
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Setup Environment Variables
+          command: |
+            echo "export DOCKER_IMAGE_NAME=sakuten/backend:$(./scripts/ci/docker_tag_name.sh)" >> $BASH_ENV
+      - run:
+          name: Login
+          command: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
+      - run:
+          name: Build image
+          command: docker build -t ${DOCKER_IMAGE_NAME} .
+      - run:
+          name: Push
+          command: docker push ${DOCKER_IMAGE_NAME}
