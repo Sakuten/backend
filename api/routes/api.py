@@ -12,7 +12,12 @@ from api.schemas import (
     lotteries_schema,
     lottery_schema
 )
-from api.auth import login_required, todays_user
+from api.auth import (
+        login_required,
+        todays_user,
+        UserNotFoundError,
+        UserDisabledError
+)
 from api.swagger import spec
 from api.time_management import (
     get_draw_time_index,
@@ -151,12 +156,11 @@ def apply_lottery(idx):
         if len(group_members_secret_id) > 3:
             return error_response(21)
         for sec_id in group_members_secret_id:
-            user = todays_user(secret_id=sec_id)
-            if user is not None:
-                group_members.append(user)
-            else:
+            try:
+                user = todays_user(secret_id=sec_id)
+            except (UserNotFoundError, UserDisabledError):
                 return error_response(1)  # Invalid group member secret id
-
+            group_members.append(user)
         for user in group_members:
             previous = Application.query.filter_by(user_id=user.id)
             if any(app.lottery.index == lottery.index and
