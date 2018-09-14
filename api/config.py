@@ -82,8 +82,8 @@ class DeploymentConfig(BaseConfig):
     DRAWING_TIME_EXTENSION = timedelta(minutes=10)
     TIMEPOINT_END_MARGIN = timedelta(minutes=1)
     TIMEPOINTS = [
-        (time(21,  0), time(21, 10)),
-        (time(21, 25), time(21, 35)),
-        (time(21, 50), time(22,  0)),
-        (time(22, 15), time(22, 25)),
+        (time(22,  0), time(22, 10)),
+        (time(22, 25), time(22, 35)),
+        (time(22, 50), time(23,  0)),
+        (time(23, 15), time(23, 25)),
     ]
