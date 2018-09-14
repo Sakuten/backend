@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ ! "$CIRCLECI" ]; then
   echo "Hey, This script works only in Circle CI enviroment."
