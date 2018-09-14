@@ -8,6 +8,20 @@ from api.time_management import get_current_datetime
 from api.error import error_response
 
 
+class UserNotFoundError(Exception):
+    """
+        The Exception that indicates the user was not found
+    """
+    pass
+
+
+class UserDisabledError(Exception):
+    """
+        The Exception that indicates the user was not found
+    """
+    pass
+
+
 def generate_token(obj):
     """
         generate token and expiration, return it.
@@ -96,7 +110,9 @@ def todays_user(secret_id='', user_id=''):
             secret_id (str): secret id of target user
         Return:
             User (api.models.User): the user object of 'secret_id'
-            None : when given 'secret_id' is used in other day
+        Exceptions:
+            UserNotFoundError : when user was not found in DB
+            UserDisabledError : when user was diabled
 
         References are here:
             https://github.com/Sakuten/backend/issues/78#issuecomment-416609508
@@ -108,10 +124,9 @@ def todays_user(secret_id='', user_id=''):
         user = User.query.get(user_id)
 
     if not user:
-        return None
+        raise UserNotFoundError()
     if user.kind not in current_app.config['ONE_DAY_KIND']:
         return user
-
     if user.first_access is None:
         user.first_access = date.today()
         db.session.add(user)
@@ -120,4 +135,4 @@ def todays_user(secret_id='', user_id=''):
     elif user.first_access == date.today():
         return user
     else:
-        return None
+        raise UserDisabledError()

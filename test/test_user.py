@@ -187,7 +187,8 @@ def test_auth_used_user(client):
                            }, follow_redirects=True)
 
     assert resp.status_code == 400
-    assert resp.get_json()['message'] == 'Login unsuccessful'
+    assert resp.get_json()['message'] == 'This user_id is ' \
+                                         'already used in other day'
 
 
 def test_auth_overtime_as_student(client):
