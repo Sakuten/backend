@@ -10,3 +10,12 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
   echo "pr_$TRAVIS_PULL_REQUEST"
   exit
 fi
+
+if [ "$TRAVIS_BRANCH" == "master" ]; then
+  echo "latest"
+  exit
+fi
+
+
+echo "$TRAVIS_BRANCH" | sed 's/[^[:alnum:]._-]/_/g'
+exit
