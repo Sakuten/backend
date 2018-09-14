@@ -78,7 +78,7 @@ class DeploymentConfig(BaseConfig):
     ENV = 'production'
     WINNERS_NUM = 4
     START_DATETIME = datetime(2018, 9, 14, 21,  0, 0, tzinfo=TIMEZONE)
-    END_DATETIME = datetime(2018, 9, 14, 22, 30, 0, tzinfo=TIMEZONE)
+    END_DATETIME = datetime(2018, 9, 14, 23, 0, 0, tzinfo=TIMEZONE)
     DRAWING_TIME_EXTENSION = timedelta(minutes=10)
     TIMEPOINT_END_MARGIN = timedelta(minutes=1)
     TIMEPOINTS = [
