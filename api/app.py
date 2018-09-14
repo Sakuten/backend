@@ -8,6 +8,7 @@ from cards.id import load_id_json_file, decode_public_id
 import os
 import sys
 import json
+import base64
 
 config = {
     "development": "api.config.DevelopmentConfig",
@@ -136,13 +137,15 @@ def generate():
     total_index = 4
     grades = [5, 6]
 
-    def classloop(f):
-        for grade in grades:
-            for class_index in range(4):  # 0->A 1->B 2->C 3->D
-                f(grade, class_index)
-
-    def create_classrooms(grade, class_index):
-        room = Classroom(grade=grade, index=class_index)
+    Classroom.query.delete()
+    cl_list_path = current_app.config['CLASSROOM_TABLE_FILE']
+    classroom_list = load_id_json_file(cl_list_path)
+    for idx, class_data in classroom_list.items():
+        # add classroom
+        title_enc = base64.b46encode(class_data['title'].encode('utf-8'))
+        room = Classroom(grade=class_data['grade'],
+                         index=class_data['index'],
+                         title=title_enc)
         db.session.add(room)
 
     def create_lotteries(grade, class_index):
@@ -152,10 +155,6 @@ def generate():
             lottery = Lottery(classroom_id=room.id,
                               index=perf_index, done=False)
             db.session.add(lottery)
-
-    Classroom.query.delete()
-    classloop(create_classrooms)
-    db.session.commit()
 
     Lottery.query.delete()
     classloop(create_lotteries)
