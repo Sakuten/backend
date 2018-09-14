@@ -12,7 +12,12 @@ from api.schemas import (
     lotteries_schema,
     lottery_schema
 )
-from api.auth import login_required, todays_user, UserNotFoundError, UserDisabledError
+from api.auth import (
+        login_required,
+        todays_user,
+        UserNotFoundError,
+        UserDisabledError
+)
 from api.swagger import spec
 from api.time_management import (
     get_draw_time_index,
