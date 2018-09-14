@@ -71,11 +71,10 @@ class PreviewDeploymentConfig(BaseConfig):
 
 
 def _get_timepoints_from_json(json_str):
-    ary = json.loads(json_str)
-    return [tuple(strptime(t, '%H:%M').time() for t in pair) for pair in ary]
+    return json_str and [tuple(strptime(t, '%H:%M').time() for t in pair) for pair in json.loads(json_str)]
 
 def _parse_datetime(datetime_str):
-    return strptime(datetime_str, '%Y-%m-%d %H:%M:%S').astimezone(BaseConfig.TIMEZONE)
+    return datetime_str and strptime(datetime_str, '%Y-%m-%d %H:%M:%S').astimezone(BaseConfig.TIMEZONE)
 
 class DeploymentConfig(BaseConfig):
     DEBUG = False
