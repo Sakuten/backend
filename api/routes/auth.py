@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, current_app
 from urllib.request import urlopen
 import json
 from ipaddress import ip_address
-from api.auth import generate_token, todays_user
+from api.auth import generate_token, todays_user, UserNotFound, UserDisabled
 from api.swagger import spec
 from api.error import error_response
 
@@ -31,9 +31,12 @@ def home():
     # login flow
     secret_id = data.get('id')
     recaptcha_code = data.get('g-recaptcha-response')
-    user, err_num = todays_user(secret_id=secret_id)
-    if not user:
-        return error_response(err_num)
+    try:
+        user = todays_user(secret_id=secret_id)
+    except UserNotFound:
+        return error_response(3)
+    except UserDisabled:
+        return error_response(22)
     if not ip_address(request.remote_addr).is_private:
         secret_key = current_app.config['RECAPTCHA_SECRET_KEY']
         request_uri = f'https://www.google.com/recaptcha/api/siteverify?secret={secret_key}&response={recaptcha_code}'  # noqa: E501

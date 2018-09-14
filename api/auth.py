@@ -8,6 +8,20 @@ from api.time_management import get_current_datetime
 from api.error import error_response
 
 
+class UserNotFound(Exception):
+    """
+        The Exception that indicates the user was not found
+    """
+    pass
+
+
+class UserDisabled(Exception):
+    """
+        The Exception that indicates the user was not found
+    """
+    pass
+
+
 def generate_token(obj):
     """
         generate token and expiration, return it.
@@ -76,7 +90,7 @@ def login_required(*required_authority):
             data = decrypt_token(token)
             if not data:
                 return auth_error(0, 'error="invalid_token"')
-            user, _ = todays_user(user_id=data['data']['user_id'])
+            user = todays_user(user_id=data['data']['user_id'])
             if user is None:
                 return auth_error(0, 'realm="id_disabled"')
             if required_authority and \
@@ -96,9 +110,10 @@ def todays_user(secret_id='', user_id=''):
             secret_id (str): secret id of target user
         Return:
             User (api.models.User): the user object of 'secret_id'
-            (None, error_num) (tuple):
-                this is returned when some error has been occured
-                error_num (int): error_code defined in error.json. [5|22]
+            None : this is returned when some error has been occured
+        Exceptions:
+            UserNotFound : when user was not found in DB
+            UserDisabled : when user was diabled
 
         References are here:
             https://github.com/Sakuten/backend/issues/78#issuecomment-416609508
@@ -110,16 +125,15 @@ def todays_user(secret_id='', user_id=''):
         user = User.query.get(user_id)
 
     if not user:
-        return None, 3
+        raise UserNotFound()
     if user.kind not in current_app.config['ONE_DAY_KIND']:
-        return user, None
-
+        return user
     if user.first_access is None:
         user.first_access = date.today()
         db.session.add(user)
         db.session.commit
-        return user, None
+        return user
     elif user.first_access == date.today():
-        return user, None
+        return user
     else:
-        return None, 22
+        raise UserDisabled()
