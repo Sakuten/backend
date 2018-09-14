@@ -110,7 +110,6 @@ def todays_user(secret_id='', user_id=''):
             secret_id (str): secret id of target user
         Return:
             User (api.models.User): the user object of 'secret_id'
-            None : this is returned when some error has been occured
         Exceptions:
             UserNotFound : when user was not found in DB
             UserDisabled : when user was diabled
