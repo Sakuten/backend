@@ -12,7 +12,7 @@ from api.schemas import (
     lotteries_schema,
     lottery_schema
 )
-from api.auth import login_required, todays_user, UserNotFound, UserDisabled
+from api.auth import login_required, todays_user, UserNotFoundError, UserDisabledError
 from api.swagger import spec
 from api.time_management import (
     get_draw_time_index,
@@ -153,7 +153,7 @@ def apply_lottery(idx):
         for sec_id in group_members_secret_id:
             try:
                 user = todays_user(secret_id=sec_id)
-            except (UserNotFound, UserDisabled):
+            except (UserNotFoundError, UserDisabledError):
                 return error_response(1)  # Invalid group member secret id
             group_members.append(user)
         for user in group_members:
