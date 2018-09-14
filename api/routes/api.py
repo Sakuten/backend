@@ -1,7 +1,7 @@
 from itertools import chain
 
 from flask import Blueprint, jsonify, g, request, current_app
-from api.models import Lottery, Classroom, User, Application, db, GroupMember
+from api.models import Lottery, Classroom, User, Application, db, group_member
 from api.schemas import (
     user_schema,
     users_schema,
@@ -12,19 +12,28 @@ from api.schemas import (
     lotteries_schema,
     lottery_schema
 )
-from api.auth import login_required, todays_user
+from api.auth import (
+        login_required,
+        todays_user,
+        UserNotFoundError,
+        UserDisabledError
+)
 from api.swagger import spec
 from api.time_management import (
     get_draw_time_index,
     OutOfHoursError,
     OutOfAcceptingHoursError,
-    get_time_index
+    get_time_index,
+    get_prev_time_index
 )
 from api.draw import (
     draw_one,
     draw_all_at_index,
 )
+from api.error import error_response
 from api.utils import calc_sha256
+
+from cards.id import encode_public_id
 
 bp = Blueprint(__name__, 'api')
 
@@ -52,7 +61,7 @@ def list_classroom(idx):
     """
     classroom = Classroom.query.get(idx)
     if classroom is None:
-        return jsonify({"message": "Classroom could not be found."}), 404
+        return error_response(7)  # Not found
     result = classroom_schema.dump(classroom)[0]
     return jsonify(result)
 
@@ -72,6 +81,26 @@ def list_lotteries():
     return jsonify(result)
 
 
+@bp.route('/lotteries/available')
+@spec('api/lotteries/available.yml')
+def list_available_lotteries():
+    """
+        return available lotteries list.
+    """
+# those two values will be used in the future. now, not used. see issue #62 #63
+#     filter = request.args.get('filter')
+#     sort = request.args.get('sort')
+
+    try:
+        index = get_time_index()
+    except (OutOfAcceptingHoursError, OutOfHoursError):
+        return jsonify([])
+    lotteries = Lottery.query.filter_by(index=index)
+
+    result = lotteries_schema.dump(lotteries)[0]
+    return jsonify(result)
+
+
 @bp.route('/lotteries/<int:idx>', methods=['GET'])
 @spec('api/lotteries/idx.yml')
 def list_lottery(idx):
@@ -80,7 +109,7 @@ def list_lottery(idx):
     """
     lottery = Lottery.query.get(idx)
     if lottery is None:
-        return jsonify({"message": "Lottery could not be found."}), 404
+        return error_response(7)  # Not found
     result = lottery_schema.dump(lottery)[0]
     return jsonify(result)
 
@@ -112,42 +141,41 @@ def apply_lottery(idx):
     group_members_secret_id = request.get_json()['group_members']
     lottery = Lottery.query.get(idx)
     if lottery is None:
-        return jsonify({"message": "Lottery could not be found."}), 404
+        return error_response(7)  # Not found
     try:
         current_index = get_time_index()
     except (OutOfHoursError, OutOfAcceptingHoursError):
-        return jsonify({"message":
-                        "We're not accepting any application in this hours."}
-                       ), 400
+        # We're not accepting any application in this hours.
+        return error_response(14)
     if lottery.index != current_index:
-        return jsonify({"message":
-                        "This lottery is not acceptable now."}), 400
+        return error_response(11)  # This lottery is not acceptable now.
 
     # 2. 3. 4.
     group_members = []
     if len(group_members_secret_id) != 0:
+        if len(group_members_secret_id) > 3:
+            return error_response(21)
         for sec_id in group_members_secret_id:
-            user = todays_user(secret_id=sec_id)
-            if user is not None:
-                group_members.append(user)
-            else:
-                return jsonify({"message":
-                                "Invalid group member secret id"}), 401
-
+            try:
+                user = todays_user(secret_id=sec_id)
+            except (UserNotFoundError, UserDisabledError):
+                return error_response(1)  # Invalid group member secret id
+            group_members.append(user)
         for user in group_members:
             previous = Application.query.filter_by(user_id=user.id)
             if any(app.lottery.index == lottery.index and
                    app.lottery.id != lottery.id
                    for app in previous.all()):
-                msg = "someone in the group is already " \
-                      "applying to a lottery in this period"
-                return jsonify({"message": msg}), 400
+                # Someone in the group is
+                # already applying to a lottery in this period
+                return error_response(8)
             if any(app.lottery.index == lottery.index and
                    app.lottery.id == lottery.id
                    for app in previous.all()):
-                msg = "someone in the group is already " \
-                      "applying to this lottery"
-                return jsonify({"message": msg}), 400
+
+                # someone in the group is already
+                # applying to this lottery
+                return error_response(9)
 
     # 5.
     rep_user = User.query.filter_by(id=g.token_data['user_id']).first()
@@ -155,13 +183,13 @@ def apply_lottery(idx):
     if any(app.lottery.index == lottery.index and
             app.lottery.id != lottery.id
             for app in previous.all()):
-        msg = "You're already applying to a lottery in this period"
-        return jsonify({"message": msg}), 400
+        # You're already applying to a lottery in this period
+        return error_response(17)
     if any(app.lottery.index == lottery.index and
             app.lottery.id == lottery.id
             for app in previous.all()):
-        msg = "Your application is already accepted"
-        return jsonify({"message": msg}), 400
+        # Your application is already accepted
+        return error_response(16)
     application = previous.filter_by(lottery_id=lottery.id).first()
     # access DB
     # 6. 7.
@@ -177,17 +205,20 @@ def apply_lottery(idx):
             result = application_schema.dump(newapplication)[0]
             return jsonify(result)
         else:
+            # 8.
+            members_app = [Application(
+                    lottery_id=lottery.id, user_id=member.id, status="pending")
+                    for member in group_members]
+
+            for application in members_app:
+                db.session.add(application)
+            db.session.commit()
             rep_application = Application(
                 lottery_id=lottery.id, user_id=rep_user.id, status="pending",
                 is_rep=True,
-                group_members=[GroupMember(user_id=member.id)
-                               for member in group_members])
+                group_members=[group_member(app)
+                               for app in members_app])
             db.session.add(rep_application)
-    # 8.
-    for member in group_members:
-        newapplication = Application(
-            lottery_id=lottery.id, user_id=member.id, status="pending")
-        db.session.add(newapplication)
 
     # 9.
     db.session.commit()
@@ -223,7 +254,7 @@ def list_application(idx):
     application = Application.query.filter_by(
         user_id=user.id).filter_by(id=idx).first()
     if application is None:
-        return jsonify({"message": "Application could not be found."}), 404
+        return error_response(7)  # Not found
     result = application_schema.dump(application)[0]
     return jsonify(result)
 
@@ -238,10 +269,10 @@ def cancel_application(idx):
     """
     application = Application.query.get(idx)
     if application is None:
-        return jsonify({"message": "Application could not be found."}), 404
+        return error_response(7)  # Not found
     if application.status != "pending":
-        resp = {"message": "The Application has already fullfilled"}
-        return jsonify(resp), 400
+        # The Application has already fullfilled
+        return error_response(10)
     db.session.delete(application)
     db.session.commit()
     return jsonify({"message": "Successful Operation"})
@@ -256,17 +287,16 @@ def draw_lottery(idx):
     """
     lottery = Lottery.query.get(idx)
     if lottery is None:
-        return jsonify({"message": "Lottery could not be found."}), 404
+        return error_response(7)  # Not found
 
-    not_acceptable_resp = jsonify({"message": "Not acceptable time"})
     try:
         # Get time index with current datetime
         index = get_draw_time_index()
     except (OutOfHoursError, OutOfAcceptingHoursError):
-        return not_acceptable_resp, 400
+        return error_response(6)  # Not acceptable time
 
     if index != lottery.index:
-        return not_acceptable_resp, 400
+        return error_response(6)  # Not acceptable time
 
     winners = draw_one(lottery)
 
@@ -285,7 +315,7 @@ def draw_all_lotteries():
         # Get time index with current datetime
         index = get_draw_time_index()
     except (OutOfHoursError, OutOfAcceptingHoursError):
-        return jsonify({"message": "Not acceptable time"}), 400
+        return error_response(6)  # Not acceptable time
 
     winners = draw_all_at_index(index)
 
@@ -302,9 +332,9 @@ def get_winners_id(idx):
     """
     lottery = Lottery.query.get(idx)
     if lottery is None:
-        return jsonify({"message": "Lottery could not be found."}), 400
+        return error_response(7)  # Not found
     if not lottery.done:
-        return jsonify({"message": "This lottery is not done yet."}), 400
+        return error_response(12)  # This lottery is not done yet.
 
     def public_id_generator():
         for app in lottery.application:
@@ -315,7 +345,7 @@ def get_winners_id(idx):
 
 @bp.route('/status', methods=['GET'])
 @spec('api/status.yml')
-@login_required('normal')
+@login_required('normal', 'checker')
 def get_status():
     """
         return user's id and applications
@@ -334,9 +364,9 @@ def translate_secret_to_public(secret_id):
     """
     user = User.query.filter_by(secret_id=secret_id).first()
     if not user:
-        return jsonify({"message": "no such user found"}), 404
+        return error_response(5)  # no such user found
     else:
-        return jsonify({"public_id": user.public_id})
+        return jsonify({"public_id": encode_public_id(user.public_id)})
 
 
 @bp.route('/ids_hash', methods=['GET'])
@@ -347,7 +377,7 @@ def ids_hash():
     try:
         checksum = calc_sha256(current_app.config['ID_LIST_FILE'])
     except FileNotFoundError:
-        return jsonify({"message": "ID_LIST_FILE is not found"}), 404
+        return error_response(20)  # ID_LIST_FILE not found
     return jsonify({"sha256": checksum})
 
 
@@ -362,16 +392,22 @@ def check_id(classroom_id, secret_id):
     """
     user = User.query.filter_by(secret_id=secret_id).first()
     if not user:
-        return jsonify({"message": "user not found"}), 404
+        return error_response(5)  # no such user found
     try:
-        index = get_time_index()
+        index = get_prev_time_index()
     except (OutOfHoursError, OutOfAcceptingHoursError):
-        return jsonify({"message": "Not acceptable time"}), 400
+        return error_response(6)  # not acceptable time
     lottery = Lottery.query.filter_by(classroom_id=classroom_id,
                                       index=index).first()
     application = Application.query.filter_by(user=user,
                                               lottery=lottery).first()
     if not application:
-        return jsonify({"message": "application not found"}), 404
+        return error_response(19)  # no application found
 
     return jsonify({"status": application.status})
+
+
+@bp.route('/health')
+@spec('api/health.yml')
+def health():
+    return jsonify({'message': 'good to go'})

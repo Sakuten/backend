@@ -1,12 +1,17 @@
 from marshmallow import Schema, fields
+from flask import current_app
 from api.models import Application, Lottery
 from cards.id import encode_public_id
+from api.time_management import mod_time
 
 
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     secret_id = fields.Str()
     public_id = fields.Method("get_public_id_str", dump_only=True)
+    win_count = fields.Int()
+    lose_count = fields.Int()
+    kind = fields.Str()
 
     def get_public_id_str(self, user):
         return encode_public_id(user.public_id)
@@ -65,6 +70,7 @@ class LotterySchema(Schema):
     done = fields.Boolean()
     name = fields.Method("format_name", dump_only=True)
     winners = fields.Method("get_winners", dump_only=True)
+    end_of_drawing = fields.Method("calc_end_of_drawing")
 
     def format_name(self, lottery):
         grade = lottery.classroom.grade
@@ -77,6 +83,20 @@ class LotterySchema(Schema):
             lottery_id=lottery.id, status="won").all()
         return [winner.public_id for winner in winners]
 
+    def calc_end_of_drawing(self, lottery):
+        index = lottery.index
+        drawing_ext = current_app.config['DRAWING_TIME_EXTENSION']
+        time_ponit = current_app.config['TIMEPOINTS'][index][1]
+        return str(mod_time(time_ponit, drawing_ext))
+
 
 lottery_schema = LotterySchema()
 lotteries_schema = LotterySchema(many=True)
+
+
+class ErrorSchema(Schema):
+    code = fields.Int()
+    message = fields.Str()
+
+
+error_schema = ErrorSchema()

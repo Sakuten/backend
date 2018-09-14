@@ -9,7 +9,7 @@ from api import app
 from cards.id import load_id_json_file
 
 from utils import admin, checker, test_user, test_user1, \
-                  test_user2, test_user3, test_user4, test_user5, test_student
+                  test_user2, test_user3, test_user4, test_student
 
 pre_config = os.environ.get('FLASK_CONFIGURATION', None)
 
@@ -37,10 +37,12 @@ def client():
     student_cred = next(i for i in id_list if i['kind'] == 'student')
     test_student['secret_id'] = student_cred['secret_id']
     test_creds = (i for i in id_list if i['kind'] == 'visitor')
-    for user in [test_user, test_user1, test_user2, test_user3,
-                 test_user4, test_user5]:
+    for user in [test_user, test_user1, test_user2, test_user3, test_user4]:
         test_cred = next(test_creds)
         user['secret_id'] = test_cred['secret_id']
+
+    with client.app_context():
+        app.init_and_generate()
 
     test_client = client.test_client()
 

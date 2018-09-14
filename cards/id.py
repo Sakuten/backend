@@ -52,34 +52,6 @@ def decode_public_id(str_id):
     return sum(alphas[i] * 18**(3-i) for i in range(4))
 
 
-def find_public_id(ids, secret_id):
-    """
-        search for the public ID that corresponds to the given secret ID
-        Args:
-            ids (list): list of dictionaries that contains IDs
-            secret_id (str): token (target)
-        Return:
-            public_id (str): 4-letter ID
-    """
-    for id_dict in ids:
-        if id_dict["secret_id"] == secret_id:
-            return id_dict["public_id"]
-
-
-def find_secret_id(ids, public_id):
-    """
-        search for the secret ID that corresponds to the given public ID
-        Args:
-            ids (list): list of dictionaries that contains IDs
-            secret_id (str): 4-letter ID (target)
-        Return:
-            public_id (str): token
-    """
-    for id_dict in ids:
-        if id_dict["public_id"] == public_id:
-            return id_dict["secret_id"]
-
-
 def generate_ids(how_many):
     """
         generate a list of dictionaries that have a pair of

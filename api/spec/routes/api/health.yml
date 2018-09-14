@@ -1,0 +1,12 @@
+Check health of backend
+---
+responses:
+  '200':
+    description: No problem
+    schema:
+      type: "object"
+      properties:
+        message:
+          description: status message
+          type: string
+          example: good to go

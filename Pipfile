@@ -17,6 +17,7 @@ pytest = "*"
 watchdog = "*"
 pillow = "*"
 qrcode = "*"
+numpy = "*"
 
 [dev-packages]
 "flake8" = "*"

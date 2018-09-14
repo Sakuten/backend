@@ -24,7 +24,7 @@ def test_checker(client, def_status):
         db.session.add(application)
         db.session.commit()
 
-    with mock.patch('api.routes.api.get_time_index',
+    with mock.patch('api.routes.api.get_prev_time_index',
                     return_value=index):
         resp = as_user_get(client, staff['secret_id'],
                            staff['g-recaptcha-response'],
@@ -44,13 +44,13 @@ def test_checker_no_application(client):
     secret_id = target_user['secret_id']
     staff = checker
 
-    with mock.patch('api.routes.api.get_time_index',
+    with mock.patch('api.routes.api.get_prev_time_index',
                     return_value=index):
         resp = as_user_get(client, staff['secret_id'],
                            staff['g-recaptcha-response'],
                            f'/checker/{classroom_id}/{secret_id}')
     assert resp.status_code == 404
-    assert resp.get_json()['message'] == 'application not found'
+    assert resp.get_json()['message'] == 'No application found'
 
 
 def test_checker_invalid_user(client):
@@ -61,11 +61,11 @@ def test_checker_invalid_user(client):
     staff = checker
     secret_id = "NOTEXIST_SECRET_KEY"
 
-    with mock.patch('api.routes.api.get_time_index',
+    with mock.patch('api.routes.api.get_prev_time_index',
                     return_value=index):
         resp = as_user_get(client, staff['secret_id'],
                            staff['g-recaptcha-response'],
                            f'/checker/{classroom_id}/{secret_id}')
 
     assert resp.status_code == 404
-    assert resp.get_json()['message'] == 'user not found'
+    assert resp.get_json()['message'] == 'No such user found'
