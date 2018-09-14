@@ -1,21 +1,26 @@
 #!/bin/bash
 
-if [ ! "$TRAVIS" ]; then
-  echo "Hey, This script works only in Travis CI enviroment."
+if [ ! "$CIRCLECI" ]; then
+  echo "Hey, This script works only in Circle CI enviroment."
   echo "Don't run this locally."
   exit -1
 fi
 
-if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-  echo "pr_$TRAVIS_PULL_REQUEST"
+if [ "$CIRCLE_PR_NUMBER" ]; then
+  echo "pr_$CIRCLE_PR_NUMBER"
   exit
 fi
 
-if [ "$TRAVIS_BRANCH" == "master" ]; then
+if [ "$CIRCLE_TAG" ]; then
+  echo "$CIRCLE_TAG"
+  exit
+fi
+
+if [ "$CIRCLE_BRANCH" == "master" ]; then
   echo "latest"
   exit
 fi
 
 
-echo "$TRAVIS_BRANCH" | sed 's/[^[:alnum:]._-]/_/g'
+echo "$CIRCLE_BRANCH" | sed 's/[^[:alnum:]._-]/_/g'
 exit
