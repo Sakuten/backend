@@ -77,8 +77,8 @@ class DeploymentConfig(BaseConfig):
     SECRET_KEY = os.environ.get('SECRET_KEY')
     ENV = 'production'
     WINNERS_NUM = 4
-    START_DATETIME = datetime(2018, 9, 14, 21,  0, 0, tzinfo=TIMEZONE)
-    END_DATETIME = datetime(2018, 9, 14, 23, 0, 0, tzinfo=TIMEZONE)
+    START_DATETIME = datetime(2018, 9, 14, 21,  0, 0, tzinfo=BaseConfig.TIMEZONE)
+    END_DATETIME = datetime(2018, 9, 14, 23, 0, 0, tzinfo=BaseConfig.TIMEZONE)
     DRAWING_TIME_EXTENSION = timedelta(minutes=10)
     TIMEPOINT_END_MARGIN = timedelta(minutes=1)
     TIMEPOINTS = [
