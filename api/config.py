@@ -74,12 +74,15 @@ def _get_timepoints_from_json(json_str):
     ary = json.loads(json_str)
     return [tuple(strptime(t, '%H:%M').time() for t in pair) for pair in ary]
 
+def _parse_datetime(datetime_str):
+    return strptime(datetime_str, '%Y-%m-%d %H:%M:%S').astimezone(BaseConfig.TIMEZONE)
+
 class DeploymentConfig(BaseConfig):
     DEBUG = False
     TESTING = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     SECRET_KEY = os.environ.get('SECRET_KEY')
     ENV = 'production'
-    START_DATETIME = os.environ.get('START_DATETIME', BaseConfig.START_DATETIME)
-    END_DATETIME = os.environ.get('END_DATETIME', BaseConfig.END_DATETIME)
+    START_DATETIME = _parse_datetime(os.environ.get('START_DATETIME') or BaseConfig.START_DATETIME
+    END_DATETIME = _parse_datetime(os.environ.get('END_DATETIME') or BaseConfig.END_DATETIME
     TIMEPOINTS = _get_timepoints_from_json(os.environ.get('TIMEPOINTS')) or BaseConfig.TIMEPOINTS
