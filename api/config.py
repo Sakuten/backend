@@ -76,3 +76,13 @@ class DeploymentConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     SECRET_KEY = os.environ.get('SECRET_KEY')
     ENV = 'production'
+    START_DATETIME = datetime(2018, 9, 14, 21,  0, 0, tzinfo=TIMEZONE)
+    END_DATETIME = datetime(2018, 9, 14, 22, 30, 0, tzinfo=TIMEZONE)
+    DRAWING_TIME_EXTENSION = timedelta(minutes=10)
+    TIMEPOINT_END_MARGIN = timedelta(minutes=1)
+    TIMEPOINTS = [
+        (time(21,  0), time(21, 10)),
+        (time(21, 25), time(21, 35)),
+        (time(21, 50), time(22,  0)),
+        (time(22, 15), time(22, 25)),
+    ]
