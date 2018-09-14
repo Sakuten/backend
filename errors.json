@@ -86,5 +86,9 @@
   "21": {
     "message": "too many group members",
     "status": 400
+  },
+  "22": {
+    "message": "This user_id is already used in other day",
+    "status": 400
   }
 }
