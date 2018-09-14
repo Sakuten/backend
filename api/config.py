@@ -73,6 +73,20 @@ class PreviewDeploymentConfig(BaseConfig):
 
 
 def _get_timepoints_from_json(json_str):
+    """
+        Get TIMEPOINTS list from JSON string.
+
+        Expected JSON looks like:
+        ```json
+        [
+          ["0:00", "5:59"],
+          ["6:00", "11:59"],
+          ["12:00", "17:59"],
+          ["18:00", "24:00"]
+        ]
+        ```
+    """
+
     return json_str and \
         [tuple(strptime(t, '%H:%M').time() for t in pair)
          for pair
@@ -80,6 +94,11 @@ def _get_timepoints_from_json(json_str):
 
 
 def _parse_datetime(datetime_str):
+    """
+        Parse datetime string to datetime,
+        and set BaseConfig.TIMEZONE
+    """
+
     return datetime_str and \
         strptime(datetime_str, '%Y-%m-%d %H:%M:%S') \
         .astimezone(BaseConfig.TIMEZONE)
