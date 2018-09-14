@@ -1,0 +1,14 @@
+return PDF file that contains the results of previous lotteries
+---
+produces:
+  - application/pdf
+responses:
+  '200':
+    description: PDF file which contains whole winners for previous winners
+    schema:
+      type: file
+  '400':
+    description: not acceptable time
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+summary: return PDF file that contains the results of previous lotteries
