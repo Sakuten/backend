@@ -49,29 +49,25 @@
     <div class="one_page">
       <div class="inner-page">
         <p style="margin-bottom: 30mm">
-        <span class="kind">
-          {% set kind = '来場者' if kind['kind'] == 'visitor' else '生徒' %}
-          {{ kind }}
-        </span>
+          <span class="kind">
+            {% set kind = '来場者' if kind['kind'] == 'visitor' else '生徒' %}
+            {{ kind }}
+          </span>
         </p>
         <p>
-        <span class="classroom" style="text-decoration: underline;">
-          {{ lottery['classroom'] }}
-        </span>
+          <span class="classroom" style="text-decoration: underline;">
+            {{ lottery['classroom'] }}
+          </span>
         </p>
-        {% for row in range(lottery['winners']|length // horizontal +1) %}
         <div class="container">
           <ul>
-            {% for column in range(1,horizontal +1) %}
-            {% set winners_index = (row * horizontal) + column %}
-            {% set winner = lottery['winners'][winners_index -1]|default("") %}
+            {% for winner in lottery['winners'] %}
             <li>
               <span class="winner">{{winner}}</span>
             </li>
             {% endfor %}
           </ul>
         </div>
-        {% endfor %}
       </div>
     </div>
     {% endfor %}
