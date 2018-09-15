@@ -142,10 +142,10 @@ def generate():
     classroom_list = load_id_json_file(cl_list_path)
     for idx, class_data in classroom_list.items():
         # add classroom
-        title_enc = base64.b46encode(class_data['title'].encode('utf-8'))
+        title_enc = base64.b64encode(class_data['title'].encode('utf-8'))
         room = Classroom(grade=class_data['grade'],
                          index=class_data['index'],
-                         title=title_enc)
+                         title=title_enc.decode('utf-8'))
         db.session.add(room)
 
         # add lotteries
