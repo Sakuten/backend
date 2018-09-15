@@ -44,7 +44,7 @@ class Classroom(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     grade = db.Column(db.Integer)
     index = db.Column(db.Integer)
-    title = db.Column(db.String(50))
+    title = db.Column(db.String(100))
 
     def __repr__(self):
         return "<Classroom %r%r>".format(self.grade, self.get_classroom_name)
