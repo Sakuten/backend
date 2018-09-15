@@ -622,6 +622,35 @@ def test_cancel_already_done_normal(client):
         'message']
 
 
+def test_cancel_group(client):
+    """attempt to cancel group applications
+        target_url: /lotteries/<id> [DELETE]
+    """
+    lottery_id = 1
+    members = (test_user1, test_user2, test_user3)
+    rep = test_user
+
+    token = login(client,
+                  rep['secret_id'],
+                  rep['g-recaptcha-response'])['token']
+
+    with client.application.app_context():
+        target_lottery = Lottery.query.get(lottery_id)
+        index = target_lottery.index
+        members_app = [make_application(client, user['secret_id'], lottery_id)
+                       for user in members]
+        rep_app = make_application(client, rep['secret_id'], lottery_id,
+                                   group_member_apps=members_app)
+
+        with mock.patch('api.routes.api.get_draw_time_index',
+                        return_value=index):
+            client.delete(f'/applications/{rep_app}',
+                          headers={'Authorization': f'Bearer {token}'})
+
+        db_apps = Application.query.filter_by(lottery_id=lottery_id).all()
+        assert not db_apps
+
+
 @pytest.mark.skip(reason='not implemented yet')
 def test_cancel_noperm(client):
     """attempt to cancel without permission
