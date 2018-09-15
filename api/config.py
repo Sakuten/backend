@@ -2,6 +2,8 @@ from cryptography.fernet import Fernet
 import os
 from pathlib import Path
 from datetime import datetime, time, timedelta, timezone
+import json
+
 import api
 
 
@@ -29,7 +31,7 @@ class BaseConfig(object):
         (time(8,  50), time(9,  20)),
         (time(10, 15), time(10, 45)),
         (time(12, 25), time(12, 55)),
-        (time(13, 50), time(14, 20)),
+        (time(13, 50), time(14, 20))
     ]
     ONE_DAY_KIND = ['visitor']
 
@@ -71,9 +73,47 @@ class PreviewDeploymentConfig(BaseConfig):
     ]
 
 
+def _get_timepoints_from_json(json_str):
+    """
+        Get TIMEPOINTS list from JSON string.
+
+        Expected JSON looks like:
+        ```json
+        [
+          ["0:00", "5:59"],
+          ["6:00", "11:59"],
+          ["12:00", "17:59"],
+          ["18:00", "24:00"]
+        ]
+        ```
+    """
+
+    return json_str and \
+        [tuple(datetime.strptime(t, '%H:%M').time() for t in pair)
+         for pair
+         in json.loads(json_str)]
+
+
+def _parse_datetime(datetime_str):
+    """
+        Parse datetime string to datetime,
+        and set BaseConfig.TIMEZONE
+    """
+
+    return datetime_str and \
+        datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S') \
+        .astimezone(BaseConfig.TIMEZONE)
+
+
 class DeploymentConfig(BaseConfig):
     DEBUG = False
     TESTING = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     SECRET_KEY = os.environ.get('SECRET_KEY')
     ENV = 'production'
+    START_DATETIME = _parse_datetime(os.environ.get('START_DATETIME')) or \
+        BaseConfig.START_DATETIME
+    END_DATETIME = _parse_datetime(os.environ.get('END_DATETIME')) or \
+        BaseConfig.END_DATETIME
+    TIMEPOINTS = _get_timepoints_from_json(os.environ.get('TIMEPOINTS')) or \
+        BaseConfig.TIMEPOINTS

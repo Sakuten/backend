@@ -1,4 +1,5 @@
 from itertools import chain
+from jinja2 import Environment, FileSystemLoader
 
 from flask import Blueprint, jsonify, g, request, current_app
 from api.models import Lottery, Classroom, User, Application, db, group_member
@@ -405,6 +406,59 @@ def check_id(classroom_id, secret_id):
         return error_response(19)  # no application found
 
     return jsonify({"status": application.status})
+
+
+@bp.route('/render_results', methods=['GET'])
+@spec('api/results.yml')
+def results():
+    """return HTML file that contains the results of previous lotteries
+        This endpoint will be used for printing PDF
+        which will be put on the wall.
+        whoever access here can get the file. This is not a problem because
+        those infomations are public.
+    """
+    #  1. Get previous time index
+    #  2. Get previous lotteries using index
+    #  3. Search for caches for those lotteries
+    #  4. If cache was found, return it
+    #  5. Make 2 public_id lists, based on user's 'kind'('student', 'visitor')
+    #  6. Send them to the jinja template
+    #  8. Caches that file locally
+    #  9. Return file
+
+    def public_id_generator(lottery, kind):
+        """return list of winners' public_id for selected 'kind'
+            original at: L.336, written by @tamazasa
+        """
+        for app in lottery.application:
+            if app.status == 'won' and app.user.kind == kind:
+                yield encode_public_id(app.user.public_id)
+
+    # 1.
+    try:
+        index = get_prev_time_index()
+    except (OutOfHoursError, OutOfAcceptingHoursError):
+        return error_response(6)  # not acceptable time
+    # 2.
+    lotteries = Lottery.query.filter_by(index=index)
+
+    # 5.
+    whole_results = {'visitor': [], 'student': []}
+    for kind in whole_results.keys():
+        for lottery in lotteries:
+            public_ids = list(public_id_generator(lottery, kind))
+            cl = Classroom.query.get(lottery.classroom_id)
+            result = {'classroom': f'{cl.grade}{cl.get_classroom_name()}',
+                      'winners': public_ids}
+            whole_results[kind].append(result)
+    data = {'kinds': [], 'horizontal': 3}
+    for key, value in whole_results.items():
+        data['kinds'].append({'lotteries': value, 'kind': key})
+
+    # 6.
+    env = Environment(loader=FileSystemLoader('api/templates'))
+    template = env.get_template('results.html')
+    return template.render(data)
 
 
 @bp.route('/health')
