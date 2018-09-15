@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ ! "$CIRCLECI" ]; then
-  echo "Hey, This script works only in Circle CI enviroment."
+  echo "Hey, This script works only in Circle CI environment."
   echo "Don't run this locally."
   exit -1
 fi
