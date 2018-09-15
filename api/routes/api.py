@@ -275,6 +275,8 @@ def cancel_application(idx):
         # The Application has already fullfilled
         return error_response(10)
     db.session.delete(application)
+    for member in application.group_members:
+        db.session.delete(member.own_application)
     db.session.commit()
     return jsonify({"message": "Successful Operation"})
 
