@@ -3,6 +3,7 @@ from flask import current_app
 from api.models import Application, Lottery
 from cards.id import encode_public_id
 from api.time_management import mod_time
+import base64
 
 
 class UserSchema(Schema):
@@ -53,10 +54,14 @@ class ClassroomSchema(Schema):
     id = fields.Int(dump_only=True)
     grade = fields.Int()
     index = fields.Int()
+    title = fields.Method("classroom_title", dump_only=True)
     name = fields.Method("classroom_name", dump_only=True)
 
     def classroom_name(self, classroom):
         return classroom.get_classroom_name()
+
+    def classroom_title(self, classroom):
+        return base64.b64decode(classroom.title).decode('utf-8')
 
 
 classroom_schema = ClassroomSchema()

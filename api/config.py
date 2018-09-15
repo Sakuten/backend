@@ -18,6 +18,7 @@ class BaseConfig(object):
     ROOT_DIR = Path(api.__file__).parent.parent
     ID_LIST_FILE = ROOT_DIR / Path('cards/ids.json')
     ERROR_TABLE_FILE = ROOT_DIR / Path('errors.json')
+    CLASSROOM_TABLE_FILE = ROOT_DIR / Path('classrooms.json')
     WINNERS_NUM = 90
     RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY')
     RECAPTCHA_THRESHOLD = 0.09  # more than 0.09
