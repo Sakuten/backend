@@ -149,8 +149,11 @@ def generate():
         db.session.add(room)
 
         # add lotteries
+        # `room` has no id yet. so, get new_classroom from DB
+        new_room = Classroom.query.filter_by(grade=class_data['grade'],
+                                             index=class_data['index']).first()
         for perf_index in range(total_index):
-            lottery = Lottery(classroom_id=idx,
+            lottery = Lottery(classroom_id=new_room.id,
                               index=perf_index, done=False)
             db.session.add(lottery)
 
