@@ -11,7 +11,7 @@ responses:
   '400':
     description: Malformed Authenication Header has detected
     headers:
-      WWW-Authenicate:
+      WWW-Authenticate:
         description: >-
           Authenication Error Code. For details, please refer to RFC 6750
           3. The WWW-Authenticate Response Header Field
@@ -21,7 +21,7 @@ responses:
   '401':
     description: Authorization Failed
     headers:
-      WWW-Authenicate:
+      WWW-Authenticate:
         description: >-
           Authenication Error Code. For details, please refer to RFC 6750
           3. The WWW-Authenticate Response Header Field

@@ -19,11 +19,10 @@ responses:
       type: object
   '400':
     description: >-
-      Invalid Request / Lottery has already done / You're
-      already applying to a lottery in this period / You're not applying
-      for this lottery
+      Invalid Request / You're already applying to a lottery in this period
+      / You're not applying for this lottery
     headers:
-      WWW-Authenicate:
+      WWW-Authenticate:
         description: >-
           Authenication Error Code. For details, please refer to RFC 6750
           3. The WWW-Authenticate Response Header Field
@@ -37,7 +36,7 @@ responses:
   '401':
     description: Authorization Failed
     headers:
-      WWW-Authenicate:
+      WWW-Authenticate:
         description: >-
           Authenication Error Code. For details, please refer to RFC 6750
           3. The WWW-Authenticate Response Header Field

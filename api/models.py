@@ -1,5 +1,4 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.schema import UniqueConstraint
 from cards.id import encode_public_id
 
 db = SQLAlchemy()
@@ -14,11 +13,17 @@ class User(db.Model):
         DB contents:
             public_id (int): public id.
             secret_id (int): secret id.
+            win_count (int): how many times the user won
+            lose_count (int): how many times the user lost
     """
     id = db.Column(db.Integer, primary_key=True)
-    public_id = db.Column(db.Integer, unique=True)
+    public_id = db.Column(db.Integer)
     secret_id = db.Column(db.String(40), unique=True)
     authority = db.Column(db.String(20))
+    win_count = db.Column(db.Integer, default=0)
+    lose_count = db.Column(db.Integer, default=0)
+    kind = db.Column(db.String(30))
+    first_access = db.Column(db.Date, default=None)
 
     def __repr__(self):
         authority_str = f'({self.authority})' if self.authority else ''
@@ -39,6 +44,7 @@ class Classroom(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     grade = db.Column(db.Integer)
     index = db.Column(db.Integer)
+    title = db.Column(db.String(300))
 
     def __repr__(self):
         return "<Classroom %r%r>".format(self.grade, self.get_classroom_name)
@@ -62,7 +68,7 @@ class Lottery(db.Model):
             id (int): lottery unique id
             classroom_id (int): associated classroom id
             classroom (relationship): associated classroom
-            index (int): class number(0->A,1->B,2->C,3->D)
+            index (int): number of peformance. {0..4}
             done (bool): whether it's done or not
     """
     id = db.Column(db.Integer, primary_key=True)  # 'id' should be defined,
@@ -84,14 +90,14 @@ class Application(db.Model):
             lottery_id (int): lottery id this application linked to
             user_id (int): user id of this application
             status (Boolen): whether chosen or not. initalized with None
+            is_rep (bool): whether rep of a group or not
     """
-    __table_args__ = (UniqueConstraint(
-        "lottery_id", "user_id", name="unique_idx_lottery_user"),)
+    __tablename__ = 'application'
 
     id = db.Column(db.Integer, primary_key=True)
     lottery_id = db.Column(db.Integer, db.ForeignKey(
         'lottery.id', ondelete='CASCADE'))
-    lottery = db.relationship('Lottery')
+    lottery = db.relationship('Lottery', backref='application')
     user_id = db.Column(db.Integer, db.ForeignKey(
         'user.id', ondelete='CASCADE'))
     user = db.relationship('User')
@@ -99,6 +105,66 @@ class Application(db.Model):
     status = db.Column(db.String,
                        default="pending",
                        nullable=False)
+    is_rep = db.Column(db.Boolean, default=False)
+    # groupmember_id = db.Column(db.Integer, db.ForeignKey(
+    #     'group_members.id', ondelete='CASCADE'))
+    # me_group_member = db.relationship('GroupMember', backref='application')
 
     def __repr__(self):
-        return "<Application {}{}>".format(self.lottery, self.user)
+        return "<Application {}{}{} {}>".format(
+            self.lottery, self.user,
+            " (rep)" if self.is_rep else "",
+            self.status)
+
+
+class GroupMember(db.Model):
+    """group-member model for DB
+        DB contents:
+            id (int): group member unique id
+            user_id (int): user id of this member
+            rep_application_id (int): rep application id
+    """
+    __tablename__ = 'group_members'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('user.id', ondelete='CASCADE'))
+    user = db.relationship('User')
+
+    own_application_id = db.Column(db.Integer, db.ForeignKey(
+        'application.id', ondelete='CASCADE'))
+    own_application = db.relationship('Application',
+                                      foreign_keys=[own_application_id])
+
+    rep_application_id = db.Column(db.Integer, db.ForeignKey(
+        'application.id', ondelete='CASCADE'))
+    rep_application = db.relationship('Application',
+                                      foreign_keys=[rep_application_id],
+                                      backref='group_members')
+
+    def __repr__(self):
+        return f"<GroupMember {self.user}>"
+
+
+class Error(db.Model):
+    """
+        Error model
+        DB contents:
+            code (int): identical error code, which has a common meaning
+                                    between frontend and backend
+            http_code (int): the HTTP status code
+            message (str): the description message
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.Integer, unique=True)
+    http_code = db.Column(db.Integer)
+    message = db.Column(db.String(200))
+
+    def __repr__(self):
+        return f'<Error {self.code}: "{self.message}">'
+
+
+def group_member(application):
+    return GroupMember(user_id=application.user_id,
+                       own_application=application)
