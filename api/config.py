@@ -1,7 +1,7 @@
 from cryptography.fernet import Fernet
 import os
 from pathlib import Path
-from datetime import datetime, time, timedelta, timezone, strptime
+from datetime import datetime, time, timedelta, timezone
 import json
 
 import api
@@ -88,7 +88,7 @@ def _get_timepoints_from_json(json_str):
     """
 
     return json_str and \
-        [tuple(strptime(t, '%H:%M').time() for t in pair)
+        [tuple(datetime.strptime(t, '%H:%M').time() for t in pair)
          for pair
          in json.loads(json_str)]
 
@@ -100,7 +100,7 @@ def _parse_datetime(datetime_str):
     """
 
     return datetime_str and \
-        strptime(datetime_str, '%Y-%m-%d %H:%M:%S') \
+        datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S') \
         .astimezone(BaseConfig.TIMEZONE)
 
 
