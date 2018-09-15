@@ -2,6 +2,8 @@ from cryptography.fernet import Fernet
 import os
 from pathlib import Path
 from datetime import datetime, time, timedelta, timezone
+import json
+
 import api
 
 
@@ -70,6 +72,38 @@ class PreviewDeploymentConfig(BaseConfig):
     ]
 
 
+def _get_timepoints_from_json(json_str):
+    """
+        Get TIMEPOINTS list from JSON string.
+
+        Expected JSON looks like:
+        ```json
+        [
+          ["0:00", "5:59"],
+          ["6:00", "11:59"],
+          ["12:00", "17:59"],
+          ["18:00", "24:00"]
+        ]
+        ```
+    """
+
+    return json_str and \
+        [tuple(datetime.strptime(t, '%H:%M').time() for t in pair)
+         for pair
+         in json.loads(json_str)]
+
+
+def _parse_datetime(datetime_str):
+    """
+        Parse datetime string to datetime,
+        and set BaseConfig.TIMEZONE
+    """
+
+    return datetime_str and \
+        datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S') \
+        .astimezone(BaseConfig.TIMEZONE)
+
+
 class DeploymentConfig(BaseConfig):
     DEBUG = False
     TESTING = False
@@ -77,13 +111,19 @@ class DeploymentConfig(BaseConfig):
     SECRET_KEY = os.environ.get('SECRET_KEY')
     ENV = 'production'
     WINNERS_NUM = 4
-    START_DATETIME = datetime(2018, 9, 14, 21,  0, 0, tzinfo=BaseConfig.TIMEZONE)
-    END_DATETIME = datetime(2018, 9, 14, 23, 0, 0, tzinfo=BaseConfig.TIMEZONE)
+    START_DATETIME = datetime(2018, 9, 15, 13, 0, 0, tzinfo=BaseConfig.TIMEZONE)
+    END_DATETIME = datetime(2018, 9, 15, 16, 30, 0, tzinfo=BaseConfig.TIMEZONE)
     DRAWING_TIME_EXTENSION = timedelta(minutes=10)
     TIMEPOINT_END_MARGIN = timedelta(minutes=1)
     TIMEPOINTS = [
-        (time(22,  0), time(22, 10)),
-        (time(22, 25), time(22, 35)),
-        (time(22, 50), time(23,  0)),
-        (time(23, 15), time(23, 25)),
+        (time(14,  0), time(14, 15)),
+        (time(14, 35), time(14, 50)),
+        (time(15, 10), time(15, 25)),
+        (time(15, 45), time(16, 00)),
     ]
+    # START_DATETIME = _parse_datetime(os.environ.get('START_DATETIME')) or \
+    #     BaseConfig.START_DATETIME
+    # END_DATETIME = _parse_datetime(os.environ.get('END_DATETIME')) or \
+    #     BaseConfig.END_DATETIME
+    # TIMEPOINTS = _get_timepoints_from_json(os.environ.get('TIMEPOINTS')) or \
+    #     BaseConfig.TIMEPOINTS
