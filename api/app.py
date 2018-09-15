@@ -140,7 +140,7 @@ def generate():
     Lottery.query.delete()
     cl_list_path = current_app.config['CLASSROOM_TABLE_FILE']
     classroom_list = load_id_json_file(cl_list_path)
-    for idx, class_data in classroom_list.items():
+    for class_data in classroom_list:
         # add classroom
         title_enc = base64.b64encode(class_data['title'].encode('utf-8'))
         room = Classroom(grade=class_data['grade'],
