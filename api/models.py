@@ -13,15 +13,11 @@ class User(db.Model):
         DB contents:
             public_id (int): public id.
             secret_id (int): secret id.
-            win_count (int): how many times the user won
-            lose_count (int): how many times the user lost
     """
     id = db.Column(db.Integer, primary_key=True)
     public_id = db.Column(db.Integer)
     secret_id = db.Column(db.String(40), unique=True)
     authority = db.Column(db.String(20))
-    win_count = db.Column(db.Integer, default=0)
-    lose_count = db.Column(db.Integer, default=0)
     kind = db.Column(db.String(30))
     first_access = db.Column(db.Date, default=None)
 
