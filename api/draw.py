@@ -136,7 +136,8 @@ def draw_one_normal_users(applications, winners_num):
     normal_users = [app for app in applications if app.status == "pending"]
 
     if len(normal_users) <= winners_num or not normal_users:
-        # if applications are less than winners_num, all applications win
+        # if pending applications are less than winners_num,
+        # all applications win
         winner_apps = normal_users
     else:
         winner_apps = choice(
