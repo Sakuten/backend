@@ -138,6 +138,25 @@ def test_get_specific_lottery(client):
     assert resp.get_json() == lottery
 
 
+def test_lottery_application_num(client):
+    """test the correct number of applications is returned fron the API
+        target_url: /lotteries/<id>
+    """
+    idx = 1
+    with client.application.app_context():
+        target_lottery = Lottery.query.get(idx)
+        users = User.query.all()
+        users_num = len(users)
+        apps = (Application(lottery=target_lottery, user=user)
+                for user in users)
+        for app in apps:
+            db.session.add(app)
+        db.session.commit()
+
+    resp = client.get(f'/lotteries/{idx}')
+    assert resp.get_json()['application_num'] == users_num
+
+
 def test_get_specific_lottery_invalid_id(client):
     """test proper errpr is returned from the API
         target_url: /lotteries/<id>
