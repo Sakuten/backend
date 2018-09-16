@@ -115,11 +115,11 @@
         },
         "flasgger": {
             "hashes": [
-                "sha256:1c9c03a4b55b60688f2bb2c2d8ff4534cb18eda70fd02973141be8c3bde586b3",
-                "sha256:efee892b0554c60f716b441ee78fddcaf7af20bc764696d9eecd6a389fb7f195"
+                "sha256:007cec966c480269b73d5c9eb312a0821b69a4ebb356d179fe1d3d9bf077f369",
+                "sha256:14a96f5590f4ac0116651bc8e45a17e7f4cfd58e812e8cded2ca6690356cda72"
             ],
             "index": "pypi",
-            "version": "==0.9.0"
+            "version": "==0.9.1"
         },
         "flask": {
             "hashes": [
@@ -188,11 +188,11 @@
         },
         "marshmallow": {
             "hashes": [
-                "sha256:0f3776aa5b5405f6000c9304841abe6d4d708bb08207fc89a5ecd86622ec9e54",
-                "sha256:57a107cfd58e9ed52dd355c65444e983d064fdcf63214a487d7305a2d24680db"
+                "sha256:06404c9f104a12cfaa9ceb79378a9834952265540306df344833c5dc59f07fa1",
+                "sha256:08b9b928f4afac524dd47cfd1509782f6d7b278e65f25847df9d1a7d8facccf4"
             ],
             "index": "pypi",
-            "version": "==2.15.4"
+            "version": "==2.15.5"
         },
         "mistune": {
             "hashes": [
