@@ -143,10 +143,12 @@ def test_lottery_application_num(client):
         target_url: /lotteries/<id>
     """
     idx = 1
+
     with client.application.app_context():
         target_lottery = Lottery.query.get(idx)
         users = User.query.all()
         users_num = len(users)
+
         apps = (Application(lottery=target_lottery, user=user)
                 for user in users)
         for app in apps:
