@@ -816,7 +816,6 @@ def test_draw_lots_of_groups_and_normal(client):
     normal = (3, 4)
 
     with client.application.app_context():
-        print(client.application.config['WINNERS_NUM'])
         target_lottery = Lottery.query.filter_by(id=idx).first()
         index = target_lottery.index
         users = User.query.all()
