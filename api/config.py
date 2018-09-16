@@ -29,7 +29,7 @@ class BaseConfig(object):
     TIMEPOINT_END_MARGIN = timedelta(minutes=1)
     TIMEPOINTS = [
         (time(8,  50), time(9,  20)),
-        (time(10, 15), time(10, 45)),
+        (time(10, 15), time(11, 30)),
         (time(12, 25), time(12, 55)),
         (time(13, 50), time(14, 20))
     ]
