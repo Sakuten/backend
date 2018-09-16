@@ -23,6 +23,10 @@ response:
           description: the status
           enum: [won, lose, pending]
           type: string
+        classroom:
+          description: the target classroom
+          example: '5A'
+          type: string
   '400':
     description: Malformed Authenication Header has detected / Not acceptable time
     headers:

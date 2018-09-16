@@ -400,12 +400,15 @@ def check_id(classroom_id, secret_id):
         return error_response(6)  # not acceptable time
     lottery = Lottery.query.filter_by(classroom_id=classroom_id,
                                       index=index).first()
+    classroom = lottery.classroom
+    classroom_name = classroom.grade + classroom.get_classroom_name()
     application = Application.query.filter_by(user=user,
                                               lottery=lottery).first()
     if not application:
         return error_response(19)  # no application found
 
-    return jsonify({"status": application.status})
+    return jsonify({"status": application.status,
+                    "classroom": classroom_name})
 
 
 @bp.route('/render_results', methods=['GET'])
