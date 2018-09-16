@@ -92,7 +92,9 @@ def login_required(*required_authority):
                 return auth_error(0, 'error="invalid_token"')
             try:
                 user = todays_user(user_id=data['data']['user_id'])
-            except (UserNotFoundError, UserDisabledError):
+            except UserNotFoundError:
+                return auth_error(0, 'realm="invalid_token"')
+            except UserDisabledError:
                 return auth_error(0, 'realm="id_disabled"')
             if required_authority and \
                     (user.authority not in required_authority):
