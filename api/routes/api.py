@@ -401,7 +401,7 @@ def check_id(classroom_id, secret_id):
     lottery = Lottery.query.filter_by(classroom_id=classroom_id,
                                       index=index).first()
     classroom = lottery.classroom
-    classroom_name = classroom.grade + classroom.get_classroom_name()
+    classroom_name = str(classroom.grade) + classroom.get_classroom_name()
     application = Application.query.filter_by(user=user,
                                               lottery=lottery).first()
     if not application:
