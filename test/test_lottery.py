@@ -755,8 +755,8 @@ def test_draw_lots_of_groups(client, cnt):
         target_url: /lotteries/<id>/draw [POST]
     """
     idx = 1
-    members = (0, 1)
-    reps = (2, 3)
+    members = (0, 1, 2)
+    reps = (3, 4, 5)
 
     with client.application.app_context():
         target_lottery = Lottery.query.filter_by(id=idx).first()
@@ -768,7 +768,7 @@ def test_draw_lots_of_groups(client, cnt):
                     lottery=target_lottery,
                     user_id=users[reps[i]].id, is_rep=True,
                     group_members=[group_member(members_app[i])])
-                    for i in range(2))
+                    for i in range(3))
 
         for application in chain(members_app, reps_app):
             db.session.add(application)
@@ -786,7 +786,7 @@ def test_draw_lots_of_groups(client, cnt):
         assert resp.status_code == 200
 
         winners = resp.get_json()
-        assert len(winners) == 2
+        assert len(winners) == 4
 
         users = User.query.all()
         target_lottery = Lottery.query.filter_by(id=idx).first()
@@ -799,8 +799,7 @@ def test_draw_lots_of_groups(client, cnt):
             assert rep_status == member_status
 
 
-@pytest.mark.parametrize("cnt", range(20))
-def test_draw_lots_of_groups_and_normal(client, cnt):
+def test_draw_lots_of_groups_and_normal(client):
     """attempt to draw a lottery as 2 groups of 2 members and 2 normal
             while WINNERS_NUM is 3
         1. make some applications to one lottery as groups
@@ -812,24 +811,26 @@ def test_draw_lots_of_groups_and_normal(client, cnt):
         target_url: /lotteries/<id>/draw [POST]
     """
     idx = 1
-    members = (0, 1)
-    reps = (2, 3)
-    normal = (4, 5)
+    members = (0,)
+    rep = 2
+    normal = (3, 4)
 
     with client.application.app_context():
+        print(client.application.config['WINNERS_NUM'])
         target_lottery = Lottery.query.filter_by(id=idx).first()
         index = target_lottery.index
         users = User.query.all()
         members_app = [Application(lottery=target_lottery, user_id=users[i].id)
                        for i in chain(members, normal)]
-        reps_app = (Application(
+        rep_app = Application(
                     lottery=target_lottery,
-                    user_id=users[reps[i]].id, is_rep=True,
-                    group_members=[group_member(members_app[i])])
-                    for i in range(2))
+                    user_id=users[rep].id, is_rep=True,
+                    group_members=[group_member(members_app[i])
+                                   for i in members])
 
-        for application in chain(members_app, reps_app):
+        for application in members_app:
             db.session.add(application)
+        db.session.add(rep_app)
         db.session.commit()
 
         token = login(client,
@@ -844,16 +845,16 @@ def test_draw_lots_of_groups_and_normal(client, cnt):
         assert resp.status_code == 200
 
         winners = resp.get_json()
-        assert len(winners) == client.application.config['WINNERS_NUM']
+        assert len(winners) == 4    # client.application.config['WINNERS_NUM']
 
         users = User.query.all()
         target_lottery = Lottery.query.filter_by(id=idx).first()
         assert target_lottery.done
-        for i, j in zip(reps, members):
-            rep_status = Application.query.filter_by(
-                lottery=target_lottery, user_id=users[i].id).first().status
+        rep_status = Application.query.filter_by(
+            lottery=target_lottery, user_id=users[rep].id).first().status
+        for i in members:
             member_status = Application.query.filter_by(
-                lottery=target_lottery, user_id=users[j].id).first().status
+                lottery=target_lottery, user_id=users[i].id).first().status
             assert rep_status == member_status
 
 
