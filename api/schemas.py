@@ -92,7 +92,7 @@ class LotterySchema(Schema):
         index = lottery.index
         drawing_ext = current_app.config['DRAWING_TIME_EXTENSION']
         time_ponit = current_app.config['TIMEPOINTS'][index][1]
-        return str(mod_time(time_ponit, drawing_ext))
+        return '{0:%H:%M}'.format(mod_time(time_ponit, drawing_ext))
 
 
 lottery_schema = LotterySchema()
