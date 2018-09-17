@@ -67,6 +67,7 @@ lotteries = client.get('/lotteries/available')
 
 if not lotteries:
     print('no lottery available')
+    sys.exit(69)
 
 else:
     n_users_per_lot = len(users) // len(lotteries)
