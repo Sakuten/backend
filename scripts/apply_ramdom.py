@@ -65,15 +65,20 @@ users = [i for i in id_list if i['authority'] == 'normal']
 
 lotteries = client.get('/lotteries/available')
 
-n_users_per_lot = len(users) // len(lotteries)
+if not lotteries:
+    print('no lottery available')
 
-for i, lottery in enumerate(lotteries):
-    print(f'applying to {lottery["id"]}: ', end='')
-    for user in users[n_users_per_lot * i:n_users_per_lot * (i + 1) - 1]:
-        token = login(client, user['secret_id'], '')['token']
-        client.post(f'/lotteries/{lottery["id"]}', _json={"group_members": ""},
-                    headers={"Authorization": f"Bearer {token}"})
-        print('.', end='')
-    print(' DONE')
+else:
+    n_users_per_lot = len(users) // len(lotteries)
 
-print('all lotteries are treated')
+    for i, lottery in enumerate(lotteries):
+        print(f'applying to {lottery["id"]}: ', end='')
+        for user in users[n_users_per_lot * i:n_users_per_lot * (i + 1) - 1]:
+            token = login(client, user['secret_id'], '')['token']
+            client.post(f'/lotteries/{lottery["id"]}',
+                        _json={"group_members": ""},
+                        headers={"Authorization": f"Bearer {token}"})
+            print('.', end='')
+        print(' DONE')
+
+    print('all lotteries are treated')
