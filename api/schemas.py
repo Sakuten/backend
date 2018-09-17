@@ -3,6 +3,7 @@ from flask import current_app
 from api.models import Application, Lottery
 from cards.id import encode_public_id
 from api.time_management import mod_time
+import base64
 
 
 class UserSchema(Schema):
@@ -39,10 +40,19 @@ class ApplicationSchema(Schema):
     lottery = fields.Method("get_lottery", dump_only=True)
     is_rep = fields.Boolean()
     group_members = fields.Nested(GroupMemberSchema, many=True)
+    is_member = fields.Method("get_is_member", dump_only=True)
 
     def get_lottery(self, application):
         lottery = Lottery.query.get(application.lottery_id)
         return lottery_schema.dump(lottery)[0]
+
+    def get_is_member(self, application):
+        index = application.lottery.index
+        reps = (app for app in Application.query.all()
+                if app.is_rep and app.lottery.index == index)
+        return any(application.id == member.own_application.id
+                   for rep in reps
+                   for member in rep.group_members)
 
 
 application_schema = ApplicationSchema()
@@ -53,10 +63,14 @@ class ClassroomSchema(Schema):
     id = fields.Int(dump_only=True)
     grade = fields.Int()
     index = fields.Int()
+    title = fields.Method("classroom_title", dump_only=True)
     name = fields.Method("classroom_name", dump_only=True)
 
     def classroom_name(self, classroom):
         return classroom.get_classroom_name()
+
+    def classroom_title(self, classroom):
+        return base64.b64decode(classroom.title).decode('utf-8')
 
 
 classroom_schema = ClassroomSchema()
