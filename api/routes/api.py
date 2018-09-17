@@ -446,7 +446,7 @@ def results():
     whole_results = {'visitor': [], 'student': []}
     for kind in whole_results.keys():
         for lottery in lotteries:
-            public_ids = list(public_id_generator(lottery, kind))
+            public_ids = list(sorted(public_id_generator(lottery, kind)))
             cl = Classroom.query.get(lottery.classroom_id)
             result = {'classroom': f'{cl.grade}{cl.get_classroom_name()}',
                       'winners': public_ids}
