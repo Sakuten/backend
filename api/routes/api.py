@@ -452,7 +452,7 @@ def results():
 
         lottery_result = []
         for kind in kinds:
-            public_ids = list(public_id_generator(lottery, kind))
+            public_ids = list(sorted(public_id_generator(lottery, kind)))
             result = {'kind': kind,
                       'winners': public_ids}
             lottery_result.append(result)
