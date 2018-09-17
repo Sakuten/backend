@@ -404,8 +404,6 @@ def check_id(classroom_id, secret_id):
     classroom_name = str(classroom.grade) + classroom.get_classroom_name()
     application = Application.query.filter_by(user=user,
                                               lottery=lottery).first()
-    if not application:
-        return error_response(19)  # no application found
 
     return jsonify({"status": application.status,
                     "classroom": classroom_name})
