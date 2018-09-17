@@ -951,7 +951,7 @@ def test_losers_advantage(client):
     idx = 1
     win_count = {i: 0 for i in range(1, 7)}
 
-    for i in range(6):
+    for i in range(20):
         with client.application.app_context():
             target_lottery = Lottery.query.get(idx)
             index = target_lottery.index
