@@ -8,6 +8,7 @@ from cards.id import load_id_json_file, decode_public_id
 import os
 import sys
 import json
+import base64
 
 config = {
     "development": "api.config.DevelopmentConfig",
@@ -134,32 +135,27 @@ def generate():
     """
     from .models import Lottery, Classroom, User, Error, db
     total_index = 4
-    grades = [5, 6]
-
-    def classloop(f):
-        for grade in grades:
-            for class_index in range(4):  # 0->A 1->B 2->C 3->D
-                f(grade, class_index)
-
-    def create_classrooms(grade, class_index):
-        room = Classroom(grade=grade, index=class_index)
-        db.session.add(room)
-
-    def create_lotteries(grade, class_index):
-        room = Classroom.query.filter_by(
-            grade=grade, index=class_index).first()
-        for perf_index in range(total_index):
-            lottery = Lottery(classroom_id=room.id,
-                              index=perf_index, done=False)
-            db.session.add(lottery)
 
     Classroom.query.delete()
-    classloop(create_classrooms)
-    db.session.commit()
-
     Lottery.query.delete()
-    classloop(create_lotteries)
-    db.session.commit()
+    cl_list_path = current_app.config['CLASSROOM_TABLE_FILE']
+    classroom_list = load_id_json_file(cl_list_path)
+    for class_data in classroom_list:
+        # add classroom
+        title_enc = base64.b64encode(class_data['title'].encode('utf-8'))
+        room = Classroom(grade=class_data['grade'],
+                         index=class_data['index'],
+                         title=title_enc.decode('utf-8'))
+        db.session.add(room)
+
+        # add lotteries
+        # `room` has no id yet. so, get new_classroom from DB
+        new_room = Classroom.query.filter_by(grade=class_data['grade'],
+                                             index=class_data['index']).first()
+        for perf_index in range(total_index):
+            lottery = Lottery(classroom_id=new_room.id,
+                              index=perf_index, done=False)
+            db.session.add(lottery)
 
     User.query.delete()
     json_path = current_app.config['ID_LIST_FILE']
