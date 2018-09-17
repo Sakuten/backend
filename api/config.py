@@ -23,8 +23,8 @@ class BaseConfig(object):
     RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY')
     RECAPTCHA_THRESHOLD = 0.09  # more than 0.09
     TIMEZONE = timezone(timedelta(hours=+9), 'JST')
-    START_DATETIME = datetime(2019, 9, 15, 8,  40, 0, tzinfo=TIMEZONE)
-    END_DATETIME = datetime(2019, 9, 16, 16, 00, 0, tzinfo=TIMEZONE)    # 敬老の日
+    START_DATETIME = datetime(2018, 9, 16, 8,  40, 0, tzinfo=TIMEZONE)
+    END_DATETIME = datetime(2018, 9, 17, 16, 00, 0, tzinfo=TIMEZONE)
     DRAWING_TIME_EXTENSION = timedelta(minutes=10)
     TIMEPOINT_END_MARGIN = timedelta(minutes=1)
     TIMEPOINTS = [
