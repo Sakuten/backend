@@ -128,14 +128,4 @@ def todays_user(secret_id='', user_id=''):
 
     if not user:
         raise UserNotFoundError()
-    if user.kind not in current_app.config['ONE_DAY_KIND']:
-        return user
-    if user.first_access is None:
-        user.first_access = date.today()
-        db.session.add(user)
-        db.session.commit
-        return user
-    elif user.first_access == date.today():
-        return user
-    else:
-        raise UserDisabledError()
+    return user
