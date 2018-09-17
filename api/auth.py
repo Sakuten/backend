@@ -139,4 +139,3 @@ def todays_user(secret_id='', user_id=''):
         return user
     else:
         raise UserDisabledError()
-    return user
