@@ -40,10 +40,19 @@ class ApplicationSchema(Schema):
     lottery = fields.Method("get_lottery", dump_only=True)
     is_rep = fields.Boolean()
     group_members = fields.Nested(GroupMemberSchema, many=True)
+    is_member = fields.Method("get_is_member", dump_only=True)
 
     def get_lottery(self, application):
         lottery = Lottery.query.get(application.lottery_id)
         return lottery_schema.dump(lottery)[0]
+
+    def get_is_member(self, application):
+        index = application.lottery.index
+        reps = (app for app in Application.query.all()
+                if app.is_rep and app.lottery.index == index)
+        return any(application.id == member.own_application.id
+                   for rep in reps
+                   for member in rep.group_members)
 
 
 application_schema = ApplicationSchema()
