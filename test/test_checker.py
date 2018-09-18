@@ -9,14 +9,13 @@ def test_checker(client, def_status):
     """use `/checker` endpoint with winner user
         target_url: /checker/{classroom_id}/{secret_id}
     """
+    classroom_id = 1
     index = 1
     target_user = test_user
     staff = checker
     secret_id = target_user['secret_id']
 
     with client.application.app_context():
-        classroom = Classroom.query.filter_by(grade=5, index=0).first()
-        classroom_id = classroom.id
         lottery_id = Lottery.query.filter_by(classroom_id=classroom_id,
                                              index=index).first().id
         user = User.query.filter_by(secret_id=secret_id).first()
