@@ -413,8 +413,7 @@ def check_id(classroom_id, secret_id):
         return error_response(23, status=application.status,
                               classroom=classroom_name)
 
-    return jsonify({"status": application.status,
-                    "classroom": classroom_name})
+    return jsonify({"status": application.status})
 
 
 @bp.route('/render_results', methods=['GET'])

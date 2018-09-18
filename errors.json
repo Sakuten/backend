@@ -93,6 +93,6 @@
   },
   "23": {
     "message": "You have applied to another lottery",
-    "status": 404
+    "status": 409
   }
 }
