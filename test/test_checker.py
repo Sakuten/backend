@@ -83,7 +83,7 @@ def test_checker_wrong_classroom(client, def_status):
                            staff['g-recaptcha-response'],
                            f'/checker/{wrong_classroom_id}/{secret_id}')
 
-    assert resp.status_code == 404
+    assert resp.status_code == 409
     assert resp.get_json()['message'] == 'You have applied to another lottery'
     assert resp.get_json()['classroom'] == '5A'
 
