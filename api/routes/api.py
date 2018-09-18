@@ -406,10 +406,10 @@ def check_id(classroom_id, secret_id):
         return error_response(19)  # No application found
 
     classroom = lottery.classroom
-    classroom_name = str(classroom.grade) + classroom.get_classroom_name()
     application = Application.query.filter_by(user=user,
                                               lottery=lottery).first()
     if classroom_id != classroom.id:
+        classroom_name = str(classroom.grade) + classroom.get_classroom_name()
         return error_response(23, status=application.status,
                               classroom=classroom_name)
 
