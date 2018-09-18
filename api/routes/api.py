@@ -398,12 +398,20 @@ def check_id(classroom_id, secret_id):
         index = get_prev_time_index()
     except (OutOfHoursError, OutOfAcceptingHoursError):
         return error_response(6)  # not acceptable time
-    lottery = Lottery.query.filter_by(classroom_id=classroom_id,
-                                      index=index).first()
+    try:
+        lottery = next(
+                lot for lot in Lottery.query.filter_by(index=index).all()
+                if Application.query.filter_by(user=user, lottery=lot).first())
+    except StopIteration:
+        return error_response(19)  # No application found
+
+    classroom = lottery.classroom
     application = Application.query.filter_by(user=user,
                                               lottery=lottery).first()
-    if not application:
-        return error_response(19)  # no application found
+    if classroom_id != classroom.id:
+        classroom_name = str(classroom.grade) + classroom.get_classroom_name()
+        return error_response(23, status=application.status,
+                              classroom=classroom_name)
 
     return jsonify({"status": application.status})
 

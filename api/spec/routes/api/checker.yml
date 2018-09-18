@@ -47,6 +47,19 @@ response:
     description: user not found  / application not found
     schema:
       $ref: '#/definitions/ErrorMessage'
+  '409':
+    description: 'You have applied to another lottery'
+    schema:
+      $ref: '#/definitions/ErrorMessage'
+      properties:
+        status:
+          description: the status
+          enum: [won, lose, pending]
+          type: string
+        classroom:
+          description: the target classroom
+          example: '5A'
+          type: string
 security:
   - checker_auth: []
 tags:
