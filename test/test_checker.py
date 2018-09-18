@@ -55,7 +55,8 @@ def test_checker_no_application(client):
     assert resp.get_json()['message'] == 'No application found'
 
 
-def test_checker_wrong_classroom(client):
+@pytest.mark.parametrize("def_status", ["pending", "won", "lose"])
+def test_checker_wrong_classroom(client, def_status):
     """attempt to use `/checker` endpoint with wrong classroom
     """
     index = 1
@@ -72,7 +73,7 @@ def test_checker_wrong_classroom(client):
                                              index=index).first().id
         user = User.query.filter_by(secret_id=secret_id).first()
         application = Application(user_id=user.id,
-                                  lottery_id=lottery_id, status="won")
+                                  lottery_id=lottery_id, status=def_status)
         db.session.add(application)
         db.session.commit()
 
@@ -84,7 +85,7 @@ def test_checker_wrong_classroom(client):
 
     assert resp.status_code == 404
     assert resp.get_json()['message'] == 'You have applied to another lottery'
-    assert resp.get_json()['correct'] == '5A'
+    assert resp.get_json()['classroom'] == '5A'
 
 
 def test_checker_invalid_user(client):

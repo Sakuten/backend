@@ -407,11 +407,11 @@ def check_id(classroom_id, secret_id):
 
     classroom = lottery.classroom
     classroom_name = str(classroom.grade) + classroom.get_classroom_name()
-    if classroom_id != classroom.id:
-        return error_response(23, correct=classroom_name)
-
     application = Application.query.filter_by(user=user,
                                               lottery=lottery).first()
+    if classroom_id != classroom.id:
+        return error_response(23, status=application.status,
+                              classroom=classroom_name)
 
     return jsonify({"status": application.status,
                     "classroom": classroom_name})
