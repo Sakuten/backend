@@ -450,23 +450,28 @@ def results():
     # 2.
     lotteries = Lottery.query.filter_by(index=index)
 
+    kinds = ('visitor', 'student')
+
     # 5.
-    whole_results = {'visitor': [], 'student': []}
-    for kind in whole_results.keys():
-        for lottery in lotteries:
-            public_ids = list(public_id_generator(lottery, kind))
-            cl = Classroom.query.get(lottery.classroom_id)
-            result = {'classroom': f'{cl.grade}{cl.get_classroom_name()}',
+    data = []
+
+    for lottery in lotteries:
+        cl = Classroom.query.get(lottery.classroom_id)
+
+        lottery_result = []
+        for kind in kinds:
+            public_ids = list(sorted(public_id_generator(lottery, kind)))
+            result = {'kind': kind,
                       'winners': public_ids}
-            whole_results[kind].append(result)
-    data = {'kinds': [], 'horizontal': 3}
-    for key, value in whole_results.items():
-        data['kinds'].append({'lotteries': value, 'kind': key})
+            lottery_result.append(result)
+
+        data.append({'classroom': str(cl),
+                     'kinds': lottery_result})
 
     # 6.
     env = Environment(loader=FileSystemLoader('api/templates'))
     template = env.get_template('results.html')
-    return template.render(data)
+    return template.render(lotteries=data)
 
 
 @bp.route('/health')
