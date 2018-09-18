@@ -34,6 +34,7 @@ def test_checker(client, def_status):
     assert resp.status_code == 200
     assert resp.get_json()['status'] == def_status
     assert resp.get_json()['classroom'] == '5A'
+    assert resp.get_json()['isCorrectClassroom']
 
 
 def test_checker_no_application(client):
@@ -53,6 +54,35 @@ def test_checker_no_application(client):
                            f'/checker/{classroom_id}/{secret_id}')
     assert resp.status_code == 404
     assert resp.get_json()['message'] == 'No application found'
+
+
+def test_checker_wrong_classroom(client):
+    """attempt to use `/checker` endpoint with wrong classroom
+    """
+    correct_classroom_id = 1
+    wrong_classroom_id = 2
+    index = 1
+    target_user = test_user
+    staff = checker
+    secret_id = target_user['secret_id']
+
+    with client.application.app_context():
+        lottery_id = Lottery.query.filter_by(classroom_id=correct_classroom_id,
+                                             index=index).first().id
+        user = User.query.filter_by(secret_id=secret_id).first()
+        application = Application(user_id=user.id,
+                                  lottery_id=lottery_id, status="won")
+        db.session.add(application)
+        db.session.commit()
+
+    with mock.patch('api.routes.api.get_prev_time_index',
+                    return_value=index):
+        resp = as_user_get(client, staff['secret_id'],
+                           staff['g-recaptcha-response'],
+                           f'/checker/{wrong_classroom_id}/{secret_id}')
+
+    assert resp.status_code == 200
+    assert not resp.get_json()['isCorrectClassroom']
 
 
 def test_checker_invalid_user(client):
