@@ -34,7 +34,6 @@ def test_checker(client, def_status):
     assert resp.status_code == 200
     assert resp.get_json()['status'] == def_status
     assert resp.get_json()['classroom'] == '5A'
-    assert resp.get_json()['isCorrectClassroom']
 
 
 def test_checker_no_application(client):
@@ -59,14 +58,16 @@ def test_checker_no_application(client):
 def test_checker_wrong_classroom(client):
     """attempt to use `/checker` endpoint with wrong classroom
     """
-    correct_classroom_id = 1
-    wrong_classroom_id = 2
     index = 1
     target_user = test_user
     staff = checker
     secret_id = target_user['secret_id']
 
     with client.application.app_context():
+        correct_classroom = Classroom.query.filter_by(grade=5, index=0).first()
+        correct_classroom_id = correct_classroom.id
+        wrong_classroom = Classroom.query.filter_by(grade=5, index=1).first()
+        wrong_classroom_id = wrong_classroom.id
         lottery_id = Lottery.query.filter_by(classroom_id=correct_classroom_id,
                                              index=index).first().id
         user = User.query.filter_by(secret_id=secret_id).first()
@@ -81,8 +82,9 @@ def test_checker_wrong_classroom(client):
                            staff['g-recaptcha-response'],
                            f'/checker/{wrong_classroom_id}/{secret_id}')
 
-    assert resp.status_code == 200
-    assert not resp.get_json()['isCorrectClassroom']
+    assert resp.status_code == 404
+    assert resp.get_json()['message'] == 'You have applied to another lottery'
+    assert resp.get_json()['correct'] == '5A'
 
 
 def test_checker_invalid_user(client):

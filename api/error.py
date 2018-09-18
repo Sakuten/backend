@@ -3,7 +3,7 @@ from api.models import Error
 from flask import jsonify
 
 
-def error_response(code):
+def error_response(code, **kwargs):
     """
         Construct json response from error code
         Args:
@@ -13,4 +13,5 @@ def error_response(code):
     """
     error = Error.query.filter_by(code=code).first()
     result = error_schema.dump(error)[0]
+    result.update(kwargs)
     return jsonify(result), error.http_code
