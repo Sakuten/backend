@@ -14,7 +14,7 @@
       }
       html {
         font-size: 15mm;
-        font-family: 'MS Gothic';
+        font-family: Consolas, 'Droid Sans Mono Slashed', 'Ubuntu Mono', Osaka-Mono, monospace;
       }
       .one_page {
         height: var(--a0-height);
@@ -44,14 +44,13 @@
       }
   </style>
   <body>
-    {% for kind in kinds %}
-    {% for lottery in kind['lotteries'] %}
+    {% for lottery in lotteries %}
+    {% for kind in lottery['kinds'] %}
     <div class="one_page">
       <div class="inner-page">
         <p style="margin-bottom: 30mm">
           <span class="kind">
-            {% set kind = '来場者' if kind['kind'] == 'visitor' else '生徒' %}
-            {{ kind }}
+            {{ '来場者' if kind['kind'] == 'visitor' else '生徒' }}
           </span>
         </p>
         <p>
@@ -61,7 +60,7 @@
         </p>
         <div class="container">
           <ul>
-            {% for winner in lottery['winners'] %}
+            {% for winner in kind['winners'] %}
             <li>
               <span class="winner">{{winner}}</span>
             </li>

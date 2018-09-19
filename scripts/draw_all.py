@@ -22,7 +22,7 @@ class client():
         try:
             response = urlopen(request)
         except HTTPError as e:
-            print('Error: {}'.format(e.read()), file=sys.stderr)
+            print(e.read().decode(), file=sys.stderr)
             sys.exit(-1)
         else:
             response_body = response.read().decode("utf-8")
@@ -41,7 +41,7 @@ class client():
         try:
             response = urlopen(request)
         except HTTPError as e:
-            print('Error: {}'.format(e.read()), file=sys.stderr)
+            print(e.read().decode(), file=sys.stderr)
             sys.exit(-1)
         else:
             response_body = response.read().decode("utf-8")

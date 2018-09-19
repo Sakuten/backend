@@ -49,6 +49,9 @@ class Classroom(db.Model):
     def __repr__(self):
         return "<Classroom %r%r>".format(self.grade, self.get_classroom_name)
 
+    def __str__(self):
+        return f'{self.grade}{self.get_classroom_name()}'
+
     def get_classroom_name(self):
         """
             return class  number in Alphabet

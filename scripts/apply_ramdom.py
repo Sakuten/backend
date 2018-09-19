@@ -22,7 +22,7 @@ class client():
         try:
             response = urlopen(request)
         except HTTPError as e:
-            print('Error: {}'.format(e.read()), file=sys.stderr)
+            print(e.read().decode(), file=sys.stderr)
             sys.exit(-1)
         else:
             response_body = response.read().decode("utf-8")
@@ -41,7 +41,7 @@ class client():
         try:
             response = urlopen(request)
         except HTTPError as e:
-            print('Error: {}'.format(e.read()), file=sys.stderr)
+            print(e.read().decode(), file=sys.stderr)
             sys.exit(-1)
         else:
             response_body = response.read().decode("utf-8")
@@ -65,13 +65,21 @@ users = [i for i in id_list if i['authority'] == 'normal']
 
 lotteries = client.get('/lotteries/available')
 
-for lottery in lotteries:
-    print(f'applying to {lottery["id"]}: ', end='')
-    for user in users:
-        token = login(client, user['secret_id'], '')['token']
-        client.post(f'/lotteries/{lottery["id"]}', _json={"group_members": ""},
-                    headers={"Authorization": f"Bearer {token}"})
-        print('.', end='')
-    print(' DONE')
+if not lotteries:
+    print('no lottery available')
+    sys.exit(69)
 
-print('all lotteries are treated')
+else:
+    n_users_per_lot = len(users) // len(lotteries)
+
+    for i, lottery in enumerate(lotteries):
+        print(f'applying to {lottery["id"]}: ', end='')
+        for user in users[n_users_per_lot * i:n_users_per_lot * (i + 1) - 1]:
+            token = login(client, user['secret_id'], '')['token']
+            client.post(f'/lotteries/{lottery["id"]}',
+                        _json={"group_members": ""},
+                        headers={"Authorization": f"Bearer {token}"})
+            print('.', end='')
+        print(' DONE')
+
+    print('all lotteries are treated')
