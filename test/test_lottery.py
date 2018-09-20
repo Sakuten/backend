@@ -14,9 +14,9 @@ from utils import (
     invalid_lottery_id,
     make_application
 )
-import conftest
 
 
+from api.app import init_and_generate
 from api.models import Lottery, Classroom, User, Application, GroupMember, db
 from api.models import group_member
 from api.schemas import (
@@ -959,8 +959,8 @@ def test_losers_advantage(client):
                     winner_id = winner_json['id']
                     win_count[winner_id] += 1
 
-        # re-configure and reset test environment
-        client = next(conftest.client())
+            # re-configure and reset test environment
+            init_and_generate()
 
     won_most = max(win_count.items(), key=itemgetter(1))[0]
     print('final results of applications (1 is rep)')
@@ -1017,8 +1017,8 @@ def test_group_losers_advantage(client):
                     winner_id = winner_json['id']
                     win_count[winner_id] += 1
 
-        # re-configure and reset test environment
-        client = next(conftest.client())
+            # re-configure and reset test environment
+            init_and_generate()
 
     won_most = max(win_count.items(), key=itemgetter(1))[0]
     print(win_count)
