@@ -53,6 +53,59 @@ def test_get_allclassrooms(client):
     assert resp.get_json() == classroom_list
 
 
+def test_draw_all_multi(client):
+    """attempt to deal with multi application.
+        target_url: /draw_all [POST]
+    """
+    time_index = 1
+
+    with client.application.app_context():
+        lottery_1st = Lottery.query.filter_by(index=time_index,
+                                              order=0).first()
+        print("lottery_1st:\t", repr(lottery_1st))
+        lottery_2nd = next(
+            filter(lambda l: l.order == 1 and l.index == time_index,
+                   lottery_1st.classroom.lottery))
+        print("lottery_2nd:\t", repr(lottery_2nd))
+        lottery_3rd = next(
+            filter(lambda l: l.order == 2 and l.index == time_index,
+                   lottery_1st.classroom.lottery))
+        print("lottery_3rd:\t", repr(lottery_3rd))
+        print()
+        users = list(user for user in User.query.all()
+                     if user.authority != "admin")[:15]
+        print("winners_num:\t", client.application.config['WINNERS_NUM'])
+        print("#users:\t\t", len(users))
+        apps_1st = [Application(lottery=lottery_1st, user=user)
+                    for user in users]
+        apps_2nd = [Application(lottery=lottery_2nd, user=user)
+                    for user in users]
+        apps_3rd = [Application(lottery=lottery_3rd, user=user)
+                    for user in users]
+        for app in chain(apps_1st, apps_2nd, apps_3rd):
+            db.session.add(app)
+        db.session.commit()
+
+        token = login(client,
+                      admin['secret_id'],
+                      admin['g-recaptcha-response'])['token']
+        with mock.patch('api.routes.api.get_draw_time_index',
+                        return_value=time_index):
+            resp = client.post('/draw_all',
+                               headers={'Authorization': f'Bearer {token}'})
+        db.session.commit()
+
+        assert resp.status_code == 200
+        target_users = list(user for user in User.query.all()
+                            if user.authority != "admin")[:15]
+        for user in target_users:
+            print(user.win_count)
+        for app in Application.query.all():
+            print(repr(app))
+        assert any(app.status == "won" for app in Application.query.all())
+        assert all(user.win_count == 1 for user in target_users)
+
+
 def test_get_specific_classroom(client):
     """test proper infomation is returned from the API
         target_url: /classrooms/<id>
@@ -822,10 +875,10 @@ def test_draw_lots_of_groups_and_normal(client):
         members_app = [Application(lottery=target_lottery, user_id=users[i].id)
                        for i in chain(members, normal)]
         rep_app = Application(
-                    lottery=target_lottery,
-                    user_id=users[rep].id, is_rep=True,
-                    group_members=[group_member(members_app[i])
-                                   for i in members])
+            lottery=target_lottery,
+            user_id=users[rep].id, is_rep=True,
+            group_members=[group_member(members_app[i])
+                           for i in members])
 
         for application in members_app:
             db.session.add(application)
