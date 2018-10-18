@@ -1,4 +1,3 @@
-from itertools import chain
 from jinja2 import Environment, FileSystemLoader
 
 from flask import Blueprint, jsonify, g, request, current_app
@@ -320,8 +319,7 @@ def draw_all_lotteries():
 
     winners = draw_all_at_index(index)
 
-    flattened = list(chain.from_iterable(winners))
-    result = users_schema.dump(flattened)
+    result = users_schema.dump(winners)
     return jsonify(result[0])
 
 
