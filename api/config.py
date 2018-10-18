@@ -34,6 +34,7 @@ class BaseConfig(object):
         (time(13, 50), time(14, 20))
     ]
     ONE_DAY_KIND = ['visitor']
+    MAX_MULTI_APPLICATION = 3
 
 
 class DevelopmentConfig(BaseConfig):
