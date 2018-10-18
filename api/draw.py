@@ -149,6 +149,14 @@ def draw_one_normal_users(applications, winners_num):
         application.status = "won" if application in winner_apps else "lose"
         db.session.add(application)
 
+    loser_apps = set(normal_users) - set(winner_apps)
+
+    for winner in winner_apps:
+        winner.user.win_count += 1
+
+    for loser in loser_apps:
+        loser.user.lose_count += 1
+
     return winner_apps
 
 
@@ -167,6 +175,10 @@ def draw_all_at_index(index):
         for lottery in lotteries:
             applications = [app for app in lottery.application
                             if app.user in users]
+            skipped_app = [app for app in lottery.application
+                           if app.user not in users]
+            for app in skipped_app:
+                app.status = "skipped"
             yield draw_one(lottery, applications)
 
     acc_winners = []

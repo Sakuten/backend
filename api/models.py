@@ -99,7 +99,8 @@ class Application(db.Model):
             id (int): application unique id
             lottery_id (int): lottery id this application linked to
             user_id (int): user id of this application
-            status (Boolen): whether chosen or not. initalized with None
+            status (Boolen): whether chosen or not.
+                             one of {won, lose, pending, skipped}
             is_rep (bool): whether rep of a group or not
     """
     __tablename__ = 'application'
@@ -111,7 +112,7 @@ class Application(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(
         'user.id', ondelete='CASCADE'))
     user = db.relationship('User')
-    # status: [ pending, won, lose ]
+    # status: [won, lose, pending, skipped]
     status = db.Column(db.String,
                        default="pending",
                        nullable=False)

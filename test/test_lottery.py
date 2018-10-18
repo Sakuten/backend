@@ -74,6 +74,7 @@ def test_draw_all_multi(client):
         print()
         users = list(user for user in User.query.all()
                      if user.authority != "admin")[:15]
+        users_ids = [user.id for user in users]
         print("winners_num:\t", client.application.config['WINNERS_NUM'])
         print("#users:\t\t", len(users))
         apps_1st = [Application(lottery=lottery_1st, user=user)
@@ -96,12 +97,12 @@ def test_draw_all_multi(client):
         db.session.commit()
 
         assert resp.status_code == 200
-        target_users = list(user for user in User.query.all()
-                            if user.authority != "admin")[:15]
+        target_users = [User.query.get(id) for id in users_ids]
         for user in target_users:
             print(user.win_count)
         for app in Application.query.all():
-            print(repr(app))
+            if app.status != "skipped":
+                print(repr(app))
         assert any(app.status == "won" for app in Application.query.all())
         assert all(user.win_count == 1 for user in target_users)
 
