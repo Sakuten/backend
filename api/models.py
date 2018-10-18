@@ -78,7 +78,7 @@ class Lottery(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # 'id' should be defined,
     classroom_id = db.Column(db.Integer, db.ForeignKey(
         'classroom.id', ondelete='CASCADE'))
-    classroom = db.relationship('Classroom')
+    classroom = db.relationship('Classroom', backref='lottery')
     index = db.Column(db.Integer)
     done = db.Column(db.Boolean)
     order = db.Column(db.Integer)
