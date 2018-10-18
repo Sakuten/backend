@@ -1,6 +1,6 @@
 import random
 from flask import current_app
-from api.models import Lottery, Application, db
+from api.models import User, Lottery, Application, db
 from itertools import chain
 from numpy.random import choice
 
@@ -23,7 +23,7 @@ class GroupAdvantage:
 group_advantage_calculation = GroupAdvantage.average
 
 
-def draw_one(lottery):
+def draw_one(lottery, applications=None):
     """
         Draw the specified lottery
         Args:
@@ -36,7 +36,8 @@ def draw_one(lottery):
     lottery.done = True
 
     idx = lottery.id
-    applications = Application.query.filter_by(lottery_id=idx).all()
+    applications = applications or \
+        Application.query.filter_by(lottery_id=idx).all()
 
     if len(applications) == 0:
         winners = []
@@ -160,12 +161,19 @@ def draw_all_at_index(index):
         Return:
           winners([[User]]): The list of list of users who won
     """
-    lotteries = Lottery.query.filter_by(index=index)
+    max_multi_apply = current_app.config['MAX_MULTI_APPLICATION']
 
-    winners = [draw_one(lottery)
-               for lottery in lotteries]
+    def draw_one_order(order, users):
+        lotteries = Lottery.query.filter_by(index=index, order=order)
+        for lottery in lotteries:
+            applications = [app for app in lottery.application
+                            if app.user in users]
+            yield draw_one(lottery, applications)
 
-    for lottery in lotteries:
+    winners = list(chain.from_iterable(draw_one_order(n, User.query.all())
+                   for n in range(max_multi_apply)))
+
+    for lottery in Lottery.query.filter_by(index=index):
         lottery.done = True
         db.session.add(lottery)
         db.session.commit()
