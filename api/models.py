@@ -73,6 +73,7 @@ class Lottery(db.Model):
             classroom (relationship): associated classroom
             index (int): number of peformance. {0..4}
             done (bool): whether it's done or not
+            order (int): 第(n+1)希望
     """
     id = db.Column(db.Integer, primary_key=True)  # 'id' should be defined,
     classroom_id = db.Column(db.Integer, db.ForeignKey(
@@ -80,10 +81,16 @@ class Lottery(db.Model):
     classroom = db.relationship('Classroom')
     index = db.Column(db.Integer)
     done = db.Column(db.Boolean)
+    order = db.Column(db.Integer)
 
     def __repr__(self):
-
-        return "<Lottery {}.{}>".format(self.classroom, self.index)
+        order_str = "1st" if self.order == 0 else \
+                    "2nd" if self.order == 1 else \
+                    "3rd" if self.order == 2 else \
+                    "{}th".format(self.order + 1)
+        return "<Lottery {}.{} {}>".format(self.classroom,
+                                           self.index,
+                                           order_str)
 
 
 class Application(db.Model):

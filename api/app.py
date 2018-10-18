@@ -135,6 +135,7 @@ def generate():
     """
     from .models import Lottery, Classroom, User, Error, db
     total_index = 4
+    max_multi_apply = current_app.config['MAX_MULTI_APPLICATION']
 
     Classroom.query.delete()
     Lottery.query.delete()
@@ -153,9 +154,11 @@ def generate():
         new_room = Classroom.query.filter_by(grade=class_data['grade'],
                                              index=class_data['index']).first()
         for perf_index in range(total_index):
-            lottery = Lottery(classroom_id=new_room.id,
-                              index=perf_index, done=False)
-            db.session.add(lottery)
+            for order in range(max_multi_apply):
+                lottery = Lottery(classroom_id=new_room.id,
+                                  index=perf_index, done=False,
+                                  order=order)
+                db.session.add(lottery)
 
     User.query.delete()
     json_path = current_app.config['ID_LIST_FILE']
