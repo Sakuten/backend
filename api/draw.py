@@ -41,6 +41,7 @@ def draw_one(lottery, applications=None):
 
     if len(applications) == 0:
         winners = []
+        losers = []
     else:
         for app in applications:
             # set a new field
@@ -50,19 +51,22 @@ def draw_one(lottery, applications=None):
 
         winners_num = current_app.config['WINNERS_NUM']
 
-        won_group_members = draw_one_group_members(applications, winners_num)
+        won_group_apps, lose_group_apps = \
+            draw_one_group_members(applications, winners_num)
 
-        rest_winners_num = winners_num - len(won_group_members)
-        won_normal_users = draw_one_normal_users(applications,
-                                                 rest_winners_num)
+        rest_winners_num = winners_num - len(won_group_apps)
+        won_normal_apps, lose_normal_apps = \
+            draw_one_normal_users(applications, rest_winners_num)
 
-        winners = [winner_app.user for winner_app in chain(won_group_members,
-                                                           won_normal_users)]
+        winners = [winner_app.user for winner_app in chain(won_group_apps,
+                                                           won_normal_apps)]
+        losers = [loser_app.user for loser_app in chain(lose_group_apps,
+                                                        lose_normal_apps)]
 
     db.session.add(lottery)
     db.session.commit()
 
-    return winners
+    return winners, losers
 
 
 def draw_one_group_members(applications, winners_num):
@@ -126,7 +130,7 @@ def draw_one_group_members(applications, winners_num):
     for user in chain(winner_apps, loser_apps):
         db.session.add(user)
 
-    return winner_apps
+    return winner_apps, loser_apps
 
 
 def draw_one_normal_users(applications, winners_num):
@@ -150,7 +154,8 @@ def draw_one_normal_users(applications, winners_num):
         application.status = "won" if application in winner_apps else "lose"
         db.session.add(application)
 
-    return winner_apps
+    loser_apps = list(set(normal_users) - set(winner_apps))
+    return winner_apps, loser_apps
 
 
 def draw_all_at_index(index):
@@ -171,7 +176,7 @@ def draw_all_at_index(index):
             yield draw_one(lottery, applications)
 
     winners = list(chain.from_iterable(draw_one_order(n, User.query.all())
-                   for n in range(max_multi_apply)))
+                                       for n in range(max_multi_apply)))
 
     for lottery in Lottery.query.filter_by(index=index):
         lottery.done = True

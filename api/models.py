@@ -73,7 +73,7 @@ class Lottery(db.Model):
             classroom (relationship): associated classroom
             index (int): number of peformance. {0..4}
             done (bool): whether it's done or not
-            order (int): 第(n+1)希望
+            order (int): (n+1)th target
     """
     id = db.Column(db.Integer, primary_key=True)  # 'id' should be defined,
     classroom_id = db.Column(db.Integer, db.ForeignKey(
