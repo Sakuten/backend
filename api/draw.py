@@ -8,16 +8,16 @@ from numpy.random import choice
 class GroupAdvantage:
     @staticmethod
     def minimum(group):
-        return min(app.advantage for app in group)
+        return min(app.get_advantage() for app in group)
 
     @staticmethod
     def average(group):
         group = list(group)
-        return sum(app.advantage for app in group) / len(group)
+        return sum(app.get_advantage() for app in group) / len(group)
 
     @staticmethod
     def rep(group):
-        return next(filter(lambda app: app.is_rep, group)).advantage
+        return next(filter(lambda app: app.is_rep, group)).get_advantage()
 
 
 group_advantage_calculation = GroupAdvantage.average
@@ -41,10 +41,6 @@ def draw_one(lottery):
     if len(applications) == 0:
         winners = []
     else:
-        for app in applications:
-            # set a new field
-            app.advantage = calc_advantage(
-                app.user.win_count, app.user.lose_count)
         set_group_advantage(applications)
 
         winners_num = current_app.config['WINNERS_NUM']
@@ -75,20 +71,16 @@ def draw_one_group_members(applications, winners_num):
     loser_reps = []
 
     def set_group_result(rep, is_won):
-        status, to_apps, to_reps, win, lose = \
-            ("won", winner_apps, winner_reps, 1, 0) if is_won \
-            else ("lose", loser_apps, loser_reps, 0, 1)
+        status, to_apps, to_reps = \
+            ("won", winner_apps, winner_reps) if is_won \
+            else ("lose", loser_apps, loser_reps)
 
-        rep.status = status
-        rep.user.win_count += win
-        rep.user.lose_count += lose
+        rep.set_status(status)
         to_apps.append(rep)
         to_reps.append(rep)
 
         for member in rep.group_members:
-            member.own_application.status = status
-            member.own_application.user.win_count += win
-            member.own_application.user.lose_count += lose
+            member.own_application.set_status(status)
             to_apps.append(member.own_application)
 
     def unset_group_result(rep, from_apps, from_reps):
@@ -146,7 +138,7 @@ def draw_one_normal_users(applications, winners_num):
             p=calc_probabilities(normal_users))
 
     for application in normal_users:
-        application.status = "won" if application in winner_apps else "lose"
+        application.set_status("won" if application in winner_apps else "lose")
         db.session.add(application)
 
     return winner_apps
@@ -168,7 +160,7 @@ def draw_all_at_index(index):
     for lottery in lotteries:
         lottery.done = True
         db.session.add(lottery)
-        db.session.commit()
+    db.session.commit()
 
     return winners
 
@@ -180,19 +172,8 @@ def calc_probabilities(applications):
         the application is to be chosen in comparison with others
         the sum of the list is 1
     """
-    sum_advantage = sum(app.advantage for app in applications)
-    return [app.advantage / sum_advantage for app in applications]
-
-
-def calc_advantage(win_count, lose_count):
-    """
-        returns multiplier indicating how more likely
-        the application is to win
-    """
-    if lose_count == 0:
-        return 1
-    else:
-        return max(1, lose_count - win_count)
+    sum_advantage = sum(app.get_advantage() for app in applications)
+    return [app.get_advantage() / sum_advantage for app in applications]
 
 
 def set_group_advantage(apps):
@@ -202,4 +183,4 @@ def set_group_advantage(apps):
     for group in group_apps:
         advantage = group_advantage_calculation(group)
         for app in group:
-            app.advantage = advantage
+            app.set_advantage(advantage)

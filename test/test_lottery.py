@@ -687,7 +687,14 @@ def test_draw(client):
                 lottery=target_lottery, user_id=user.id).first()
             if application:
                 status = 'won' if user.id in winners_id else 'lose'
+            print(application)
             assert application.status == status
+            if status == 'won':
+                assert user.win_count == 1
+                assert user.lose_count == 0
+            else:
+                assert user.win_count == 0
+                assert user.lose_count == 1
 
 
 def test_draw_group(client):
@@ -928,44 +935,39 @@ def test_losers_advantage(client):
         target_url: /lotteries/<id>/draw
     """
     idx = 1
-    win_count = {i: 0 for i in range(1, 7)}
+    win_count = {i: 0 for i in range(1, 13)}
 
-    for i in range(20):
-        with client.application.app_context():
-            target_lottery = Lottery.query.get(idx)
-            index = target_lottery.index
+    with client.application.app_context():
+        target_lottery = Lottery.query.get(idx)
+        index = target_lottery.index
 
-            users = User.query.order_by(User.id).all()[:6]
-            users[0].lose_count = 6
-            user0_id = users[0].id
+        users = User.query.order_by(User.id).all()[:12]
+        users[0].lose_count = 3
+        user0_id = users[0].id
 
-            apps = (Application(lottery=target_lottery, user_id=user.id)
-                    for user in users)
+        apps = (Application(lottery=target_lottery, user_id=user.id)
+                for user in users)
 
-            for app in apps:
-                db.session.add(app)
-            db.session.commit()
+        for app in apps:
+            db.session.add(app)
+        db.session.commit()
 
-            token = login(client, admin['secret_id'],
-                          admin['g-recaptcha-response'])['token']
+        token = login(client, admin['secret_id'],
+                      admin['g-recaptcha-response'])['token']
 
-            with mock.patch('api.routes.api.get_draw_time_index',
-                            return_value=index):
-                resp = client.post(
-                    f'/lotteries/{idx}/draw',
-                    headers={'Authorization': f'Bearer {token}'})
+        with mock.patch('api.routes.api.get_draw_time_index',
+                        return_value=index):
+            resp = client.post(
+                f'/lotteries/{idx}/draw',
+                headers={'Authorization': f'Bearer {token}'})
 
-                for winner_json in resp.get_json():
-                    winner_id = winner_json['id']
-                    win_count[winner_id] += 1
+            for winner_json in resp.get_json():
+                winner_id = winner_json['id']
+                win_count[winner_id] += 1
 
-            # re-configure and reset test environment
-            init_and_generate()
-
-    won_most = max(win_count.items(), key=itemgetter(1))[0]
-    print('final results of applications (1 is rep)')
+    print("final results of applications (1's lose_count == 3)")
     print(win_count)
-    assert won_most == user0_id
+    assert win_count[user0_id] > 0
 
 
 def test_group_losers_advantage(client):
