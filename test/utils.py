@@ -81,3 +81,30 @@ def make_application(client, secret_id, lottery_id):
         db.session.add(newapplication)
         db.session.commit()
         return newapplication.id
+
+
+def user2application(user, target_lottery):
+    if isinstance(target_lottery, int):
+        # when target_lottery is id
+        if isinstance(user, int):
+            # when user is id
+            return Application(lottery_id=target_lottery, user_id=user)
+        else:
+            return Application(lottery_id=target_lottery, user=user)
+    else:
+        if isinstance(user, int):
+            return Application(lottery=target_lottery, user_id=user)
+        else:
+            return Application(lottery=target_lottery, user=user)
+
+
+def add_db(args):
+    for arg in args:
+        db.session.add(arg)
+    db.session.commit()
+
+
+def get_token(client, login_user):
+    return login(client,
+                 login_user['secret_id'],
+                 login_user['g-recaptcha-response'])['token']
