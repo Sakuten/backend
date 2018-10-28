@@ -211,3 +211,7 @@ class Error(db.Model):
 def group_member(application):
     return GroupMember(user_id=application.user_id,
                        own_application=application)
+
+
+def group_members(applications):
+    return [group_member(app) for app in applications]
