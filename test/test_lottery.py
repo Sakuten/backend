@@ -174,7 +174,7 @@ def test_apply_normal(client):
     with mock.patch('api.routes.api.get_time_index',
                     return_value=index):
         resp = post(client, f'/lotteries/{idx}', token,
-                    json={'group_members': []})
+                    group_members=[])
 
     assert resp.status_code == 200
 
@@ -197,8 +197,7 @@ def test_apply_admin(client):
     idx = 1
     token = get_token(client, admin)
 
-    resp = post(client, f'/lotteries/{idx}', token,
-                json={'group_members': []})
+    resp = post(client, f'/lotteries/{idx}', token, group_members=[])
 
     assert resp.status_code == 403
 
@@ -282,11 +281,9 @@ def test_apply_same_period_same_lottery(client):
         db.session.add(application)
         db.session.commit()
 
-    with mock.patch('api.routes.api.get_time_index',
-                    return_value=index):
-        resp = client.post(f'/lotteries/{idx}',
-                           headers={'Authorization': f'Bearer {token}'},
-                           json={'group_members': []})
+        with mock.patch('api.routes.api.get_time_index',
+                        return_value=index):
+            resp = post(client, f'/lotteries/{idx}', token, group_members=[])
 
     message = resp.get_json()['message']
 
@@ -742,33 +739,33 @@ def test_draw_group(client):
 
 
 def test_draw_lots_of_groups(client):
-    """attempt to draw a lottery as 3 groups of 2 members
+    """attempt to draw a lottery as 2 groups of 2 members and
+            1 group of 3 members
             while WINNERS_NUM is 5
         1. make some applications to one lottery as groups
         2. draws the lottery
         3. test: status code
         4. test: DB is changed
         5. test: result of each member
-        6. test: number of winners is 2
+        6. test: number of winners is 5 (*not 4*)
         target_url: /lotteries/<id>/draw [POST]
     """
     idx = 1
-    members = (0, 1, 2)
-    reps = (3, 4, 5)
+    groups = {0: [1], 2: [3], 4: [5, 6]}    # rep -> members
 
     with client.application.app_context():
         target_lottery = Lottery.query.get(idx)
         index = target_lottery.index
         users = User.query.all()
 
-        members_app = [user2application(users[i], target_lottery)
-                       for i in members]
-        add_db(members_app)
+        for rep, members in groups.items():
+            members_app = [user2application(users[i], target_lottery)
+                           for i in members]
+            add_db(members_app)
 
-        reps_app = (rep2application(users[rep], target_lottery,
-                                    [members_app[member]])
-                    for rep, member in zip(reps, members))
-        add_db(reps_app)
+            rep_app = rep2application(users[rep], target_lottery,
+                                      group_members(members_app))
+            add_db([rep_app])
 
         token = get_token(client, admin)
 
@@ -777,18 +774,19 @@ def test_draw_lots_of_groups(client):
         assert resp.status_code == 200
 
         winners = resp.get_json()
-        assert len(winners) == 4
+        assert len(winners) == 5
 
         users = User.query.all()
         target_lottery = Lottery.query.get(idx)
 
         assert target_lottery.done
 
-        for i, j in zip(reps, members):
-            rep_status = get_application(users[i], target_lottery).status
-            member_status = get_application(users[j], target_lottery).status
+        for rep, members in groups.items():
+            rep_status = get_application(users[rep], target_lottery).status
+            members_status = (get_application(users[i], target_lottery).status
+                              for i in members)
 
-            assert rep_status == member_status
+            assert all(status == rep_status for status in members_status)
 
 
 def test_draw_lots_of_groups_and_normal(client):
@@ -1041,6 +1039,7 @@ def test_draw_all(client):
 
     resp = draw_all(client, token, time=draw_time)
 
+    print(resp.get_json())
     assert resp.status_code == 200
 
     winners_id = [winner['id'] for winner in resp.get_json()]

@@ -63,7 +63,6 @@ def draw_one(lottery):
 def draw_one_group_members(applications, winners_num):
     """internal function
         decide win or lose for each group
-        add applications to the session
     """
     winner_apps = []
     loser_apps = []
@@ -71,12 +70,13 @@ def draw_one_group_members(applications, winners_num):
     loser_reps = []
 
     def set_group_result(rep, is_won):
-        status, to_apps, to_reps = \
-            ("won", winner_apps, winner_reps) if is_won \
-            else ("lose", loser_apps, loser_reps)
+        if is_won:
+            status, to_apps, to_reps = "won", winner_apps, winner_reps
+        else:
+            status, to_apps, to_reps = "lose", loser_apps, loser_reps
 
         rep.set_status(status)
-        to_apps.append(rep)
+        to_apps.append(rep)     # record results
         to_reps.append(rep)
 
         for member in rep.group_members:
@@ -84,22 +84,21 @@ def draw_one_group_members(applications, winners_num):
             to_apps.append(member.own_application)
 
     def unset_group_result(rep, from_apps, from_reps):
-        from_apps.remove(rep)
+        from_apps.remove(rep)   # remove recorded old results
         from_reps.remove(rep)
         for member in rep.group_members:
             from_apps.remove(member.own_application)
 
-    reps_with_index = [(i, app)
-                       for i, app in enumerate(applications) if app.is_rep]
+    reps = [app for app in applications if app.is_rep]
 
-    all_probabilities = calc_probabilities(applications)
+    probability_dict = get_probability_dict(applications, winners_num)
 
-    for i, rep in reps_with_index:
+    for i, rep in enumerate(reps):
         set_group_result(rep,
-                         random.random() < all_probabilities[i] * winners_num)
+                         random.random() < probability_dict[rep])
 
-    n_group_members = sum(len(rep_app.group_members) + 1
-                          for _, rep_app in reps_with_index)
+    n_group_members = sum(len(rep.group_members) + 1
+                          for rep in reps)
     n_normal_users = len(applications) - n_group_members
 
     # when too few groups accidentally won
@@ -170,13 +169,22 @@ def calc_probabilities(applications):
         calculate the probability of each application
         return list of the weight of each application showing how likely
         the application is to be chosen in comparison with others
-        the sum of the list is 1
+        *the sum of the list is 1*
     """
     sum_advantage = sum(app.get_advantage() for app in applications)
     return [app.get_advantage() / sum_advantage for app in applications]
 
 
+def get_probability_dict(applications, winners_num):
+    all_probabilities = calc_probabilities(applications)
+    return {app: all_probabilities[i] * winners_num
+            for i, app in enumerate(applications)}
+
+
 def set_group_advantage(apps):
+    """
+        calculate the advantage of the group using group_advantage_calculation
+    """
     group_apps = (chain([rep], (member.own_application
                                 for member in rep.group_members))
                   for rep in apps if rep.is_rep)

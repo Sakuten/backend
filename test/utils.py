@@ -155,20 +155,25 @@ def draw_all(client, token, index=None, time=None):
     return post(client, '/draw_all', token, index, time)
 
 
-def post(client, url, token=None, draw_time_index=None, time=None, **kwargs):
-    if draw_time_index is not None:
+def post(client, url, token=None, index=None,
+         time=None, group_members=None, **kwargs):
+    if index is not None:
         with mock.patch('api.routes.api.get_draw_time_index',
-                        return_value=draw_time_index):
-            return post(client, url, token, None, time, **kwargs)
-
+                        return_value=index):
+            return post(client, url, token, None, time, group_members,
+                        **kwargs)
     if time is not None:
         with mock.patch('api.time_management.get_current_datetime',
                         return_value=time):
-            return post(client, url, token, draw_time_index, None,
+            return post(client, url, token, index, None, group_members,
                         **kwargs)
 
     if token is not None:
-        return client.post(url, headers={'Authorization': f'Bearer {token}'},
-                           **kwargs)
-    else:
-        return client.post(url, **kwargs)
+        return post(client, url, group_members=group_members,
+                    headers={'Authorization': f'Bearer {token}'},
+                    **kwargs)
+    if group_members is not None:
+        return post(client, url, json={'group_members': group_members},
+                    **kwargs)
+
+    return client.post(url, **kwargs)
