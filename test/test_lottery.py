@@ -1039,7 +1039,6 @@ def test_draw_all(client):
 
     resp = draw_all(client, token, time=draw_time)
 
-    print(resp.get_json())
     assert resp.status_code == 200
 
     winners_id = [winner['id'] for winner in resp.get_json()]
