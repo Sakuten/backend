@@ -29,7 +29,7 @@ def draw_one(lottery):
         Args:
           lottery(Lottery): The lottery to be drawn
         Return:
-          winners([User]): The list of users who won
+          winners([User]): The list of users who win
         Raises:
             AlreadyDoneError
     """
@@ -74,9 +74,9 @@ def draw_one_group_members(applications, winners_num):
     winner_reps = []
     loser_reps = []
 
-    def set_group_result(rep, is_won):
+    def set_group_result(rep, is_win):
         status, to_apps, to_reps, win, lose = \
-            ("won", winner_apps, winner_reps, 1, 0) if is_won \
+            ("win", winner_apps, winner_reps, 1, 0) if is_win \
             else ("lose", loser_apps, loser_reps, 0, 1)
 
         rep.status = status
@@ -146,7 +146,7 @@ def draw_one_normal_users(applications, winners_num):
             p=calc_probabilities(normal_users))
 
     for application in normal_users:
-        application.status = "won" if application in winner_apps else "lose"
+        application.status = "win" if application in winner_apps else "lose"
         db.session.add(application)
 
     return winner_apps
@@ -158,7 +158,7 @@ def draw_all_at_index(index):
         Args:
           index(int): zero-based index that indicates the time of lottery
         Return:
-          winners([[User]]): The list of list of users who won
+          winners([[User]]): The list of list of users who win
     """
     lotteries = Lottery.query.filter_by(index=index)
 

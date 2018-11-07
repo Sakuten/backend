@@ -104,7 +104,7 @@ class Application(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(
         'user.id', ondelete='CASCADE'))
     user = db.relationship('User')
-    # status: [ pending, won, lose ]
+    # status: [ pending, win, lose ]
     status = db.Column(db.String,
                        default="pending",
                        nullable=False)
@@ -118,6 +118,44 @@ class Application(db.Model):
             self.lottery, self.user,
             " (rep)" if self.is_rep else "",
             self.status)
+
+    def get_advantage(self):
+        """
+            returns multiplier indicating how more likely
+            the application is to win
+        """
+        if self.advantage:
+            return self.advantage
+        elif self.user.lose_count == 0:
+            return 1
+        else:
+            return 3 ** max(0, self.user.lose_count - self.user.win_count)
+
+    def set_advantage(self, advantage):
+        self.advantage = advantage
+
+    def set_status(self, newstatus):
+        if newstatus not in {"pending", "win", "lose"}:
+            raise ValueError
+
+        change_win, change_lose = (1, 0) if newstatus == "win" else \
+                                  (0, 1) if newstatus == "lose" else \
+                                  (0, 0)
+
+        revert_win, revert_lose = (-1, 0) if self.status == "win" else \
+                                  (0, -1) if self.status == "lose" else \
+                                  (0, 0)
+
+        self.user.win_count += change_win
+        self.user.win_count += revert_win
+        self.user.lose_count += change_lose
+        self.user.lose_count += revert_lose
+
+        self.status = newstatus
+
+        db.session.add(self.user)
+        db.session.add(self)
+        db.session.commit()
 
 
 class GroupMember(db.Model):

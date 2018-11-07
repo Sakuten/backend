@@ -339,7 +339,7 @@ def get_winners_id(idx):
 
     def public_id_generator():
         for app in lottery.application:
-            if app.status == 'won':
+            if app.status == 'win':
                 yield app.user.public_id
     return jsonify(list(public_id_generator()))
 
@@ -431,7 +431,7 @@ def results():
             original at: L.336, written by @tamazasa
         """
         for app in lottery.application:
-            if app.status == 'won' and app.user.kind == kind:
+            if app.status == 'win' and app.user.kind == kind:
                 yield encode_public_id(app.user.public_id)
 
     # 1.

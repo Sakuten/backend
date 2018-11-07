@@ -21,7 +21,7 @@ response:
       properties:
         status:
           description: the status
-          enum: [won, lose, pending]
+          enum: [win, lose, pending]
           type: string
   '400':
     description: Malformed Authenication Header has detected / Not acceptable time

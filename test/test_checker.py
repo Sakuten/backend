@@ -4,7 +4,7 @@ from utils import test_user, checker, as_user_get
 from api.models import Lottery, User, Application, db
 
 
-@pytest.mark.parametrize("def_status", ["pending", "won", "lose"])
+@pytest.mark.parametrize("def_status", ["pending", "win", "lose"])
 def test_checker(client, def_status):
     """use `/checker` endpoint with winner user
         target_url: /checker/{classroom_id}/{secret_id}

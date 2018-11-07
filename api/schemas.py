@@ -94,7 +94,7 @@ class LotterySchema(Schema):
 
     def get_winners(self, lottery):
         winners = Application.query.filter_by(
-            lottery_id=lottery.id, status="won").all()
+            lottery_id=lottery.id, status="win").all()
         return [winner.public_id for winner in winners]
 
     def calc_end_of_drawing(self, lottery):
