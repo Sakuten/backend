@@ -95,6 +95,7 @@ class Application(db.Model):
             user_id (int): user id of this application
             status (Boolen): whether chosen or not. initalized with None
             is_rep (bool): whether rep of a group or not
+            advantage (int): how much advantage does user have
     """
     __tablename__ = 'application'
 
