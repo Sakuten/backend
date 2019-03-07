@@ -3,6 +3,10 @@ from flask import current_app
 from api.models import Lottery, Application, db
 from itertools import chain
 from numpy.random import choice
+# typehints imports {{{
+from typehint import List, Union
+from api.models import User
+# }}}
 
 
 class GroupAdvantage:
@@ -23,7 +27,7 @@ class GroupAdvantage:
 group_advantage_calculation = GroupAdvantage.average
 
 
-def draw_one(lottery):
+def draw_one(lottery: Lottery) -> Union[List, List[User]]:
     """
         Draw the specified lottery
         Args:
@@ -60,7 +64,7 @@ def draw_one(lottery):
     return winners
 
 
-def draw_one_group_members(applications, winners_num):
+def draw_one_group_members(applications: List[Application], winners_num: int): # TODO: WIP
     """internal function
         decide win or lose for each group
     """
