@@ -1,5 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
 from cards.id import encode_public_id
+# typehints imports {{{
+from typehint import List
+# }}}
 
 db = SQLAlchemy()
 
@@ -25,7 +28,7 @@ class User(db.Model):
     kind = db.Column(db.String(30))
     first_access = db.Column(db.Date, default=None)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         authority_str = f'({self.authority})' if self.authority else ''
         return f'<User {encode_public_id(self.public_id)} {authority_str} ' + \
                f'{self.win_count}-{self.lose_count}>'
@@ -47,13 +50,13 @@ class Classroom(db.Model):
     index = db.Column(db.Integer)
     title = db.Column(db.String(300))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<Classroom %r%r>".format(self.grade, self.get_classroom_name)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.grade}{self.get_classroom_name()}'
 
-    def get_classroom_name(self):
+    def get_classroom_name(self) -> str:
         """
             return class  number in Alphabet
         """
@@ -82,7 +85,7 @@ class Lottery(db.Model):
     index = db.Column(db.Integer)
     done = db.Column(db.Boolean)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
 
         return "<Lottery {}.{}>".format(self.classroom, self.index)
 
@@ -115,13 +118,13 @@ class Application(db.Model):
     #     'group_members.id', ondelete='CASCADE'))
     # me_group_member = db.relationship('GroupMember', backref='application')
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<Application {}{}{} {}>".format(
             self.lottery, self.user,
             " (rep)" if self.is_rep else "",
             self.status)
 
-    def get_advantage(self):
+    def get_advantage(self) -> int:
         """
             returns multiplier indicating how more likely
             the application is to win
@@ -133,10 +136,10 @@ class Application(db.Model):
         else:
             return 3 ** max(0, self.user.lose_count - self.user.win_count)
 
-    def set_advantage(self, advantage):
+    def set_advantage(self, advantage: int) -> None:
         self.advantage = advantage
 
-    def set_status(self, newstatus):
+    def set_status(self, newstatus: str) -> None:
         if newstatus not in {"pending", "won", "lose"}:
             raise ValueError
 
@@ -186,7 +189,7 @@ class GroupMember(db.Model):
                                       foreign_keys=[rep_application_id],
                                       backref='group_members')
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<GroupMember {self.user}>"
 
 
@@ -204,14 +207,14 @@ class Error(db.Model):
     http_code = db.Column(db.Integer)
     message = db.Column(db.String(200))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'<Error {self.code}: "{self.message}">'
 
 
-def group_member(application):
+def group_member(application: Application) -> GroupMember:
     return GroupMember(user_id=application.user_id,
                        own_application=application)
 
 
-def group_members(applications):
+def group_members(applications: List[Application]) -> List[GroupMember]:
     return [group_member(app) for app in applications]

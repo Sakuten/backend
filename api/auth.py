@@ -22,7 +22,7 @@ class UserDisabledError(Exception):
     pass
 
 
-def generate_token(obj):
+def generate_token(obj: dict) -> bytes:
     """
         generate token and expiration, return it.
         Args:
@@ -39,7 +39,7 @@ def generate_token(obj):
     return fernet.encrypt(json.dumps(data).encode())
 
 
-def decrypt_token(token):
+def decrypt_token(token: str) -> dict:
     """
         decrypt the token.
         Args:
@@ -55,7 +55,8 @@ def decrypt_token(token):
     return json.loads(decrypted.decode())
 
 
-def login_required(*required_authority):
+# TODO: is this returns anything?
+def login_required(*required_authority: str):
     """
         a decorder to require login
         Args:
@@ -106,7 +107,7 @@ def login_required(*required_authority):
     return login_required_impl
 
 
-def todays_user(secret_id='', user_id=''):
+def todays_user(secret_id: str='', user_id: str='') -> User:
     """confirm the user id isn't used in other day
         and return `User` object
         Args:

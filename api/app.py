@@ -19,7 +19,7 @@ config = {
 }
 
 
-def create_app():
+def create_app() -> Flask.app:
     """create base flask application
         1. generate flask application
         2. set config based on 'FLASK_CONFIGURATION'
@@ -76,7 +76,7 @@ def create_app():
     return app
 
 
-def init_and_generate():
+def init_and_generate() -> None:
     """
         Intialize and generate DB if needed,
         depends on DB_GEN_POLICY and DB_FORCE_INIT.
@@ -117,12 +117,12 @@ def init_and_generate():
             f'Unknown DB_GEN_POLICY: {policy}. Treated as \'never\'.')
 
 
-def initdb(app, db):
+def initdb(app: Flask.app, db: api.models.db):
     from api.models import db
     db.create_all()
 
 
-def generate():
+def generate() -> None:
     """generate DB contents
         1. generate classrooms
         2. generate lotteries

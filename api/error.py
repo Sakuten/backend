@@ -1,9 +1,12 @@
 from api.schemas import error_schema
 from api.models import Error
 from flask import jsonify
+# typehints imports {{{
+from typehint import Tuple
+from flask import Response
+# }}}
 
-
-def error_response(code):
+def error_response(code: int) -> Tuple[Response, int]:
     """
         Construct json response from error code
         Args:
