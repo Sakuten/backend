@@ -1,8 +1,11 @@
 from flask import current_app
 import datetime
+# typehints imports {{{
+from typehint import Union, Optional
+# }}}
 
 
-def mod_time(t, dt):
+def mod_time(t: Union[datetime.time, datetime.datetime], dt: datetime.timedelta) -> Union[datetime.time, datetime.datetime]:
     """
         Modify the supplied time with timedelta
         Args:
@@ -33,7 +36,7 @@ class OutOfAcceptingHoursError(Exception):
     pass
 
 
-def get_current_datetime():
+def get_current_datetime() -> datetime.datetime:
     """
         Get the current datetime.
         Note: This function is intended to be mocked in testing
@@ -43,7 +46,7 @@ def get_current_datetime():
     return datetime.datetime.now(current_app.config['TIMEZONE'])
 
 
-def _validate_and_get_time(time):
+def _validate_and_get_time(time: Optional[datetime.datetime]) -> datetime.time:
     if time is None:
         time = get_current_datetime()
 
@@ -57,7 +60,7 @@ def _validate_and_get_time(time):
     return time
 
 
-def get_draw_time_index(time=None):
+def get_draw_time_index(time: Union[datetime.time, datetime.datetime, None]=None) -> int:
     """
         get the lottery index from the drawing time
         args:
@@ -78,7 +81,7 @@ def get_draw_time_index(time=None):
     raise OutOfAcceptingHoursError()
 
 
-def get_time_index(time=None):
+def get_time_index(time: Union[datetime.time, datetime.datetime, None]=None) -> int:
     """
         get the lottery index from the time
         args:
@@ -98,7 +101,7 @@ def get_time_index(time=None):
     raise OutOfAcceptingHoursError()
 
 
-def get_prev_time_index(time=None):
+def get_prev_time_index(time: Union[datetime.time, datetime.datetime, None]=None) -> int:
     """
         get the previous lottery index from the time
         args:
