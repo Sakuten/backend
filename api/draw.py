@@ -4,7 +4,7 @@ from api.models import Lottery, Application, db
 from itertools import chain
 from numpy.random import choice
 # typehints imports {{{
-from typehint import List, Union
+from typehint import List, Union, Dict
 from api.models import User
 # }}}
 
@@ -64,7 +64,7 @@ def draw_one(lottery: Lottery) -> Union[List, List[User]]:
     return winners
 
 
-def draw_one_group_members(applications: List[Application], winners_num: int): # TODO: WIP
+def draw_one_group_members(applications: List[Application], winners_num: int) -> List[Application]:
     """internal function
         decide win or lose for each group
     """
@@ -73,7 +73,7 @@ def draw_one_group_members(applications: List[Application], winners_num: int): #
     winner_reps = []
     loser_reps = []
 
-    def set_group_result(rep, is_won):
+    def set_group_result(rep: Application, is_won: bool) -> None:
         if is_won:
             status, to_apps, to_reps = "won", winner_apps, winner_reps
         else:
@@ -87,7 +87,7 @@ def draw_one_group_members(applications: List[Application], winners_num: int): #
             member.own_application.set_status(status)
             to_apps.append(member.own_application)
 
-    def unset_group_result(rep, from_apps, from_reps):
+    def unset_group_result(rep: Application, from_apps: List[Application], from_reps: List[Application]) -> None:
         from_apps.remove(rep)   # remove recorded old results
         from_reps.remove(rep)
         for member in rep.group_members:
@@ -125,7 +125,7 @@ def draw_one_group_members(applications: List[Application], winners_num: int): #
     return winner_apps
 
 
-def draw_one_normal_users(applications, winners_num):
+def draw_one_normal_users(applications: List[Application], winners_num: int) -> List[Application]:
     """internal function
         decide win or lose for each user not belonging to a group
         add applications to the session
@@ -149,7 +149,7 @@ def draw_one_normal_users(applications, winners_num):
     return winner_apps
 
 
-def draw_all_at_index(index):
+def draw_all_at_index(index: int) -> List[User]:
     """
         Draw all lotteries in the specific index
         Args:
@@ -170,7 +170,7 @@ def draw_all_at_index(index):
     return winners
 
 
-def calc_probabilities(applications):
+def calc_probabilities(applications: List[Application]) -> List[float]:
     """
         calculate the probability of each application
         return list of the weight of each application showing how likely
@@ -181,13 +181,13 @@ def calc_probabilities(applications):
     return [app.get_advantage() / sum_advantage for app in applications]
 
 
-def get_probability_dict(applications, winners_num):
+def get_probability_dict(applications: List[Application], winners_num: int) -> Dict[Application, float]:
     all_probabilities = calc_probabilities(applications)
     return {app: all_probabilities[i] * winners_num
             for i, app in enumerate(applications)}
 
 
-def set_group_advantage(apps):
+def set_group_advantage(apps: List[Application]):
     """
         calculate the advantage of the group using group_advantage_calculation
     """
