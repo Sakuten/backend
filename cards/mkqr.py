@@ -3,7 +3,7 @@
 import qrcode
 
 
-def gen_qr_code(base_url, secret_id):
+def gen_qr_code(base_url: str, secret_id: str) -> str:
     """generate QR code from URL and secret key
         Parameters:
             secret_id (str): secret id to include

@@ -9,6 +9,8 @@ from mkqr import gen_qr_code
 from cards import card
 from pathlib import Path
 
+from typehint import Iterator, List
+
 parser = argparse.ArgumentParser(description='Generate HTML from template')
 parser.add_argument("-i", "--input", type=str,
                     required=True, help="Input json file path")
@@ -40,7 +42,7 @@ for id_pair in id_pairs:
     cards.append(newcard)
 
 
-def print_cards(cards, path):
+def print_cards(cards, path) -> None:
     empty_card = card('', '')
     env = Environment(loader=FileSystemLoader('.'))
     template = env.get_template(args.template)
@@ -54,7 +56,7 @@ def print_cards(cards, path):
         f.write(html)
 
 
-def chunks(l, n):
+def chunks(l: List[card], n: int) -> Iterator[card]:
     """
     This function is taken from Stack Overflow:
     https://stackoverflow.com/questions/312443
