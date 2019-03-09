@@ -7,7 +7,7 @@ from typehint import List
 db = SQLAlchemy()
 
 
-class User(db.Model):
+class User(db.Model): # type: ignore
     """
         User model for DB
         Args:
@@ -34,7 +34,7 @@ class User(db.Model):
                f'{self.win_count}-{self.lose_count}>'
 
 
-class Classroom(db.Model):
+class Classroom(db.Model): # type: ignore
     """
         Classroom model for DB
         Args:
@@ -64,7 +64,7 @@ class Classroom(db.Model):
         return names[self.index]
 
 
-class Lottery(db.Model):
+class Lottery(db.Model): # type: ignore
     """
         Lottery model for DB
         Args:
@@ -90,7 +90,7 @@ class Lottery(db.Model):
         return "<Lottery {}.{}>".format(self.classroom, self.index)
 
 
-class Application(db.Model):
+class Application(db.Model): # type: ignore
     """application model for DB
         DB contents:
             id (int): application unique id
@@ -163,7 +163,7 @@ class Application(db.Model):
         db.session.commit()
 
 
-class GroupMember(db.Model):
+class GroupMember(db.Model): # type: ignore
     """group-member model for DB
         DB contents:
             id (int): group member unique id
@@ -193,7 +193,7 @@ class GroupMember(db.Model):
         return f"<GroupMember {self.user}>"
 
 
-class Error(db.Model):
+class Error(db.Model): # type: ignore
     """
         Error model
         DB contents:
