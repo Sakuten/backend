@@ -13,7 +13,7 @@ from urllib.request import Request, urlopen
 from urllib.error import HTTPError
 import hashlib
 # typehints imports {{{
-from typehint import Dict, Optional
+from typing import Dict, Optional
 # }}}
 
 parser = argparse.ArgumentParser(

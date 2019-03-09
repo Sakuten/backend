@@ -1,7 +1,7 @@
 from flask import current_app
 import datetime
 # typehints imports {{{
-from typehint import Union, Optional
+from typing import Union, Optional
 # }}}
 
 

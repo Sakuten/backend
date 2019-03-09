@@ -2,7 +2,7 @@ from api.schemas import error_schema
 from api.models import Error
 from flask import jsonify
 # typehints imports {{{
-from typehint import Tuple
+from typing import Tuple
 from flask import Response
 # }}}
 

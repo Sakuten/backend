@@ -9,7 +9,7 @@ from pathlib import Path
 import json
 
 # typehints imports {{{
-from typehint import Dict, Optional
+from typing import Dict, Optional
 # }}}
 
 

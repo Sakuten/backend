@@ -9,7 +9,7 @@ from mkqr import gen_qr_code
 from cards import card
 from pathlib import Path
 
-from typehint import Iterator, List
+from typing import Iterator, List
 
 parser = argparse.ArgumentParser(description='Generate HTML from template')
 parser.add_argument("-i", "--input", type=str,

@@ -7,7 +7,7 @@ import json
 from api.time_management import get_current_datetime
 from api.error import error_response
 # typehints imports {{{
-from typehint import Optional, Tuple, Callable, Dict
+from typing import Optional, Tuple, Callable, Dict
 from flask import Response
 # }}}
 

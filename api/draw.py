@@ -4,7 +4,7 @@ from api.models import Lottery, Application, db
 from itertools import chain
 from numpy.random import choice
 # typehints imports {{{
-from typehint import List, Union, Dict
+from typing import List, Union, Dict
 from api.models import User
 # }}}
 

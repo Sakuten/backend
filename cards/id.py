@@ -2,7 +2,7 @@ import json
 import random
 from secrets import token_urlsafe
 # typehints imports {{{
-from typehint import List, Dict
+from typing import List, Dict
 ## }}}
 
 

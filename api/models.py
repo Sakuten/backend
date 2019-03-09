@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from cards.id import encode_public_id
 # typehints imports {{{
-from typehint import List
+from typing import List
 # }}}
 
 db = SQLAlchemy()

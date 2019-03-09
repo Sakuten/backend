@@ -8,7 +8,7 @@ from urllib.error import HTTPError
 from pathlib import Path
 import json
 # typehints imports {{{
-from typehint import Optional, Dict
+from typing import Optional, Dict
 # }}}
 
 
