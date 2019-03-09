@@ -27,7 +27,7 @@ class GroupAdvantage:
 group_advantage_calculation = GroupAdvantage.average
 
 
-def draw_one(lottery: Lottery) -> Union[List, List[User]]:
+def draw_one(lottery: Lottery) -> List[User]:
     """
         Draw the specified lottery
         Args:
@@ -149,7 +149,7 @@ def draw_one_normal_users(applications: List[Application], winners_num: int) -> 
     return winner_apps
 
 
-def draw_all_at_index(index: int) -> List[User]:
+def draw_all_at_index(index: int) -> List[List[User]]:
     """
         Draw all lotteries in the specific index
         Args:

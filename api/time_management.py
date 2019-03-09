@@ -2,10 +2,18 @@ from flask import current_app
 import datetime
 # typehints imports {{{
 from typing import Union, Optional
+import typing
 # }}}
 
+@typing.overload
+def mod_time(t: datetime.time, dt: datetime.timedelta) -> datetime.time:
+    pass
 
-def mod_time(t: Union[datetime.time, datetime.datetime], dt: datetime.timedelta) -> Union[datetime.time, datetime.datetime]:
+@typing.overload
+def mod_time(t: datetime.datetime, dt: datetime.timedelta) -> datetime.datetime:
+    pass
+
+def mod_time(t, dt):
     """
         Modify the supplied time with timedelta
         Args:
@@ -46,7 +54,7 @@ def get_current_datetime() -> datetime.datetime:
     return datetime.datetime.now(current_app.config['TIMEZONE'])
 
 
-def _validate_and_get_time(time: Optional[datetime.datetime]) -> datetime.time:
+def _validate_and_get_time(time: Union[datetime.time, datetime.datetime, None]) -> datetime.time:
     if time is None:
         time = get_current_datetime()
 

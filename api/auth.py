@@ -7,7 +7,7 @@ import json
 from api.time_management import get_current_datetime
 from api.error import error_response
 # typehints imports {{{
-from typing import Optional, Tuple, Callable, Dict
+from typing import Optional, Tuple, Callable, Dict, Union
 from flask import Response
 # }}}
 
@@ -68,7 +68,7 @@ def login_required(*required_authority: str) -> Callable:
     """
     def login_required_impl(f: Callable) -> Callable:
         @wraps(f)
-        def decorated_function(*args: Tuple, **kwargs: Dict) -> Callable:
+        def decorated_function(*args: Tuple, **kwargs: Dict) -> Union[Callable, Tuple[Response, int]]:
             def auth_error(code: int, headm: Optional[str]=None) -> Tuple[Response , int]:
                 resp, http_code = error_response(code)
                 if headm:
