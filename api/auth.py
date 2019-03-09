@@ -43,7 +43,7 @@ def generate_token(obj: dict) -> bytes:
     return fernet.encrypt(json.dumps(data).encode())
 
 
-def decrypt_token(token: str) -> dict:
+def decrypt_token(token: str) -> Optional[Dict]:
     """
         decrypt the token.
         Args:
