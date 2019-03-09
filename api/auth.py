@@ -6,6 +6,10 @@ from functools import wraps
 import json
 from api.time_management import get_current_datetime
 from api.error import error_response
+# typehints imports {{{
+from typehint import Optional, Tuple, Callable, Dict
+from flask import Response
+# }}}
 
 
 class UserNotFoundError(Exception):
@@ -55,18 +59,17 @@ def decrypt_token(token: str) -> dict:
     return json.loads(decrypted.decode())
 
 
-# TODO: is this returns anything?
-def login_required(*required_authority: str):
+def login_required(*required_authority: str) -> Callable:
     """
         a decorder to require login
         Args:
             *required_authority (str): required authorities
                 if this is blank, no requirement of authority
     """
-    def login_required_impl(f):
+    def login_required_impl(f: Callable) -> Callable:
         @wraps(f)
-        def decorated_function(*args, **kwargs):
-            def auth_error(code, headm=None):
+        def decorated_function(*args: Tuple, **kwargs: Dict) -> Callable:
+            def auth_error(code: int, headm: Optional[str]=None) -> Tuple[Response , int]:
                 resp, http_code = error_response(code)
                 if headm:
                     resp.headers['WWW-Authenticate'] = 'Bearer ' + headm

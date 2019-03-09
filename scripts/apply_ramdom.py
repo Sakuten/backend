@@ -8,9 +8,13 @@ from urllib.error import HTTPError
 from pathlib import Path
 import json
 
+# typehints imports {{{
+from typehint import Dict, Optional
+# }}}
+
 
 class client():
-    def get(self, _url, _json=None, follow_redirects=False, headers=None):
+    def get(self, _url: str, _json: Optional[Dict]=None, follow_redirects: bool=False, headers: Optional[Dict]=None) -> Optional[Dict]:
         default_headers = {"Content-Type": "application/json"}
         if headers:
             default_headers.update(headers)
@@ -29,7 +33,7 @@ class client():
             response.close()
             return json.loads(response_body)
 
-    def post(self, _url, _json=None, follow_redirects=False, headers=None):
+    def post(self, _url: str, _json: Optional[Dict]=None, follow_redirects: bool=False, headers: Optional[Dict]=None) -> Optional[Dict]:
         default_headers = {"Content-Type": "application/json"}
         if headers:
             default_headers.update(headers)
@@ -49,7 +53,7 @@ class client():
             return json.loads(response_body)
 
 
-def login(client, secret_id, rresp):
+def login(client: client, secret_id: int, rresp: str) -> Optional[Dict]:
     return client.post('/auth', _json={
         "id": secret_id,
         "g-recaptcha-response": rresp
