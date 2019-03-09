@@ -35,13 +35,16 @@ from api.error import error_response
 from api.utils import calc_sha256
 
 from cards.id import encode_public_id
-
+# typehints imports {{{
+from typing import Tuple, Union
+from flask import Response
+# }}}
 bp = Blueprint(__name__, 'api')
 
 
 @bp.route('/classrooms')
 @spec('api/classrooms.yml')
-def list_classrooms():
+def list_classrooms() -> Response:
     """
         return classroom list
     """
@@ -56,7 +59,7 @@ def list_classrooms():
 
 @bp.route('/classrooms/<int:idx>')
 @spec('api/classrooms/idx.yml')
-def list_classroom(idx):
+def list_classroom(idx: int) -> Response:
     """
         return infomation about specified classroom
     """
@@ -69,7 +72,7 @@ def list_classroom(idx):
 
 @bp.route('/lotteries')
 @spec('api/lotteries.yml')
-def list_lotteries():
+def list_lotteries() -> Response:
     """
         return lotteries list.
     """
@@ -84,7 +87,7 @@ def list_lotteries():
 
 @bp.route('/lotteries/available')
 @spec('api/lotteries/available.yml')
-def list_available_lotteries():
+def list_available_lotteries() -> Response:
     """
         return available lotteries list.
     """
@@ -104,7 +107,7 @@ def list_available_lotteries():
 
 @bp.route('/lotteries/<int:idx>', methods=['GET'])
 @spec('api/lotteries/idx.yml')
-def list_lottery(idx):
+def list_lottery(idx: int) -> Response:
     """
         return infomation about specified lottery.
     """
@@ -118,7 +121,7 @@ def list_lottery(idx):
 @bp.route('/lotteries/<int:idx>', methods=['POST'])
 @spec('api/lotteries/apply.yml')
 @login_required('normal')
-def apply_lottery(idx):
+def apply_lottery(idx: int) -> Response:
     """
         apply to the lottery.
         specify the lottery id in the URL.
@@ -230,7 +233,7 @@ def apply_lottery(idx):
 @bp.route('/applications')
 @spec('api/applications.yml')
 @login_required('normal')
-def list_applications():
+def list_applications() -> Response:
     """
         return applications list.
     """
@@ -247,7 +250,7 @@ def list_applications():
 @bp.route('/applications/<int:idx>', methods=['GET'])
 @spec('api/applications/idx.yml')
 @login_required('normal')
-def list_application(idx):
+def list_application(idx: int) -> Response:
     """
         return infomation about specified application.
     """
@@ -263,7 +266,7 @@ def list_application(idx):
 @bp.route('/applications/<int:idx>', methods=['DELETE'])
 @spec('api/applications/cancel.yml')
 @login_required('normal')
-def cancel_application(idx):
+def cancel_application(idx: int) -> Response:
     """
         cancel the application.
         specify the application id in the URL.
@@ -282,7 +285,7 @@ def cancel_application(idx):
 @bp.route('/lotteries/<int:idx>/draw', methods=['POST'])
 @spec('api/lotteries/draw.yml')
 @login_required('admin')
-def draw_lottery(idx):
+def draw_lottery(idx: int) -> Response:
     """
         draw lottery as adminstrator
     """
@@ -308,7 +311,7 @@ def draw_lottery(idx):
 @bp.route('/draw_all', methods=['POST'])
 @spec('api/draw_all.yml')
 @login_required('admin')
-def draw_all_lotteries():
+def draw_all_lotteries() -> Response:
     """
         draw all available lotteries as adminstrator
     """
@@ -327,7 +330,7 @@ def draw_all_lotteries():
 
 @bp.route('/lotteries/<int:idx>/winners')
 @spec('api/lotteries/winners.yml')
-def get_winners_id(idx):
+def get_winners_id(idx: int) -> Response:
     """
         Return winners' public_id for 'idx' lottery
     """
@@ -337,7 +340,7 @@ def get_winners_id(idx):
     if not lottery.done:
         return error_response(12)  # This lottery is not done yet.
 
-    def public_id_generator():
+    def public_id_generator() -> Iterator[int]:
         for app in lottery.application:
             if app.status == 'won':
                 yield app.user.public_id
@@ -347,7 +350,7 @@ def get_winners_id(idx):
 @bp.route('/status', methods=['GET'])
 @spec('api/status.yml')
 @login_required('normal', 'checker')
-def get_status():
+def get_status() -> Response:
     """
         return user's id and applications
     """
@@ -359,7 +362,7 @@ def get_status():
 @bp.route('/public_id/<string:secret_id>', methods=['GET'])
 @spec('api/translate_secret_to_public.yml')
 @login_required('normal', 'checker', 'admin')
-def translate_secret_to_public(secret_id):
+def translate_secret_to_public(secret_id: str) -> Union[Tuple[Response, int], Response]:
     """translate secret_id into public_id
         This will used for checking the guests at each classes
     """
@@ -372,7 +375,7 @@ def translate_secret_to_public(secret_id):
 
 @bp.route('/ids_hash', methods=['GET'])
 @spec('api/ids_hash.yml')
-def ids_hash():
+def ids_hash() -> Union[Tuple[Response, int], Response]:
     """return sha256 hash of `ids.json` used in background
     """
     try:
@@ -385,7 +388,7 @@ def ids_hash():
 @bp.route('/checker/<int:classroom_id>/<string:secret_id>', methods=['GET'])
 @spec('api/checker.yml')
 @login_required('checker')
-def check_id(classroom_id, secret_id):
+def check_id(classroom_id: int, secret_id: str) -> Union[Tuple[Response, int], Response]:
     """return if the user is winner of given classroom
         Args:
             classroom_id (int): target classroom
@@ -408,6 +411,7 @@ def check_id(classroom_id, secret_id):
     return jsonify({"status": application.status})
 
 
+# TODO: what type is the return of this?
 @bp.route('/render_results', methods=['GET'])
 @spec('api/results.yml')
 def results():
@@ -426,7 +430,7 @@ def results():
     #  8. Caches that file locally
     #  9. Return file
 
-    def public_id_generator(lottery, kind):
+    def public_id_generator(lottery: Lottery, kind: str) -> Iterator[int]:
         """return list of winners' public_id for selected 'kind'
             original at: L.336, written by @tamazasa
         """
@@ -468,5 +472,5 @@ def results():
 
 @bp.route('/health')
 @spec('api/health.yml')
-def health():
+def health() -> Response:
     return jsonify({'message': 'good to go'})
