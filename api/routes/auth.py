@@ -10,13 +10,17 @@ from api.auth import (
 )
 from api.swagger import spec
 from api.error import error_response
+# typehints imports {{{
+from typing import Tuple, Union
+from flask import Response
+# }}}
 
 bp = Blueprint(__name__, 'auth')
 
 
 @bp.route('/auth', methods=['POST'])
 @spec('auth.yml')
-def home():
+def home() -> Union[Response, Tuple[Response, int]]:
     """
         top page. Require/Check Login
     """
