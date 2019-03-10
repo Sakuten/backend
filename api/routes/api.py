@@ -36,7 +36,7 @@ from api.utils import calc_sha256
 
 from cards.id import encode_public_id
 # typehints imports {{{
-from typing import Tuple, Union
+from typing import Tuple, Union, Iterator
 from flask import Response
 # }}}
 bp = Blueprint(__name__, 'api')
