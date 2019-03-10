@@ -19,7 +19,7 @@ config = {
 }
 
 
-def create_app() -> Flask.app:
+def create_app() -> Flask:
     """create base flask application
         1. generate flask application
         2. set config based on 'FLASK_CONFIGURATION'
@@ -117,7 +117,8 @@ def init_and_generate() -> None:
             f'Unknown DB_GEN_POLICY: {policy}. Treated as \'never\'.')
 
 
-def initdb(app: Flask.app, db: api.models.db):
+# TODO: Does this returns anything?
+def initdb(app: Flask, db: db):
     from api.models import db
     db.create_all()
 
