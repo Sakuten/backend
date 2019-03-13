@@ -5,35 +5,45 @@ from datetime import datetime, time, timedelta, timezone
 import json
 
 import api
+# typehints imports {{{
+from typing import Optional, List, Tuple
+# }}}
 
 
 class BaseConfig(object):
-    DEBUG = False
-    TESTING = False
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:password@db/postgres'
-    DB_GEN_POLICY = os.getenv('DB_GEN_POLICY', 'first_time')
-    DB_FORCE_INIT = os.getenv('DB_FORCE_INIT', 'false') == 'true'
-    SECRET_KEY = Fernet.generate_key()
-    ROOT_DIR = Path(api.__file__).parent.parent
-    ID_LIST_FILE = ROOT_DIR / Path('cards/ids.json')
-    ERROR_TABLE_FILE = ROOT_DIR / Path('errors.json')
-    CLASSROOM_TABLE_FILE = ROOT_DIR / Path('classrooms.json')
-    WINNERS_NUM = 90
-    RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY')
-    RECAPTCHA_THRESHOLD = 0.09  # more than 0.09
-    TIMEZONE = timezone(timedelta(hours=+9), 'JST')
-    START_DATETIME = datetime(2019, 9, 15, 8,  40, 0, tzinfo=TIMEZONE)
-    END_DATETIME = datetime(2019, 9, 16, 16, 00, 0, tzinfo=TIMEZONE)    # 敬老の日
-    DRAWING_TIME_EXTENSION = timedelta(minutes=10)
-    TIMEPOINT_END_MARGIN = timedelta(minutes=1)
-    TIMEPOINTS = [
+    DEBUG   : bool  = False
+    TESTING : bool  = False
+    SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
+    SQLALCHEMY_DATABASE_URI: Optional[str] \
+            = 'postgresql://postgres:password@db/postgres'
+    DB_GEN_POLICY: Optional[str] \
+            = os.getenv('DB_GEN_POLICY', 'first_time')
+    DB_FORCE_INIT: bool \
+            = os.getenv('DB_FORCE_INIT', 'false') == 'true'
+    SECRET_KEY          : Optional[str] = Fernet.generate_key()
+    ROOT_DIR            : Path  = Path(api.__file__).parent.parent
+    ID_LIST_FILE        : Path  = ROOT_DIR / Path('cards/ids.json')
+    ERROR_TABLE_FILE    : Path  = ROOT_DIR / Path('errors.json')
+    CLASSROOM_TABLE_FILE: Path  = ROOT_DIR / Path('classrooms.json')
+    WINNERS_NUM         : int   = 90
+    RECAPTCHA_SECRET_KEY: Optional[str] \
+            = os.environ.get('RECAPTCHA_SECRET_KEY')
+    RECAPTCHA_THRESHOLD : float = 0.09  # more than 0.09
+    TIMEZONE            : timezone \
+            = timezone(timedelta(hours=+9), 'JST')
+    START_DATETIME  : datetime \
+            = datetime(2019, 9, 15, 8,  40, 0, tzinfo=TIMEZONE)
+    END_DATETIME    : datetime \
+            = datetime(2019, 9, 16, 16, 00, 0, tzinfo=TIMEZONE)    # 敬老の日
+    DRAWING_TIME_EXTENSION: timedelta = timedelta(minutes=10)
+    TIMEPOINT_END_MARGIN  : timedelta = timedelta(minutes=1)
+    TIMEPOINTS: List[Tuple]  = [
         (time(8,  50), time(9,  20)),
         (time(10, 15), time(10, 45)),
         (time(12, 25), time(12, 55)),
         (time(13, 50), time(14, 20))
     ]
-    ONE_DAY_KIND = ['visitor']
+    ONE_DAY_KIND : List[str] = ['visitor']
 
 
 class DevelopmentConfig(BaseConfig):
