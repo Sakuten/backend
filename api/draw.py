@@ -43,7 +43,7 @@ def draw_one(lottery: Lottery) -> List[User]:
     applications = Application.query.filter_by(lottery_id=idx).all()
 
     if len(applications) == 0:
-        winners = []
+        winners: List[User] = []
     else:
         set_group_advantage(applications)
 
@@ -68,10 +68,10 @@ def draw_one_group_members(applications: List[Application], winners_num: int) ->
     """internal function
         decide win or lose for each group
     """
-    winner_apps = []
-    loser_apps = []
-    winner_reps = []
-    loser_reps = []
+    winner_apps : List[Application] = []
+    loser_apps  : List[Application] = []
+    winner_reps : List[Application] = []
+    loser_reps  : List[Application] = []
 
     def set_group_result(rep: Application, is_won: bool) -> None:
         if is_won:
