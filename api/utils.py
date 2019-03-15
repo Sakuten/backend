@@ -3,7 +3,7 @@ import os
 __docs__ = """collection of small utilities"""
 
 
-def calc_sha256(_file):
+def calc_sha256(_file: str) -> str:
     """calculate sha256 hash of given file
         Args:
             _file (str): file path
