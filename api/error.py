@@ -3,8 +3,6 @@ from api.models import Error
 from flask import jsonify
 
 
-#TODO: Is the description of 'Returns' correct?
-#      Please confirm in review
 def error_response(code):
     """
         Construct json response from error code
