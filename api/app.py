@@ -48,8 +48,10 @@ def create_app() -> Flask:
     # load app sepcified configuration
     config_name = os.getenv('FLASK_CONFIGURATION', 'default')
 
-    app.config.from_object(config[config_name])
-    app.config.from_pyfile('config.cfg', silent=True)
+    # TODO: remove those ignoring comments when mypy is updated to 0.680
+    # related issue: https://github.com/python/mypy/issues/6410
+    app.config.from_object(config[config_name])         # type: ignore
+    app.config.from_pyfile('config.cfg', silent=True)   # type: ignore
 
     if app.config.get('SQLALCHEMY_DATABASE_URI', None) is None:
         app.logger.error(
