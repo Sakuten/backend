@@ -68,8 +68,10 @@ def login_required(*required_authority: str) -> Callable:
     """
     def login_required_impl(f: Callable) -> Callable:
         @wraps(f)
-        def decorated_function(*args: Tuple, **kwargs: Dict) -> Union[Callable, Tuple[Response, int]]:
-            def auth_error(code: int, headm: Optional[str]=None) -> Tuple[Response , int]:
+        def decorated_function(*args: Tuple, **kwargs: Dict) \
+                -> Union[Callable, Tuple[Response, int]]:
+            def auth_error(code: int, headm: Optional[str] = None) \
+                    -> Tuple[Response, int]:
                 resp, http_code = error_response(code)
                 if headm:
                     resp.headers['WWW-Authenticate'] = 'Bearer ' + headm
@@ -110,7 +112,7 @@ def login_required(*required_authority: str) -> Callable:
     return login_required_impl
 
 
-def todays_user(secret_id: str='', user_id: str='') -> User:
+def todays_user(secret_id: str = '', user_id: str = '') -> User:
     """confirm the user id isn't used in other day
         and return `User` object
         Args:

@@ -3,7 +3,7 @@ from flasgger import Swagger, swag_from
 import yaml
 import api
 
-with open(os.path.join(api.__path__[0], 'spec/template.yml')) as f: # type: ignore
+with open(os.path.join(api.__path__[0], 'spec/template.yml')) as f:  # type: ignore # noqa: E501
     template = yaml.load(f)
 swag = Swagger(template=template)
 

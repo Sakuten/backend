@@ -35,7 +35,8 @@ with open(args.list, 'r') as f:
 admin_ids = next(cred for cred in id_list if cred['authority'] == 'admin')
 
 
-def post_json(path: str, data: Optional[Dict]=None, token: Optional[str]=None) -> Optional[Dict]:
+def post_json(path: str, data: Optional[Dict] = None,
+              token: Optional[str] = None) -> Optional[Dict]:
     headers = {"Content-Type": "application/json"}
     if token:
         headers['Authorization'] = 'Bearer ' + token

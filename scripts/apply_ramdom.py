@@ -14,7 +14,9 @@ from typing import Dict, Optional
 
 
 class client():
-    def get(self, _url: str, _json: Optional[Dict]=None, follow_redirects: bool=False, headers: Optional[Dict]=None) -> Optional[Dict]:
+    def get(self, _url: str, _json: Optional[Dict] = None,
+            follow_redirects: bool = False, headers: Optional[Dict] = None) \
+            -> Optional[Dict]:
         default_headers = {"Content-Type": "application/json"}
         if headers:
             default_headers.update(headers)
@@ -33,7 +35,9 @@ class client():
             response.close()
             return json.loads(response_body)
 
-    def post(self, _url: str, _json: Optional[Dict]=None, follow_redirects: bool=False, headers: Optional[Dict]=None) -> Optional[Dict]:
+    def post(self, _url: str, _json: Optional[Dict] = None,
+             follow_redirects: bool = False, headers: Optional[Dict] = None) \
+            -> Optional[Dict]:
         default_headers = {"Content-Type": "application/json"}
         if headers:
             default_headers.update(headers)

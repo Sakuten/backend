@@ -3,10 +3,10 @@ from urllib.request import urlopen
 import json
 from ipaddress import ip_address
 from api.auth import (
-        generate_token,
-        todays_user,
-        UserNotFoundError,
-        UserDisabledError
+    generate_token,
+    todays_user,
+    UserNotFoundError,
+    UserDisabledError
 )
 from api.swagger import spec
 from api.error import error_response

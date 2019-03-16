@@ -122,17 +122,17 @@ def get_application(user, target_lottery, **kwargs):
         if isinstance(user, int):
             # when user is id
             return Application.query.filter_by(
-                    lottery_id=target_lottery, user_id=user, **kwargs).first()
+                lottery_id=target_lottery, user_id=user, **kwargs).first()
         else:
             return Application.query.filter_by(
-                    lottery_id=target_lottery, user=user, **kwargs).first()
+                lottery_id=target_lottery, user=user, **kwargs).first()
     else:
         if isinstance(user, int):
             return Application.query.filter_by(
-                    lottery=target_lottery, user_id=user, **kwargs).first()
+                lottery=target_lottery, user_id=user, **kwargs).first()
         else:
             return Application.query.filter_by(
-                    lottery=target_lottery, user=user, **kwargs).first()
+                lottery=target_lottery, user=user, **kwargs).first()
 
 
 def add_db(args):

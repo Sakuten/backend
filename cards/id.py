@@ -3,7 +3,7 @@ import random
 from secrets import token_urlsafe
 # typehints imports {{{
 from typing import List, Dict
-## }}}
+# }}}
 
 
 max_public_id = 34991   # 6 ([3-79]) * 18 ([AC-HJ-NPRTW-Y]) * 18 * 18
@@ -27,7 +27,7 @@ def encode_public_id(num_id: int) -> str:
         return '9' if num == 5 else str(num + 3)
 
     latter_3_num = num_id // (18**3)
-    letters = []
+    letters: List[int] = []
     for i in range(1, 4):
         data = num_id % (18**i) // 18**(i-1)
         letters.insert(0, data)
@@ -44,7 +44,7 @@ def decode_public_id(str_id: str) -> int:
         Return:
             num_id (int): numeric ID
     """
-    def alpha2num(c: str) ->int:
+    def alpha2num(c: str) -> int:
         return encoder.find(c)
 
     def num2num(c: str) -> int:

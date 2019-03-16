@@ -9,7 +9,7 @@ from api import app
 from cards.id import load_id_json_file
 
 from utils import admin, checker, test_user, test_user1, \
-                  test_user2, test_user3, test_user4, test_student
+    test_user2, test_user3, test_user4, test_student
 
 pre_config = os.environ.get('FLASK_CONFIGURATION', None)
 

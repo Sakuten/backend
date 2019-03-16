@@ -714,9 +714,9 @@ def test_draw_group(client):
         add_db(members_app)
 
         rep_application = user2application(
-                users[0], target_lottery,
-                is_rep=True,
-                group_members=group_members(members_app))
+            users[0], target_lottery,
+            is_rep=True,
+            group_members=group_members(members_app))
 
         add_db((rep_application,))  # 1-element tuple
 

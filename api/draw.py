@@ -4,7 +4,7 @@ from api.models import Lottery, Application, db
 from itertools import chain
 from numpy.random import choice
 # typehints imports {{{
-from typing import List, Union, Dict
+from typing import List, Dict
 from api.models import User
 # }}}
 
@@ -64,14 +64,15 @@ def draw_one(lottery: Lottery) -> List[User]:
     return winners
 
 
-def draw_one_group_members(applications: List[Application], winners_num: int) -> List[Application]:
+def draw_one_group_members(applications: List[Application], winners_num: int) \
+        -> List[Application]:
     """internal function
         decide win or lose for each group
     """
-    winner_apps : List[Application] = []
-    loser_apps  : List[Application] = []
-    winner_reps : List[Application] = []
-    loser_reps  : List[Application] = []
+    winner_apps: List[Application] = []
+    loser_apps: List[Application] = []
+    winner_reps: List[Application] = []
+    loser_reps: List[Application] = []
 
     def set_group_result(rep: Application, is_won: bool) -> None:
         if is_won:
@@ -87,7 +88,8 @@ def draw_one_group_members(applications: List[Application], winners_num: int) ->
             member.own_application.set_status(status)
             to_apps.append(member.own_application)
 
-    def unset_group_result(rep: Application, from_apps: List[Application], from_reps: List[Application]) -> None:
+    def unset_group_result(rep: Application, from_apps: List[Application],
+                           from_reps: List[Application]) -> None:
         from_apps.remove(rep)   # remove recorded old results
         from_reps.remove(rep)
         for member in rep.group_members:
@@ -125,7 +127,8 @@ def draw_one_group_members(applications: List[Application], winners_num: int) ->
     return winner_apps
 
 
-def draw_one_normal_users(applications: List[Application], winners_num: int) -> List[Application]:
+def draw_one_normal_users(applications: List[Application], winners_num: int) \
+        -> List[Application]:
     """internal function
         decide win or lose for each user not belonging to a group
         add applications to the session
@@ -181,7 +184,8 @@ def calc_probabilities(applications: List[Application]) -> List[float]:
     return [app.get_advantage() / sum_advantage for app in applications]
 
 
-def get_probability_dict(applications: List[Application], winners_num: int) -> Dict[Application, float]:
+def get_probability_dict(applications: List[Application], winners_num: int) \
+        -> Dict[Application, float]:
     all_probabilities = calc_probabilities(applications)
     return {app: all_probabilities[i] * winners_num
             for i, app in enumerate(applications)}

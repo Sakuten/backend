@@ -14,10 +14,10 @@ from api.schemas import (
     lottery_schema
 )
 from api.auth import (
-        login_required,
-        todays_user,
-        UserNotFoundError,
-        UserDisabledError
+    login_required,
+    todays_user,
+    UserNotFoundError,
+    UserDisabledError
 )
 from api.swagger import spec
 from api.time_management import (
@@ -211,8 +211,8 @@ def apply_lottery(idx: int) -> Response:
         else:
             # 8.
             members_app = [Application(
-                    lottery_id=lottery.id, user_id=member.id, status="pending")
-                    for member in group_members]
+                lottery_id=lottery.id, user_id=member.id, status="pending")
+                for member in group_members]
 
             for application in members_app:
                 db.session.add(application)
@@ -362,7 +362,8 @@ def get_status() -> Response:
 @bp.route('/public_id/<string:secret_id>', methods=['GET'])
 @spec('api/translate_secret_to_public.yml')
 @login_required('normal', 'checker', 'admin')
-def translate_secret_to_public(secret_id: str) -> Union[Tuple[Response, int], Response]:
+def translate_secret_to_public(secret_id: str) \
+        -> Union[Tuple[Response, int], Response]:
     """translate secret_id into public_id
         This will used for checking the guests at each classes
     """
@@ -388,7 +389,8 @@ def ids_hash() -> Union[Tuple[Response, int], Response]:
 @bp.route('/checker/<int:classroom_id>/<string:secret_id>', methods=['GET'])
 @spec('api/checker.yml')
 @login_required('checker')
-def check_id(classroom_id: int, secret_id: str) -> Union[Tuple[Response, int], Response]:
+def check_id(classroom_id: int, secret_id: str) \
+        -> Union[Tuple[Response, int], Response]:
     """return if the user is winner of given classroom
         Args:
             classroom_id (int): target classroom

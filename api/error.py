@@ -6,6 +6,7 @@ from typing import Tuple
 from flask import Response
 # }}}
 
+
 def error_response(code: int) -> Tuple[Response, int]:
     """
         Construct json response from error code
