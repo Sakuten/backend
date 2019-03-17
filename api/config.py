@@ -16,8 +16,7 @@ class BaseConfig(object):
     SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
     SQLALCHEMY_DATABASE_URI: Optional[str] \
         = 'postgresql://postgres:password@db/postgres'
-    DB_GEN_POLICY: Optional[str] \
-        = os.getenv('DB_GEN_POLICY', 'first_time')
+    DB_GEN_POLICY: str = os.getenv('DB_GEN_POLICY', 'first_time')
     DB_FORCE_INIT: bool \
         = os.getenv('DB_FORCE_INIT', 'false') == 'true'
     SECRET_KEY: Optional[str] = Fernet.generate_key()
