@@ -36,7 +36,7 @@ from api.utils import calc_sha256
 
 from cards.id import encode_public_id
 # typehints imports {{{
-from typing import Tuple, Union, Iterator
+from typing import Tuple, Union, Iterator, Text
 from flask import Response
 # }}}
 bp = Blueprint(__name__, 'api')
@@ -413,10 +413,9 @@ def check_id(classroom_id: int, secret_id: str) \
     return jsonify({"status": application.status})
 
 
-# TODO: what type is the return of this?
 @bp.route('/render_results', methods=['GET'])
 @spec('api/results.yml')
-def results():
+def results() -> Union[Text, Tuple[Response, int]]:
     """return HTML file that contains the results of previous lotteries
         This endpoint will be used for printing PDF
         which will be put on the wall.
