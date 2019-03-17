@@ -9,7 +9,9 @@ def error_response(code):
         Args:
             code(int): Error Code specified in error table json file
         Returns:
-            resp(Response): flask response with error message
+            Tuple of those items
+                 resp(Response): Flask.Response object
+                http_code (int): error code
     """
     error = Error.query.filter_by(code=code).first()
     result = error_schema.dump(error)[0]
