@@ -119,8 +119,7 @@ def init_and_generate() -> None:
             f'Unknown DB_GEN_POLICY: {policy}. Treated as \'never\'.')
 
 
-# TODO: Does this returns anything?
-def initdb(app: Flask, db: db):
+def initdb(app: Flask, db: db) -> None:
     from api.models import db
     db.create_all()
 
