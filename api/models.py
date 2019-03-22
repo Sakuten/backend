@@ -27,7 +27,8 @@ class User(db.Model):
 
     def __repr__(self):
         authority_str = f'({self.authority})' if self.authority else ''
-        return f'<User {encode_public_id(self.public_id)} {authority_str}>'
+        return f'<User {encode_public_id(self.public_id)} {authority_str} ' + \
+               f'{self.win_count}-{self.lose_count}>'
 
 
 class Classroom(db.Model):
@@ -48,6 +49,9 @@ class Classroom(db.Model):
 
     def __repr__(self):
         return "<Classroom %r%r>".format(self.grade, self.get_classroom_name)
+
+    def __str__(self):
+        return f'{self.grade}{self.get_classroom_name()}'
 
     def get_classroom_name(self):
         """
@@ -91,6 +95,7 @@ class Application(db.Model):
             user_id (int): user id of this application
             status (Boolen): whether chosen or not. initalized with None
             is_rep (bool): whether rep of a group or not
+            advantage (int): how much advantage does user have
     """
     __tablename__ = 'application'
 
@@ -106,6 +111,7 @@ class Application(db.Model):
                        default="pending",
                        nullable=False)
     is_rep = db.Column(db.Boolean, default=False)
+    advantage = None
     # groupmember_id = db.Column(db.Integer, db.ForeignKey(
     #     'group_members.id', ondelete='CASCADE'))
     # me_group_member = db.relationship('GroupMember', backref='application')
@@ -115,6 +121,44 @@ class Application(db.Model):
             self.lottery, self.user,
             " (rep)" if self.is_rep else "",
             self.status)
+
+    def get_advantage(self):
+        """
+            returns multiplier indicating how more likely
+            the application is to win
+        """
+        if self.advantage:
+            return self.advantage
+        elif self.user.lose_count == 0:
+            return 1
+        else:
+            return 3 ** max(0, self.user.lose_count - self.user.win_count)
+
+    def set_advantage(self, advantage):
+        self.advantage = advantage
+
+    def set_status(self, newstatus):
+        if newstatus not in {"pending", "won", "lose"}:
+            raise ValueError
+
+        change_win, change_lose = (1, 0) if newstatus == "won" else \
+                                  (0, 1) if newstatus == "lose" else \
+                                  (0, 0)
+
+        revert_win, revert_lose = (-1, 0) if self.status == "won" else \
+                                  (0, -1) if self.status == "lose" else \
+                                  (0, 0)
+
+        self.user.win_count += change_win
+        self.user.win_count += revert_win
+        self.user.lose_count += change_lose
+        self.user.lose_count += revert_lose
+
+        self.status = newstatus
+
+        db.session.add(self.user)
+        db.session.add(self)
+        db.session.commit()
 
 
 class GroupMember(db.Model):
@@ -168,3 +212,7 @@ class Error(db.Model):
 def group_member(application):
     return GroupMember(user_id=application.user_id,
                        own_application=application)
+
+
+def group_members(applications):
+    return [group_member(app) for app in applications]

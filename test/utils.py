@@ -1,4 +1,5 @@
-from api.models import User, Application, db
+from api.models import User, Application, db, group_members
+from unittest import mock
 
 # --- variables
 
@@ -81,3 +82,98 @@ def make_application(client, secret_id, lottery_id):
         db.session.add(newapplication)
         db.session.commit()
         return newapplication.id
+
+
+def user2application(user, target_lottery, **kwargs):
+    if isinstance(target_lottery, int):
+        # when target_lottery is id
+        if isinstance(user, int):
+            # when user is id
+            return Application(lottery_id=target_lottery, user_id=user,
+                               **kwargs)
+        else:
+            return Application(lottery_id=target_lottery, user=user,
+                               **kwargs)
+    else:
+        if isinstance(user, int):
+            return Application(lottery=target_lottery, user_id=user,
+                               **kwargs)
+        else:
+            return Application(lottery=target_lottery, user=user,
+                               **kwargs)
+
+
+def users2application(users, target_lottery, **kwargs):
+    return [user2application(user, target_lottery, **kwargs)
+            for user in users]
+
+
+def rep2application(user, target_lottery, members):
+    if isinstance(members[0], Application):
+        members = group_members(members)
+    return user2application(user, target_lottery,
+                            is_rep=True,
+                            group_members=members)
+
+
+def get_application(user, target_lottery, **kwargs):
+    if isinstance(target_lottery, int):
+        # when target_lottery is id
+        if isinstance(user, int):
+            # when user is id
+            return Application.query.filter_by(
+                    lottery_id=target_lottery, user_id=user, **kwargs).first()
+        else:
+            return Application.query.filter_by(
+                    lottery_id=target_lottery, user=user, **kwargs).first()
+    else:
+        if isinstance(user, int):
+            return Application.query.filter_by(
+                    lottery=target_lottery, user_id=user, **kwargs).first()
+        else:
+            return Application.query.filter_by(
+                    lottery=target_lottery, user=user, **kwargs).first()
+
+
+def add_db(args):
+    for arg in args:
+        db.session.add(arg)
+    db.session.commit()
+
+
+def get_token(client, login_user):
+    return login(client,
+                 login_user['secret_id'],
+                 login_user['g-recaptcha-response'])['token']
+
+
+def draw(client, token, idx, index=None, time=None):
+    return post(client, f'lotteries/{idx}/draw', token, index, time)
+
+
+def draw_all(client, token, index=None, time=None):
+    return post(client, '/draw_all', token, index, time)
+
+
+def post(client, url, token=None, index=None,
+         time=None, group_members=None, **kwargs):
+    if index is not None:
+        with mock.patch('api.routes.api.get_draw_time_index',
+                        return_value=index):
+            return post(client, url, token, None, time, group_members,
+                        **kwargs)
+    if time is not None:
+        with mock.patch('api.time_management.get_current_datetime',
+                        return_value=time):
+            return post(client, url, token, index, None, group_members,
+                        **kwargs)
+
+    if token is not None:
+        return post(client, url, group_members=group_members,
+                    headers={'Authorization': f'Bearer {token}'},
+                    **kwargs)
+    if group_members is not None:
+        return post(client, url, json={'group_members': group_members},
+                    **kwargs)
+
+    return client.post(url, **kwargs)
