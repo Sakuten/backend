@@ -9,13 +9,13 @@
         "secret_id": "excGkN88o8eN61NbZpHMfJK0HgThsX9N",
         "public_id": "5RAX",
         "authority": "normal",
-        "kind": "visitor"
+        "kind": "student"
     },
     {
         "secret_id": "zmPplhO29m7dMNDdLnt4MtO_aFONrViC",
         "public_id": "4YMY",
         "authority": "normal",
-        "kind": "visitor"
+        "kind": "student"
     },
     {
         "secret_id": "TFdC-Ckz30CmhRS8PozhwgT5qM6t1q3I",
@@ -45,13 +45,13 @@
         "secret_id": "6ys5vXbm_J4WKXlvdVEFhLIM_b9XMtca",
         "public_id": "3EPE",
         "authority": "normal",
-        "kind": "checker"
+        "kind": "visitor"
     },
     {
         "secret_id": "c148WsrQP5xFKUNNvUWCL1gxAVDRJ_KZ",
         "public_id": "6FEH",
         "authority": "normal",
-        "kind": "checker"
+        "kind": "visitor"
     },
     {
         "secret_id": "bzF2xstsEc7SmiV0RCGiIml8TvlcWbGb",
@@ -64,5 +64,605 @@
         "public_id": "7TCY",
         "authority": "admin",
         "kind": "admin"
+    },
+    {
+        "secret_id": "8GXSXDB8JB3zldwdbX1uzZ6vJgxo38xB",
+        "public_id": "7JXG",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "6xcVBj66HVCcBZKExy1h7WWOM3o47SWu",
+        "public_id": "6FAK",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "s1GBOGPgqUUpfp3nWO7IKBFYFd7BoKO7",
+        "public_id": "7MMY",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "JatprPR5E12U7hyFK8dCP38FJL4GcnI0",
+        "public_id": "5GWD",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "Yl__mOZXDvtVmzlLHwSbKeSp29L-dZkO",
+        "public_id": "7GPY",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "1pf3TRU5GHes86quGO2bbS_6568trNIt",
+        "public_id": "4CJD",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "gKKdZjy7j0ib-mNvv2tTT3lieuw6ZdVY",
+        "public_id": "3LCA",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "JGoREWBx2BaXy1wjIFbv7jW1simkGPT4",
+        "public_id": "7FMW",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "3hoTTc2gZCfpijG3kMU-wJA9uOIoGNin",
+        "public_id": "6DDH",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "yAO-W1lImMgqBDYOY4gMHb5kwHjcfV--",
+        "public_id": "4FFC",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "Yw08sbTgvUCrjbsDmNgd8TBFeMZ5R1V_",
+        "public_id": "7PCP",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "xKuopPsQffhOQGodpvex6p7LgmMrNoPY",
+        "public_id": "6NHT",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "RSvm-p8J1gQzMmeeC-7HXwEOp5v5TY8u",
+        "public_id": "5MFY",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "w7TG1t9QBg9nmDHqCfOe8Pe6qa7VRo0j",
+        "public_id": "6XGM",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "UDFV7dmcBUPBRjL5XO05BnPBjwGHthzz",
+        "public_id": "6CLL",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "YKU0pYCXDJonGjK4Zv73ws3DOJ1oGeOK",
+        "public_id": "3FNH",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "95ZMlCUMNiud0wbTOT19inecIAcC9FXK",
+        "public_id": "4LRJ",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "BZCDpI24oGrPx2JXtJKJCAyHPABnUI_a",
+        "public_id": "5RXA",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "YdemaUHNMc39dDUYm7aytWmqJIWQ3R7H",
+        "public_id": "3RTK",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "igpFBGADVf0KC8uzUfx6qTwW6eOpHd07",
+        "public_id": "3FKR",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "atNTw_i_LLwwzfH9m-9WqFC3jhFZ4WCV",
+        "public_id": "4LYH",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "_FL3S5QcSAEd_YIjgbNt8p1JaRgA4JLw",
+        "public_id": "4FAL",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "-6NTufzBYpNQxJIjVrM4IIkcqDoU6MHZ",
+        "public_id": "9WFP",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "8lXvMdEX3RRT-Vrw-qMNAJz1uRcvGGvS",
+        "public_id": "3MFJ",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "7VIcreBP1N8O0UElU7gbkcYLdlvB5Bl8",
+        "public_id": "4FXD",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "22TgaDc9J2LSKJnsj4xINK1p3h37Q8NN",
+        "public_id": "5EKX",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "z6UkQEtEZQ9A0AO9oj3Jd-1YtGannEpo",
+        "public_id": "6WFX",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "xqA5cXJV-cmyJm8Muq1_z417xbJ8Mqaq",
+        "public_id": "3XMA",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "G4JbVoG5-y0c3CaPU5rrkUfVy5yyfO_X",
+        "public_id": "7NHP",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "mmuKFlgwUz87Zw9M8lcbyYaSnGr60_Cg",
+        "public_id": "3XMG",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "sLeFQgS5Q7yt_wWZ3sx4kGxSeKA5osd-",
+        "public_id": "6GXH",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "a22egsCgKCHG8mdWshrWf8vC54M0CGzL",
+        "public_id": "4GXM",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "5iIZ9b-wF4KAZXUbxDQ8mIFwv9kauOnQ",
+        "public_id": "3ATR",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "bzDPhIucQX-AWwI_4n_mxHj18KEATnlw",
+        "public_id": "6PXH",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "AUP7jDXG908OrDeaRDTcM3o43JjTA9EB",
+        "public_id": "9DGN",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "wEzTNajiQNh0aJeVmArX_d_kijVOvB4A",
+        "public_id": "7JEW",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "duCBLCfDdDArE4Zqg2t98UCBGYfF3kbT",
+        "public_id": "7PNT",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "8Jtu26eRYLwyjMlUEFgfaqZ4r9LY4D89",
+        "public_id": "4DET",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "RgnLAsBu2-89kSHYoCQ6ppm3SnTB8uzM",
+        "public_id": "9MTP",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "Yma5F1K8kMpwVKLMy4qs0-RfFl3tZdBX",
+        "public_id": "7DAC",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "4NswGaOLuZ7BKM6Xg_1ezua5IMrX-SJg",
+        "public_id": "6XHN",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "LA7fkq1yxM9ifeY9asdGa7fjcvdL12BV",
+        "public_id": "6MNE",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "b3zmOmH_G7eznnnNughM33qMymSICQ6A",
+        "public_id": "3MMD",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "ycATAN2M0q17uSjgQ2Qsr-z7wnk6lgHl",
+        "public_id": "3CKL",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "YpSNCPF9APfc197qP2XgvS8PSglBQrfl",
+        "public_id": "4JFP",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "ft5yEk4tkxNLrC1ApVSXP5gneVJ-4js5",
+        "public_id": "6KMM",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "j0K0oN7bqabwdCNJpvqDzjwSusjKGwiH",
+        "public_id": "3WEP",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "deE1YCHxtAZ6f1DSU1qPEifReed0ZCKq",
+        "public_id": "6XGN",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "XpDnQU8EbOewlTLqYpxl4nKOdSeVkOzI",
+        "public_id": "9CMK",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "znnlvUaFOYkLmUUR2CulCTUkDOA8veqC",
+        "public_id": "9FPL",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "dnBDWa2nmKeSRNzyCjyglFy-OV6gzV4X",
+        "public_id": "5HGG",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "YAMEFq7NFK2MVfS_PDGI6C8zFpnp3ZhD",
+        "public_id": "3CXP",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "6BNIIc45VMzcyzb9awfH3hYVK8936suZ",
+        "public_id": "7JAX",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "71-EOYQOHaIsjHyQYg54JUAsx_LfzA3j",
+        "public_id": "4WEC",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "oyPneCyuxVOnwj6PfR3LWnhTVI7ZKL6k",
+        "public_id": "7PTF",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "8dsOGiFdHB14SupwbGWTptI-7sR33s3N",
+        "public_id": "9AAJ",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "pvB6aAUH7vDday-WiBDYAqEOHeZRXvye",
+        "public_id": "5REE",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "f9ltUSIfI4ZJaOW96_wTxK0K05wipfsy",
+        "public_id": "4KRF",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "3-CtGdThBqRjjgEqkgEbghr5_OOdYqSU",
+        "public_id": "4YEY",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "iGvRSo9LQ_MzpAE6voVaHUHkhs3i9QLt",
+        "public_id": "3KGL",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "UIEZnfhQcCbblkkEydw5-DfWHA_0Sr7Q",
+        "public_id": "5RLT",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "moRFrwuPkkWlmQM8TeMSItofb4TbC6-M",
+        "public_id": "5ACT",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "zxuAfCeoBihUl7X-S1I1Sr1XDBTU_LAK",
+        "public_id": "6PJY",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "wbH7ORXvPYVRQ4rxeiInVinx1oeeWsvc",
+        "public_id": "6PME",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "PfSEnMCzHXs7tz58YNI4i348_BQxEsxl",
+        "public_id": "5EPR",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "2I5cQDZWEqzv1er6XAjdShmoOJBUjSch",
+        "public_id": "5DCC",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "e3kVWIH4vDnVlIeZtSkZt9SnBuRKDBet",
+        "public_id": "7GHE",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "8--Ybdo_f0lrG5qIjriBuHsL6igA2uqI",
+        "public_id": "4RKF",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "G0wNVnzq_tBN2A4doEXnYWa2H_VuCOwD",
+        "public_id": "5HHP",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "fLSU97hRT_D3sQhCqM4VRlSuBr3peBEW",
+        "public_id": "7GMD",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "GoZYvGEshbq0mkf4wy5dbRmDu8nF_nDu",
+        "public_id": "7PHX",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "Og_sjQ71vhgRPypU4eCCKcf_4uxk2G06",
+        "public_id": "4TRG",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "P_aNDXZKR3Wc8WhJsoxXRDtkqEkOEke6",
+        "public_id": "5RRX",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "Q8bzqn5B4Ejwdd-7i8pxbnwpAFH2ceEX",
+        "public_id": "6PNT",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "u849jpUX2iShSJfELEKpad15ICxxWLLL",
+        "public_id": "9NHD",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "WgxUfE0-ixIXRv3gyW7gYwqhuBhb5WZa",
+        "public_id": "7YGL",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "Az4D7DWCrVgZ3-1o3EE60DIGPyHFugXA",
+        "public_id": "7GJD",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "Q6RcrIrxO3kn-PDSx_X00a1uIbWX-MvW",
+        "public_id": "3YXW",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "-oSLmad6pJITCC88m5psbhXD7fC5-bRx",
+        "public_id": "7WTC",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "PBrEqFcvxlQkOJhTvDTYM_6Wtz_CzKRR",
+        "public_id": "4CRW",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "kXmqU1ykH1I7t9jsrbCX8vXYSO6VxcCa",
+        "public_id": "7GGW",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "e2VH7y0MHFRw_Cb-C46mvYN3mjoqbxpg",
+        "public_id": "3TMD",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "f4Z3-FWEBolXcvGYzUn7NS7z0ywX96mh",
+        "public_id": "6TPG",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "M8l-Yzs9OHCyoCJCH_Zs5YxhU-1swtDD",
+        "public_id": "6DCN",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "ipckLwnn67q81lhJ_RDZLvjbuEVPC5UV",
+        "public_id": "3ANM",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "vS-04E7KZ2qDrglovaPBW8eBW835W8nP",
+        "public_id": "6NFK",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "r8pXCS9L1HHCoTQg0NdJdDEELq7SzrTe",
+        "public_id": "6JMJ",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "acGSFeQZUgfYGIpm6uFx-40cbLh4kYG1",
+        "public_id": "5KYK",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "Z851U9PNYgNRfag-Hjr94ZTiCgA-4OXq",
+        "public_id": "7ENG",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "wzOmuB_-EQUMuv8Pm8ZLBVjfqxpWEdku",
+        "public_id": "3JHC",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "TvNtpCPYj5xgw2MWiKarHIrQkoq3owDv",
+        "public_id": "9TPN",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "tSfNXEDVtLn4WeCkIZDhm_9-m6wYS5VB",
+        "public_id": "3JMD",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "8cn8bCiyx5KCMauppTsnqJZeJhXGpJuG",
+        "public_id": "7YTH",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "-u3Dcy6dvc5FB7Gpo4i0txR81NRRqvp5",
+        "public_id": "3JXW",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "uxfCYObl953GimKZN0JGa9Y8IP6rLyDo",
+        "public_id": "3ADK",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "odKWKMSAsNuv-Ur9YW9cvQjeA-azgMXh",
+        "public_id": "5RYY",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "iglvHLfH9i5jvhGeTLNWoRqXOq_ZNXKo",
+        "public_id": "3AFL",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "uRJ6AunCd4MafdWNIKOigCFiLp67Zl84",
+        "public_id": "6CJP",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "pk831Zc5-BFov7BgxUOoBVGCUNZC9DeC",
+        "public_id": "4TMA",
+        "authority": "normal",
+        "kind": "visitor"
+    },
+    {
+        "secret_id": "Bj6wr_j4hdru_OzhZsU6VhQA_tdlbD9j",
+        "public_id": "3KHA",
+        "authority": "normal",
+        "kind": "visitor"
     }
 ]

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <meta charset="UTF-8">
+  </head>
+  <style>
+      body {
+        color: gray;
+      }
+      :root {
+        --a0-height: 1133.5mm;
+        --a0-width: 806mm;
+      }
+      html {
+        font-size: 15mm;
+        font-family: Consolas, 'Droid Sans Mono Slashed', 'Ubuntu Mono', Osaka-Mono, monospace;
+      }
+      .one_page {
+        height: var(--a0-height);
+        color: black;
+      }
+      .inner-page {
+        margin: 35mm;
+      }
+      .kind {
+        font-size: 3em;
+        border: 1.5mm solid;
+        padding: 7mm 10mm;
+      }
+      .winner {
+        font-size: 2em;
+        font-weight: bold;
+        line-height: 1.7;
+        margin: 3mm 20mm 7mm 30mm;
+      }
+      .classroom {
+        font-size: 3em;
+        font-weight: bold;
+        margin: 90mm 45mm;
+      }
+      li {
+        display: inline;
+      }
+  </style>
+  <body>
+    {% for lottery in lotteries %}
+    {% for kind in lottery['kinds'] %}
+    <div class="one_page">
+      <div class="inner-page">
+        <p style="margin-bottom: 30mm">
+          <span class="kind">
+            {{ '来場者' if kind['kind'] == 'visitor' else '生徒' }}
+          </span>
+        </p>
+        <p>
+          <span class="classroom" style="text-decoration: underline;">
+            {{ lottery['classroom'] }}
+          </span>
+        </p>
+        <div class="container">
+          <ul>
+            {% for winner in kind['winners'] %}
+            <li>
+              <span class="winner">{{winner}}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    {% endfor %}
+  </body>
+</html>

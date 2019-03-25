@@ -1,4 +1,5 @@
 from itertools import chain
+from jinja2 import Environment, FileSystemLoader
 
 from flask import Blueprint, jsonify, g, request, current_app
 from api.models import Lottery, Classroom, User, Application, db, group_member
@@ -12,7 +13,12 @@ from api.schemas import (
     lotteries_schema,
     lottery_schema
 )
-from api.auth import login_required, todays_user
+from api.auth import (
+        login_required,
+        todays_user,
+        UserNotFoundError,
+        UserDisabledError
+)
 from api.swagger import spec
 from api.time_management import (
     get_draw_time_index,
@@ -151,12 +157,11 @@ def apply_lottery(idx):
         if len(group_members_secret_id) > 3:
             return error_response(21)
         for sec_id in group_members_secret_id:
-            user = todays_user(secret_id=sec_id)
-            if user is not None:
-                group_members.append(user)
-            else:
+            try:
+                user = todays_user(secret_id=sec_id)
+            except (UserNotFoundError, UserDisabledError):
                 return error_response(1)  # Invalid group member secret id
-
+            group_members.append(user)
         for user in group_members:
             previous = Application.query.filter_by(user_id=user.id)
             if any(app.lottery.index == lottery.index and
@@ -396,6 +401,64 @@ def check_id(classroom_id, secret_id):
         return error_response(19)  # no application found
 
     return jsonify({"status": application.status})
+
+
+@bp.route('/render_results', methods=['GET'])
+@spec('api/results.yml')
+def results():
+    """return HTML file that contains the results of previous lotteries
+        This endpoint will be used for printing PDF
+        which will be put on the wall.
+        whoever access here can get the file. This is not a problem because
+        those infomations are public.
+    """
+    #  1. Get previous time index
+    #  2. Get previous lotteries using index
+    #  3. Search for caches for those lotteries
+    #  4. If cache was found, return it
+    #  5. Make 2 public_id lists, based on user's 'kind'('student', 'visitor')
+    #  6. Send them to the jinja template
+    #  8. Caches that file locally
+    #  9. Return file
+
+    def public_id_generator(lottery, kind):
+        """return list of winners' public_id for selected 'kind'
+            original at: L.336, written by @tamazasa
+        """
+        for app in lottery.application:
+            if app.status == 'won' and app.user.kind == kind:
+                yield encode_public_id(app.user.public_id)
+
+    # 1.
+    try:
+        index = get_prev_time_index()
+    except (OutOfHoursError, OutOfAcceptingHoursError):
+        return error_response(6)  # not acceptable time
+    # 2.
+    lotteries = Lottery.query.filter_by(index=index)
+
+    kinds = ('visitor', 'student')
+
+    # 5.
+    data = []
+
+    for lottery in lotteries:
+        cl = Classroom.query.get(lottery.classroom_id)
+
+        lottery_result = []
+        for kind in kinds:
+            public_ids = list(sorted(public_id_generator(lottery, kind)))
+            result = {'kind': kind,
+                      'winners': public_ids}
+            lottery_result.append(result)
+
+        data.append({'classroom': str(cl),
+                     'kinds': lottery_result})
+
+    # 6.
+    env = Environment(loader=FileSystemLoader('api/templates'))
+    template = env.get_template('results.html')
+    return template.render(lotteries=data)
 
 
 @bp.route('/health')

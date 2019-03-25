@@ -1,7 +1,7 @@
 Check health of backend
 ---
 responses:
-  - '200':
+  '200':
     description: No problem
     schema:
       type: "object"
