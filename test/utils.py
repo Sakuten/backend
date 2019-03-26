@@ -1,4 +1,4 @@
-from api.models import User, Application, db, group_members
+from api.models import User, Application, db, group_members, group_member
 from unittest import mock
 
 # --- variables
