@@ -632,7 +632,7 @@ def test_cancel_group(client):
         target_url: /lotteries/<id> [DELETE]
     """
     lottery_id = 1
-    members = (test_user1, test_user2, test_user3)
+    members = (test_user1, test_user2)
     rep = test_user
 
     token = login(client,
@@ -642,18 +642,19 @@ def test_cancel_group(client):
     with client.application.app_context():
         target_lottery = Lottery.query.get(lottery_id)
         index = target_lottery.index
-        members_app = [make_application(client, user['secret_id'], lottery_id)
+        members_app_id = [make_application(client, user['secret_id'], lottery_id)
                        for user in members]
-        rep_app = make_application(client, rep['secret_id'], lottery_id,
-                                   group_member_apps=members_app)
+        rep_app_id = make_application(client, rep['secret_id'], lottery_id,
+                                   group_member_apps=members_app_id)
 
         with mock.patch('api.routes.api.get_draw_time_index',
                         return_value=index):
-            client.delete(f'/applications/{rep_app}',
+            client.delete(f'/applications/{rep_app_id}',
                           headers={'Authorization': f'Bearer {token}'})
 
-        db_apps = Application.query.filter_by(lottery_id=lottery_id).all()
-        assert not db_apps
+        app_ids = db.session.query(Application.id).all()
+        assert rep_app_id not in app_ids
+        assert all(member_app not in app_ids for member_app in members_app_id)
 
 
 @pytest.mark.skip(reason='not implemented yet')
