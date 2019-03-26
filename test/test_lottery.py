@@ -642,10 +642,11 @@ def test_cancel_group(client):
     with client.application.app_context():
         target_lottery = Lottery.query.get(lottery_id)
         index = target_lottery.index
-        members_app_id = [make_application(client, user['secret_id'], lottery_id)
-                       for user in members]
+        members_app_id = [
+            make_application(client, user['secret_id'], lottery_id)
+            for user in members]
         rep_app_id = make_application(client, rep['secret_id'], lottery_id,
-                                   group_member_apps=members_app_id)
+                                      group_member_apps=members_app_id)
 
         with mock.patch('api.routes.api.get_draw_time_index',
                         return_value=index):
