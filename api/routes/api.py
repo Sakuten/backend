@@ -200,21 +200,20 @@ def apply_lottery(idx):
         db.session.commit()
         result = application_schema.dump(newapplication)[0]
         return jsonify(result)
-    else:
-        # 8.
-        members_app = [Application(
-                lottery_id=lottery.id, user_id=member.id, status="pending")
-                for member in group_members]
+    # 8.
+    members_app = [Application(
+            lottery_id=lottery.id, user_id=member.id, status="pending")
+            for member in group_members]
 
-        for application in members_app:
-            db.session.add(application)
-        db.session.commit()
-        rep_application = Application(
-            lottery_id=lottery.id, user_id=rep_user.id, status="pending",
-            is_rep=True,
-            group_members=[group_member(app)
-                           for app in members_app])
-        db.session.add(rep_application)
+    for application in members_app:
+        db.session.add(application)
+    db.session.commit()
+    rep_application = Application(
+        lottery_id=lottery.id, user_id=rep_user.id, status="pending",
+        is_rep=True,
+        group_members=[group_member(app)
+                        for app in members_app])
+    db.session.add(rep_application)
 
     # 9.
     db.session.commit()
