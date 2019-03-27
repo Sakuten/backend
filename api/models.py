@@ -27,7 +27,8 @@ class User(db.Model):
 
     def __repr__(self):
         authority_str = f'({self.authority})' if self.authority else ''
-        return f'<User {encode_public_id(self.public_id)} {authority_str}>'
+        return f'<User {encode_public_id(self.public_id)} {authority_str} ' + \
+               f'{self.win_count}-{self.lose_count}>'
 
 
 class Classroom(db.Model):
@@ -94,6 +95,7 @@ class Application(db.Model):
             user_id (int): user id of this application
             status (Boolen): whether chosen or not. initalized with None
             is_rep (bool): whether rep of a group or not
+            advantage (int): how much advantage does user have
     """
     __tablename__ = 'application'
 
@@ -109,6 +111,7 @@ class Application(db.Model):
                        default="pending",
                        nullable=False)
     is_rep = db.Column(db.Boolean, default=False)
+    advantage = None
     # groupmember_id = db.Column(db.Integer, db.ForeignKey(
     #     'group_members.id', ondelete='CASCADE'))
     # me_group_member = db.relationship('GroupMember', backref='application')
@@ -209,3 +212,7 @@ class Error(db.Model):
 def group_member(application):
     return GroupMember(user_id=application.user_id,
                        own_application=application)
+
+
+def group_members(applications):
+    return [group_member(app) for app in applications]
