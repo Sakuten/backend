@@ -681,9 +681,15 @@ def test_draw(client):
 
         for user in users:
             application = get_application(user, target_lottery)
-            if application:
-                status = 'win' if user.id in winners_id else 'lose'
-            assert application.status == status
+
+            if user.id in winners_id:
+                assert application.status == 'win'
+                assert user.win_count == 1
+                assert user.lose_count == 0
+            else:
+                assert application.status == 'lose'
+                assert user.win_count == 0
+                assert user.lose_count == 1
 
 
 def test_draw_group(client):
