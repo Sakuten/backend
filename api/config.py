@@ -19,7 +19,8 @@ class BaseConfig(object):
     ID_LIST_FILE = ROOT_DIR / Path('cards/ids.json')
     ERROR_TABLE_FILE = ROOT_DIR / Path('errors.json')
     CLASSROOM_TABLE_FILE = ROOT_DIR / Path('classrooms.json')
-    WINNERS_NUM = 90
+    WINNERS_NUM = 85
+    WAITING_NUM = 30
     RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY')
     RECAPTCHA_THRESHOLD = 0.09  # more than 0.09
     TIMEZONE = timezone(timedelta(hours=+9), 'JST')
@@ -50,6 +51,7 @@ class TestingConfig(BaseConfig):
     ENV = 'development'
     ID_LIST_FILE = BaseConfig.ROOT_DIR / 'cards/test_users.json'
     WINNERS_NUM = 5  # just small value
+    WAITING_NUM = 3
     # Recaptcha test key for automated testing.
     # https://developers.google.com/recaptcha/docs/faq#id-like-to-run-automated-tests-with-recaptcha-v2-what-should-i-do
     RECAPTCHA_SECRET_KEY = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
