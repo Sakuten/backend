@@ -789,6 +789,78 @@ def test_draw_lots_of_groups(client):
             assert all(status == rep_status for status in members_status)
 
 
+def test_draw_lots_of_groups_impossible(client):
+    """attempt to draw a lottery as 2 groups of 3 members and
+            1 normal user
+            while WINNERS_NUM is 5
+        1. make some applications to one lottery as groups
+        2. draws the lottery
+        3. test: status code
+        4. test: DB is changed
+        5. test: result of each member
+        6. test: number of winners is 4
+        7. test: 3 members of either group are `lose`
+        target_url: /lotteries/<id>/draw [POST]
+    """
+    idx = 1
+    groups = {0: [1, 2], 3: [4, 5]}    # rep -> members
+    normal = 6
+
+    with client.application.app_context():
+        target_lottery = Lottery.query.get(idx)
+        index = target_lottery.index
+        users = User.query.all()
+
+        for rep, members in groups.items():
+            members_app = [user2application(users[i], target_lottery)
+                           for i in members]
+            add_db(members_app)
+
+            rep_app = rep2application(users[rep], target_lottery,
+                                      group_members(members_app))
+            add_db([rep_app])
+
+        normal_app = user2application(users[normal], target_lottery)
+        add_db([normal_app])
+
+        token = get_token(client, admin)
+
+        resp = draw(client, token, idx, index)
+
+        assert resp.status_code == 200
+
+        winners = resp.get_json()
+        assert len(winners) == 4
+
+        users = User.query.all()
+        target_lottery = Lottery.query.get(idx)
+
+        assert target_lottery.done
+
+        normal_status = get_application(users[normal], target_lottery).status
+
+        assert normal_status == "won"
+
+        assert User.query.get(users[normal].id).win_count == 1
+
+        winners_cnt = 1
+        losers_cnt = 0
+        for rep, members in groups.items():
+            rep_status = get_application(users[rep], target_lottery).status
+            members_status = [get_application(users[i], target_lottery).status
+                              for i in members]
+
+            assert all(status == rep_status for status in members_status)
+
+            if rep_status == "won":
+                winners_cnt += 1 + len(members_status)
+            else:
+                losers_cnt += 1 + len(members_status)
+
+        assert winners_cnt == 4
+        assert losers_cnt == 3
+
+
 def test_draw_lots_of_groups_and_normal(client):
     """attempt to draw a lottery as 2 groups of 2 members and 2 normal
             while WINNERS_NUM is 5

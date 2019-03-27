@@ -101,6 +101,9 @@ def draw_one_group_members(applications, winners_num):
                           for rep in reps)
     n_normal_users = len(applications) - n_group_members
 
+    maximum_loop_cnt = 50
+
+    loop_cnt = 0
     while (loser_reps and len(winner_apps) < winners_num - n_normal_users or
            len(winner_apps) > winners_num):
         # when too few groups accidentally won
@@ -114,6 +117,10 @@ def draw_one_group_members(applications, winners_num):
             new_loser = random.choice(winner_reps)
             unset_group_result(new_loser, winner_apps, winner_reps)
             set_group_result(new_loser, False)
+
+        loop_cnt += 1
+        if (loop_cnt >= maximum_loop_cnt):
+            break
 
     for user in chain(winner_apps, loser_apps):
         db.session.add(user)
