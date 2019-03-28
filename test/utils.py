@@ -1,4 +1,4 @@
-from api.models import User, Application, db, group_members
+from api.models import User, Application, db, group_members, group_member
 from unittest import mock
 
 # --- variables
@@ -68,7 +68,7 @@ def as_user_get(client, secret_id, rresp, url):
     return client.get(url, headers={'Authorization': header})
 
 
-def make_application(client, secret_id, lottery_id):
+def make_application(client, secret_id, lottery_id, group_member_apps=[]):
     """make an application with specified user and lottery id
          client (class Flask.testing.FlaskClient): the client
          secret_id (str): the secret_id to apply
@@ -77,8 +77,12 @@ def make_application(client, secret_id, lottery_id):
    """
     with client.application.app_context():
         user = User.query.filter_by(secret_id=secret_id).first()
+        group_member_apps = (Application.query.get(app_id)
+                             for app_id in group_member_apps)
         newapplication = Application(
-            lottery_id=lottery_id, user_id=user.id, status="pending")
+            lottery_id=lottery_id, user_id=user.id,
+            group_members=[group_member(app)
+                           for app in group_member_apps])
         db.session.add(newapplication)
         db.session.commit()
         return newapplication.id
