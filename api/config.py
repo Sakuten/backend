@@ -41,6 +41,16 @@ class DevelopmentConfig(BaseConfig):
     TESTING = True
     ENV = 'development'
     ID_LIST_FILE = BaseConfig.ROOT_DIR / 'cards/test_users.json'
+    START_DATETIME = datetime(2019, 1, 1, 0, 0, 0, tzinfo=BaseConfig.TIMEZONE)
+    END_DATETIME = datetime(2100, 1, 1, 0, 0, 0, tzinfo=BaseConfig.TIMEZONE)
+    TIMEPOINTS = [
+        # applications are accepted in these durations
+        # modify me when debugging
+        (time(8,  50), time(9,  20)),
+        (time(10, 15), time(10, 45)),
+        (time(12, 25), time(12, 55)),
+        (time(13, 50), time(14, 20))
+    ]
 
 
 class TestingConfig(BaseConfig):
