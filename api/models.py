@@ -137,12 +137,12 @@ class Application(db.Model):
     def set_advantage(self, advantage):
         self.advantage = advantage
 
-    def set_status(self, newstatus):
-        if newstatus not in {"pending", "won", "lose"}:
+    def set_status(self, new_status):
+        if new_status not in {"pending", "won", "lose"}:
             raise ValueError
 
-        change_win, change_lose = (1, 0) if newstatus == "won" else \
-                                  (0, 1) if newstatus == "lose" else \
+        change_win, change_lose = (1, 0) if new_status == "won" else \
+                                  (0, 1) if new_status == "lose" else \
                                   (0, 0)
 
         revert_win, revert_lose = (-1, 0) if self.status == "won" else \
@@ -154,7 +154,7 @@ class Application(db.Model):
         self.user.lose_count += change_lose
         self.user.lose_count += revert_lose
 
-        self.status = newstatus
+        self.status = new_status
 
         db.session.add(self.user)
         db.session.add(self)
