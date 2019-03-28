@@ -44,7 +44,7 @@ class DevelopmentConfig(BaseConfig):
     START_DATETIME = datetime(2019, 1, 1, 0, 0, 0, tzinfo=BaseConfig.TIMEZONE)
     END_DATETIME = datetime(2100, 1, 1, 0, 0, 0, tzinfo=BaseConfig.TIMEZONE)
     TIMEPOINTS = [
-        # applications are accepted in these durations
+        # applications are accepted in these durations plus TIMEPOINT_END_MARGIN
         # modify me when debugging
         (time(8,  50), time(9,  20)),
         (time(10, 15), time(10, 45)),
