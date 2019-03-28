@@ -4,7 +4,7 @@ import yaml
 import api
 
 with open(os.path.join(api.__path__[0], 'spec/template.yml')) as f:
-    template = yaml.load(f)
+    template = yaml.load(f, Loader=yaml.FullLoader)
 swag = Swagger(template=template)
 
 
