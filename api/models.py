@@ -107,7 +107,7 @@ class Application(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(
         'user.id', ondelete='CASCADE'))
     user = db.relationship('User')
-    # status: [ pending, won, lose, waiting ]
+    # status: [ pending, won, lose, waiting, waiting-pending(internal) ]
     status = db.Column(db.String,
                        default="pending",
                        nullable=False)
@@ -133,13 +133,16 @@ class Application(db.Model):
         elif self.user.lose_count == 0:
             return 1
         else:
-            return 3 ** max(0, self.user.lose_count + self.user.waiting_count / 2 - self.user.win_count)
+            return 3 ** max(0, self.user.lose_count
+                               + self.user.waiting_count / 2
+                               - self.user.win_count)
 
     def set_advantage(self, advantage):
         self.advantage = advantage
 
     def set_status(self, newstatus):
-        if newstatus not in {"pending", "won", "lose", "waiting"}:
+        if newstatus not in {"pending", "waiting-pending",
+                             "won", "lose", "waiting"}:
             raise ValueError
 
         if self.status == "won":

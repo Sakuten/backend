@@ -44,15 +44,27 @@ def draw_one(lottery):
         set_group_advantage(applications)
 
         winners_num = current_app.config['WINNERS_NUM']
+        waiting_num = current_app.config['WAITING_NUM']
 
-        won_group_members = draw_one_group_members(applications, winners_num)
+        won_group_members = draw_one_group_members(
+            applications, winners_num, "pending", "won", "waiting-pending", True)
 
         rest_winners_num = winners_num - len(won_group_members)
-        won_normal_users = draw_one_normal_users(applications,
-                                                 rest_winners_num)
+        won_normal_users = draw_one_normal_users(
+            applications, rest_winners_num, "pending", "won", "waiting-pending")
 
         winners = [winner_app.user for winner_app in chain(won_group_members,
                                                            won_normal_users)]
+
+        waiting_group_members = draw_one_group_members(
+            applications, waiting_num, "waiting-pending", "waiting", "lose", False)
+
+        rest_waiting_num = waiting_num - len(waiting_group_members)
+        waiting_normal_users = draw_one_normal_users(
+            applications, rest_waiting_num, "waiting-pending", "waiting", "lose")
+
+        waiting = [waiting_app.user for waiting_app in chain(waiting_group_members,
+                                                             waiting_normal_users)]
 
     db.session.add(lottery)
     db.session.commit()
@@ -60,10 +72,12 @@ def draw_one(lottery):
     return winners
 
 
-def draw_one_group_members(applications, winners_num):
+def draw_one_group_members(applications, winners_num,
+                          target_status, win_status, lose_status, adjust):
     """internal function
-        decide win or lose for each group
+        decide win (waiting) or lose for each group
     """
+    target_apps = [app for app in applications if app.status == target_status]
     winner_apps = []
     loser_apps = []
     winner_reps = []
@@ -71,9 +85,9 @@ def draw_one_group_members(applications, winners_num):
 
     def set_group_result(rep, is_won):
         if is_won:
-            status, to_apps, to_reps = "won", winner_apps, winner_reps
+            status, to_apps, to_reps = win_status, winner_apps, winner_reps
         else:
-            status, to_apps, to_reps = "lose", loser_apps, loser_reps
+            status, to_apps, to_reps = lose_status, loser_apps, loser_reps
 
         rep.set_status(status)
         to_apps.append(rep)     # record results
@@ -89,7 +103,7 @@ def draw_one_group_members(applications, winners_num):
         for member in rep.group_members:
             from_apps.remove(member.own_application)
 
-    reps = [app for app in applications if app.is_rep]
+    reps = [app for app in target_apps if app.is_rep]
 
     probability_dict = get_probability_dict(applications, winners_num)
 
@@ -100,6 +114,12 @@ def draw_one_group_members(applications, winners_num):
     n_group_members = sum(len(rep.group_members) + 1
                           for rep in reps)
     n_normal_users = len(applications) - n_group_members
+
+    if not adjust:
+        for user in chain(winner_apps, loser_apps):
+        db.session.add(user)
+
+        return winner_apps
 
     while (loser_reps and len(winner_apps) < winners_num - n_normal_users or
            len(winner_apps) > winners_num):
@@ -121,12 +141,13 @@ def draw_one_group_members(applications, winners_num):
     return winner_apps
 
 
-def draw_one_normal_users(applications, winners_num):
+def draw_one_normal_users(applications, winners_num,
+                          target_status, win_status, lose_status):
     """internal function
         decide win or lose for each user not belonging to a group
         add applications to the session
     """
-    normal_users = [app for app in applications if app.status == "pending"]
+    normal_users = [app for app in applications if app.status == target_status]
 
     if len(normal_users) <= winners_num or not normal_users:
         # if pending applications are less than winners_num,
@@ -139,7 +160,7 @@ def draw_one_normal_users(applications, winners_num):
             p=calc_probabilities(normal_users))
 
     for application in normal_users:
-        application.set_status("won" if application in winner_apps else "lose")
+        application.set_status(win_status if application in winner_apps else lose_status)
         db.session.add(application)
 
     return winner_apps
