@@ -209,10 +209,10 @@ class Error(db.Model):
         return f'<Error {self.code}: "{self.message}">'
 
 
-def group_member(application):
+def app2member(application):
     return GroupMember(user_id=application.user_id,
                        own_application=application)
 
 
-def group_members(applications):
-    return [group_member(app) for app in applications]
+def apps2members(applications):
+    return [app2member(app) for app in applications]

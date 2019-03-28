@@ -2,7 +2,7 @@ from itertools import chain
 from jinja2 import Environment, FileSystemLoader
 
 from flask import Blueprint, jsonify, g, request, current_app
-from api.models import Lottery, Classroom, User, Application, db, group_member
+from api.models import Lottery, Classroom, User, Application, db, apps2members
 from api.schemas import (
     user_schema,
     users_schema,
@@ -194,11 +194,11 @@ def apply_lottery(idx):
     # access DB
     # 6. 7.
     if len(group_members) == 0:
-        newapplication = Application(
+        new_application = Application(
             lottery_id=lottery.id, user_id=rep_user.id, status="pending")
-        db.session.add(newapplication)
+        db.session.add(new_application)
         db.session.commit()
-        result = application_schema.dump(newapplication)[0]
+        result = application_schema.dump(new_application)[0]
         return jsonify(result)
     # 8.
     members_app = [Application(
@@ -211,8 +211,7 @@ def apply_lottery(idx):
     rep_application = Application(
         lottery_id=lottery.id, user_id=rep_user.id, status="pending",
         is_rep=True,
-        group_members=[group_member(app)
-                       for app in members_app])
+        group_members=apps2members(members_app))
     db.session.add(rep_application)
 
     # 9.

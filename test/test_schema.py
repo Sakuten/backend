@@ -1,4 +1,4 @@
-from api.models import User, Lottery, Application, group_member, db
+from api.models import User, Lottery, Application, app2member, db
 from api.schemas import application_schema
 
 
@@ -12,7 +12,7 @@ def test_application_is_member(client):
         member_app = Application(lottery=target_lot, user=member)
         rep = users[1]
         rep_app = Application(lottery=target_lot, user=rep, is_rep=True,
-                              group_members=[group_member(member_app)])
+                              group_members=[app2member(member_app)])
 
         db.session.add(member_app)
         db.session.add(rep_app)
