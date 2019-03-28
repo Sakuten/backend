@@ -143,6 +143,9 @@ tags
 # ignore them not to commit credentials
 instance/
 
+# Visual Studio setting files
+.vscode/
+
 
 
 ## user definitions
