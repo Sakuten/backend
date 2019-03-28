@@ -45,8 +45,9 @@ class DevelopmentConfig(BaseConfig):
     END_DATETIME = datetime(2100, 1, 1, 0, 0, 0, tzinfo=BaseConfig.TIMEZONE)
     TIMEPOINTS = [
         # applications are accepted in these durations and TIMEPOINT_END_MARGIN
-        # modify me when debugging
-        (time(8,  50), time(9,  20)),
+        # lottery is carried out during DRAWING_TIME_EXTENTION
+        # modify here when debugging
+        (time(0, 0), time(23, 49)),
     ]
 
 
