@@ -26,7 +26,7 @@ from utils import (
 
 
 from api.models import Lottery, Classroom, User, Application, GroupMember, db
-from api.models import group_members
+from api.models import apps2members
 from api.schemas import (
     classrooms_schema,
     classroom_schema,
@@ -740,7 +740,7 @@ def test_draw_group(client):
         2. draws the lottery
         3. test: status code
         4. test: DB is changed
-        5. test: result of each member
+        5. test: result of each member (win)
         target_url: /lotteries/<id>/draw [POST]
     """
     idx = 1
@@ -758,7 +758,7 @@ def test_draw_group(client):
         rep_application = user2application(
                 users[0], target_lottery,
                 is_rep=True,
-                group_members=group_members(members_app))
+                group_members=apps2members(members_app))
 
         add_db((rep_application,))  # 1-element tuple
 
@@ -775,9 +775,13 @@ def test_draw_group(client):
 
         rep_status = get_application(users[0], target_lottery).status
 
+        assert rep_status == "won"
+        assert users[0].win_count == 1
+
         for user in users[1:group_size]:
             application = get_application(user, target_lottery)
-            assert application.status == rep_status
+            assert application.status == "won"
+            assert user.win_count == 1
 
 
 def test_draw_lots_of_groups(client):
@@ -807,7 +811,7 @@ def test_draw_lots_of_groups(client):
             add_db(members_app)
 
             rep_app = rep2application(users[rep], target_lottery,
-                                      group_members(members_app))
+                                      apps2members(members_app))
             add_db([rep_app])
 
         token = get_token(client, admin)

@@ -29,7 +29,7 @@ def draw_one(lottery):
         Args:
           lottery(Lottery): The lottery to be drawn
         Return:
-          winners([User]): The list of users who won
+          applications([User]): The list of applications handled
         Raises:
             AlreadyDoneError
     """
@@ -47,24 +47,25 @@ def draw_one(lottery):
         waiting_num = current_app.config['WAITING_NUM']
 
         won_group_members = draw_one_group_members(
-            applications, winners_num, "pending", "won", "waiting-pending", True)
+            applications, winners_num,
+            "pending", "won", "waiting-pending", True)
 
         rest_winners_num = winners_num - len(won_group_members)
-        won_normal_users = draw_one_normal_users(
-            applications, rest_winners_num, "pending", "won", "waiting-pending")
+        draw_one_normal_users(
+            applications, rest_winners_num,
+            "pending", "won", "waiting-pending")
 
         winners = [winner_app.user for winner_app in chain(won_group_members,
                                                            won_normal_users)]
 
         waiting_group_members = draw_one_group_members(
-            applications, waiting_num, "waiting-pending", "waiting", "lose", False)
+            applications, waiting_num,
+            "waiting-pending", "waiting", "lose", False)
 
         rest_waiting_num = waiting_num - len(waiting_group_members)
-        waiting_normal_users = draw_one_normal_users(
-            applications, rest_waiting_num, "waiting-pending", "waiting", "lose")
-
-        waiting = [waiting_app.user for waiting_app in chain(waiting_group_members,
-                                                             waiting_normal_users)]
+        draw_one_normal_users(
+            applications, rest_waiting_num,
+            "waiting-pending", "waiting", "lose")
 
     db.session.add(lottery)
     db.session.commit()
@@ -73,7 +74,7 @@ def draw_one(lottery):
 
 
 def draw_one_group_members(applications, winners_num,
-                          target_status, win_status, lose_status, adjust):
+                           target_status, win_status, lose_status, adjust):
     """internal function
         decide win (waiting) or lose for each group
     """
@@ -117,7 +118,7 @@ def draw_one_group_members(applications, winners_num,
 
     if not adjust:
         for user in chain(winner_apps, loser_apps):
-        db.session.add(user)
+            db.session.add(user)
 
         return winner_apps
 
@@ -160,7 +161,8 @@ def draw_one_normal_users(applications, winners_num,
             p=calc_probabilities(normal_users))
 
     for application in normal_users:
-        application.set_status(win_status if application in winner_apps else lose_status)
+        application.set_status(win_status if application in winner_apps
+                               else lose_status)
         db.session.add(application)
 
     return winner_apps
@@ -208,10 +210,14 @@ def set_group_advantage(apps):
     """
         calculate the advantage of the group using group_advantage_calculation
     """
-    group_apps = (chain([rep], (member.own_application
-                                for member in rep.group_members))
-                  for rep in apps if rep.is_rep)
-    for group in group_apps:
+    def group_apps(rep):
+        members = [member.own_application for member in rep.group_members]
+        members.append(rep)
+        return members
+
+    reps = (app for app in apps if app.is_rep)
+    groups = (group_apps(rep) for rep in reps)
+    for group in groups:
         advantage = group_advantage_calculation(group)
         for app in group:
             app.set_advantage(advantage)

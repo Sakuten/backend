@@ -133,16 +133,18 @@ class Application(db.Model):
         elif self.user.lose_count == 0:
             return 1
         else:
-            return 3 ** max(0, self.user.lose_count
-                               + self.user.waiting_count / 2
-                               - self.user.win_count)
+            return 3 ** max(0, (
+                self.user.lose_count
+                + self.user.waiting_count / 2
+                - self.user.win_count
+                ))
 
     def set_advantage(self, advantage):
         self.advantage = advantage
 
-    def set_status(self, newstatus):
-        if newstatus not in {"pending", "waiting-pending",
-                             "won", "lose", "waiting"}:
+    def set_status(self, new_status):
+        if new_status not in {"pending", "waiting-pending",
+                              "won", "lose", "waiting"}:
             raise ValueError
 
         if self.status == "won":
@@ -152,14 +154,14 @@ class Application(db.Model):
         elif self.status == "waiting":
             self.user.waiting_count -= 1
 
-        if newstatus == "won":
+        if new_status == "won":
             self.user.win_count += 1
-        elif newstatus == "lose":
+        elif new_status == "lose":
             self.user.lose_count += 1
-        elif newstatus == "waiting":
+        elif new_status == "waiting":
             self.user.waiting_count += 1
 
-        self.status = newstatus
+        self.status = new_status
 
         db.session.add(self.user)
         db.session.add(self)
@@ -214,10 +216,10 @@ class Error(db.Model):
         return f'<Error {self.code}: "{self.message}">'
 
 
-def group_member(application):
+def app2member(application):
     return GroupMember(user_id=application.user_id,
                        own_application=application)
 
 
-def group_members(applications):
-    return [group_member(app) for app in applications]
+def apps2members(applications):
+    return [app2member(app) for app in applications]
