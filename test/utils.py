@@ -1,4 +1,4 @@
-from api.models import User, Application, db, group_members, group_member
+from api.models import User, Application, db, apps2members
 from unittest import mock
 
 # --- variables
@@ -79,13 +79,12 @@ def make_application(client, secret_id, lottery_id, group_member_apps=[]):
         user = User.query.filter_by(secret_id=secret_id).first()
         group_member_apps = (Application.query.get(app_id)
                              for app_id in group_member_apps)
-        newapplication = Application(
+        new_application = Application(
             lottery_id=lottery_id, user_id=user.id,
-            group_members=[group_member(app)
-                           for app in group_member_apps])
-        db.session.add(newapplication)
+            group_members=apps2members(group_member_apps))
+        db.session.add(new_application)
         db.session.commit()
-        return newapplication.id
+        return new_application.id
 
 
 def user2application(user, target_lottery, **kwargs):
@@ -114,7 +113,7 @@ def users2application(users, target_lottery, **kwargs):
 
 def rep2application(user, target_lottery, members):
     if isinstance(members[0], Application):
-        members = group_members(members)
+        members = apps2members(members)
     return user2application(user, target_lottery,
                             is_rep=True,
                             group_members=members)

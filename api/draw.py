@@ -94,6 +94,9 @@ def draw_one_group_members(applications, winners_num):
     probability_dict = get_probability_dict(applications, winners_num)
 
     for i, rep in enumerate(reps):
+        # assert all(
+        #     member.own_application.get_advantage() == rep.get_advantage()
+        #     for member in rep.group_members)
         set_group_result(rep,
                          random.random() < probability_dict[rep])
 
@@ -187,10 +190,14 @@ def set_group_advantage(apps):
     """
         calculate the advantage of the group using group_advantage_calculation
     """
-    group_apps = (chain([rep], (member.own_application
-                                for member in rep.group_members))
-                  for rep in apps if rep.is_rep)
-    for group in group_apps:
+    def group_apps(rep):
+        members = [member.own_application for member in rep.group_members]
+        members.append(rep)
+        return members
+
+    reps = (app for app in apps if app.is_rep)
+    groups = (group_apps(rep) for rep in reps)
+    for group in groups:
         advantage = group_advantage_calculation(group)
         for app in group:
             app.set_advantage(advantage)
