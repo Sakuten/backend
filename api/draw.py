@@ -51,7 +51,7 @@ def draw_one(lottery):
             "pending", "won", "waiting-pending", True)
 
         rest_winners_num = winners_num - len(won_group_members)
-        draw_one_normal_users(
+        won_normal_users = draw_one_normal_users(
             applications, rest_winners_num,
             "pending", "won", "waiting-pending")
 
@@ -117,6 +117,11 @@ def draw_one_group_members(applications, winners_num,
     n_normal_users = len(applications) - n_group_members
 
     if not adjust:
+        # when too many groups accidentally won
+        while len(winner_apps) > winners_num:
+            new_loser = random.choice(winner_reps)
+            unset_group_result(new_loser, winner_apps, winner_reps)
+            set_group_result(new_loser, False)
         for user in chain(winner_apps, loser_apps):
             db.session.add(user)
 
