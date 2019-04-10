@@ -106,7 +106,7 @@ def draw_one_group_members(applications, winners_num,
 
     reps = [app for app in target_apps if app.is_rep]
 
-    probability_dict = get_probability_dict(applications, winners_num)
+    probability_dict = get_probability_dict(target_apps, winners_num)
 
     for i, rep in enumerate(reps):
         set_group_result(rep,
@@ -114,7 +114,7 @@ def draw_one_group_members(applications, winners_num,
 
     n_group_members = sum(len(rep.group_members) + 1
                           for rep in reps)
-    n_normal_users = len(applications) - n_group_members
+    n_normal_users = len(target_apps) - n_group_members
 
     def adjust():
         # when too few groups accidentally won
