@@ -74,7 +74,7 @@ def draw_one(lottery):
 
 
 def draw_one_group_members(applications, winners_num,
-                           target_status, win_status, lose_status, adjust):
+                           target_status, win_status, lose_status, set_just):
     """internal function
         decide win (waiting) or lose for each group
     """
@@ -116,12 +116,20 @@ def draw_one_group_members(applications, winners_num,
                           for rep in reps)
     n_normal_users = len(applications) - n_group_members
 
-    if not adjust:
+    def adjust():
+        # when too few groups accidentally won
+        while loser_reps and len(winner_apps) < winners_num - n_normal_users:
+            new_winner = random.choice(loser_reps)
+            unset_group_result(new_winner, loser_apps, loser_reps)
+            set_group_result(new_winner, True)
         # when too many groups accidentally won
         while len(winner_apps) > winners_num:
             new_loser = random.choice(winner_reps)
             unset_group_result(new_loser, winner_apps, winner_reps)
             set_group_result(new_loser, False)
+
+    if not set_just:
+        adjust()
         for user in chain(winner_apps, loser_apps):
             db.session.add(user)
 
@@ -129,17 +137,7 @@ def draw_one_group_members(applications, winners_num,
 
     while (loser_reps and len(winner_apps) < winners_num - n_normal_users or
            len(winner_apps) > winners_num):
-        # when too few groups accidentally won
-        while loser_reps and len(winner_apps) < winners_num - n_normal_users:
-            new_winner = random.choice(loser_reps)
-            unset_group_result(new_winner, loser_apps, loser_reps)
-            set_group_result(new_winner, True)
-
-        # when too many groups accidentally won
-        while len(winner_apps) > winners_num:
-            new_loser = random.choice(winner_reps)
-            unset_group_result(new_loser, winner_apps, winner_reps)
-            set_group_result(new_loser, False)
+        adjust()
 
     for user in chain(winner_apps, loser_apps):
         db.session.add(user)
