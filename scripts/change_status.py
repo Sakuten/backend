@@ -20,7 +20,9 @@ def find_user(arg):
 
 def find_application(user):
     apps = db.session.query(Application).all()
-    print(apps)
+    if not apps:
+        print("No application yet")
+        exit()
     return max(apps, key=lambda app: app.lottery.index)
 
 def valid_status(arg):
