@@ -48,7 +48,7 @@ def draw_one(lottery):
 
         won_group_members = draw_one_group_members(
             applications, winners_num,
-            "pending", "won", "waiting-pending", True)
+            "pending", "won", "waiting-pending", set_just=True)
 
         rest_winners_num = winners_num - len(won_group_members)
         won_normal_users = draw_one_normal_users(
@@ -60,7 +60,7 @@ def draw_one(lottery):
 
         waiting_group_members = draw_one_group_members(
             applications, waiting_num,
-            "waiting-pending", "waiting", "lose", False)
+            "waiting-pending", "waiting", "lose", set_just=False)
 
         rest_waiting_num = waiting_num - len(waiting_group_members)
         draw_one_normal_users(
