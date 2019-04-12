@@ -73,8 +73,8 @@ def draw_one(lottery):
     return winners
 
 
-def draw_one_group_members(applications, winners_num,
-                           target_status="pending", win_status="won", lose_status="lose",
+def draw_one_group_members(applications, winners_num, target_status="pending",
+                           win_status="won", lose_status="lose",
                            set_just=True):
     """internal function
         decide win (waiting) or lose for each group
@@ -146,8 +146,8 @@ def draw_one_group_members(applications, winners_num,
     return winner_apps
 
 
-def draw_one_normal_users(applications, winners_num,
-                          target_status="pending", win_status="won", lose_status="lose"):
+def draw_one_normal_users(applications, winners_num, target_status="pending",
+                          win_status="won", lose_status="lose"):
     """internal function
         decide win or lose for each user not belonging to a group
         add applications to the session
