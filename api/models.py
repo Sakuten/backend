@@ -133,9 +133,9 @@ class Application(db.Model):
         elif self.user.lose_count == 0:
             return 1
         else:
-            return 3 ** max(0, (
-                self.user.lose_count
-                + self.user.waiting_count / 2
+            return 3 ** max(0, (                # at least 3^0 (= 1)
+                self.user.lose_count            # increase exponentially
+                + self.user.waiting_count / 2   # 2 waiting == 1 lose
                 - self.user.win_count
                 ))
 
