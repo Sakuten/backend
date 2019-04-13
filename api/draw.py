@@ -82,12 +82,12 @@ def draw_one_group_members(applications, winners_num, set_just=True,
     """internal function
         decide win (waiting) or lose for each group
     """
-    target_status = kwargs['target_status'] if 'target_status' in kwargs \
-                    else "pending"
-    win_status = kwargs['win_status'] if 'win_status' in kwargs \
-                 else "won"
-    lose_status = kwargs['lose_status'] if 'lose_status' in kwargs \
-                  else "lose"
+    target_status = \
+        kwargs['target_status'] if 'target_status' in kwargs else "pending"
+    win_status = \
+        kwargs['win_status'] if 'win_status' in kwargs else "won"
+    lose_status = \
+        kwargs['lose_status'] if 'lose_status' in kwargs else "lose"
 
     target_apps = [app for app in applications if app.status == target_status]
     winner_apps = []
@@ -161,12 +161,12 @@ def draw_one_normal_users(applications, winners_num, **kwargs):
         decide win or lose for each user not belonging to a group
         add applications to the session
     """
-    target_status = kwargs['target_status'] if 'target_status' in kwargs \
-                    else "pending"
-    win_status = kwargs['win_status'] if 'win_status' in kwargs \
-                 else "won"
-    lose_status = kwargs['lose_status'] if 'lose_status' in kwargs \
-                  else "lose"
+    target_status = \
+        kwargs['target_status'] if 'target_status' in kwargs else "pending"
+    win_status = \
+        kwargs['win_status'] if 'win_status' in kwargs else "won"
+    lose_status = \
+        kwargs['lose_status'] if 'lose_status' in kwargs else "lose"
 
     normal_users = [app for app in applications if app.status == target_status]
 
