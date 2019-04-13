@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c1e02896889d22a56edf5d4a09f3b6bdeb57f615417d38472358750c1292631e"
+            "sha256": "cd608774d7c91ada3cdda9d4d47b00c553bf694b25ebb9f878ae586daea7a8ad"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -84,6 +84,14 @@
             ],
             "version": "==7.0"
         },
+        "colorama": {
+            "hashes": [
+                "sha256:05eed71e2e327246ad6b38c540c4a3117230b19679b875190486ddd2d721422d",
+                "sha256:f8ac84de7840f5b9c4e3347b3c1eaa50f7e49c2b07596221daec5edaabbd7c48"
+            ],
+            "markers": "platform_system == 'Windows'",
+            "version": "==0.4.1"
+        },
         "cryptography": {
             "hashes": [
                 "sha256:066f815f1fe46020877c5983a7e747ae140f517f1b09030ec098503575265ce1",
@@ -161,6 +169,7 @@
                 "sha256:065c4f02ebe7f7cf559e49ee5a95fb800a9e4528727aec6f24402a5374c65013",
                 "sha256:14dd6caf1527abb21f08f86c784eac40853ba93edb79552aa1e4b8aef1b61c7b"
             ],
+            "index": "pypi",
             "version": "==2.10.1"
         },
         "jsonschema": {
@@ -343,15 +352,15 @@
         },
         "pycparser": {
             "hashes": [
-                "sha256:a0588afa00fbb6bb95d4134faf770c7989884252f134ad6a34bc469f4580392b",
+                "sha256:1d9c2c6eeb0adc882b7993f0c2811fed5909a709f0d37c749a402f30f77fd8ea",
                 "sha256:a988718abfad80b6b157acce7bf130a30876d27603738ac39f140993246b25b3"
             ],
             "version": "==2.19"
         },
         "pyrsistent": {
             "hashes": [
-                "sha256:12f03fbeaf6dab94d42afec5843638e81d2a10d620811a358a3ed6797a6d6d3a",
-                "sha256:3ca82748918eb65e2d89f222b702277099aca77e34843c5eb9d52451173970e2"
+                "sha256:3ca82748918eb65e2d89f222b702277099aca77e34843c5eb9d52451173970e2",
+                "sha256:6bc778cdcc8713aebf6e788725f1d8454e09b2861505d0e6fa7bf5bdb21acabb"
             ],
             "version": "==0.14.11"
         },
