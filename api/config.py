@@ -23,6 +23,7 @@ class BaseConfig(object):
     RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY')
     RECAPTCHA_THRESHOLD = 0.09  # more than 0.09
     TIMEZONE = timezone(timedelta(hours=+9), 'JST')
+    # Don't forget to update START/END DATETIME every year
     START_DATETIME = datetime(2019, 9, 15, 8,  40, 0, tzinfo=TIMEZONE)
     END_DATETIME = datetime(2019, 9, 16, 16, 00, 0, tzinfo=TIMEZONE)    # 敬老の日
     DRAWING_TIME_EXTENSION = timedelta(minutes=10)
@@ -41,8 +42,10 @@ class DevelopmentConfig(BaseConfig):
     TESTING = True
     ENV = 'development'
     ID_LIST_FILE = BaseConfig.ROOT_DIR / 'cards/test_users.json'
+    # Don't forget to update START/END DATETIME every year
+    # Update BaseConfig too
     START_DATETIME = datetime(2019, 1, 1, 0, 0, 0, tzinfo=BaseConfig.TIMEZONE)
-    END_DATETIME = datetime(2100, 1, 1, 0, 0, 0, tzinfo=BaseConfig.TIMEZONE)
+    END_DATETIME = datetime(2019, 9, 16, 23, 59, 59, tzinfo=BaseConfig.TIMEZONE)
     TIMEPOINTS = [
         # applications are accepted in these durations and TIMEPOINT_END_MARGIN
         # lottery is carried out during DRAWING_TIME_EXTENTION
