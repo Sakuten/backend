@@ -44,8 +44,9 @@ class DevelopmentConfig(BaseConfig):
     ID_LIST_FILE = BaseConfig.ROOT_DIR / 'cards/test_users.json'
     # Don't forget to update START/END DATETIME every year
     # Update BaseConfig too
-    START_DATETIME = datetime(2019, 1, 1, 0, 0, 0, tzinfo=BaseConfig.TIMEZONE)
-    END_DATETIME = datetime(2019, 9, 16, 23, 59, 59, tzinfo=BaseConfig.TIMEZONE)
+    START_DATETIME = datetime(2018, 9, 17, 0, 0, 0, tzinfo=BaseConfig.TIMEZONE)
+    END_DATETIME = datetime(2019, 9, 16, 23, 59, 59,
+                            tzinfo=BaseConfig.TIMEZONE)
     TIMEPOINTS = [
         # applications are accepted in these durations and TIMEPOINT_END_MARGIN
         # lottery is carried out during DRAWING_TIME_EXTENTION
