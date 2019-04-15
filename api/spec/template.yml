@@ -49,6 +49,7 @@ definitions:
       - pending
       - won
       - lose
+      - waiting
     type: string
   RepresentativeMarker:
     description: Marker of the reps of applying groups

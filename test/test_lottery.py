@@ -710,6 +710,8 @@ def test_draw(client):
 
         assert target_lottery.done
 
+        waiting_cnt = 0
+
         for user in users:
             application = get_application(user, target_lottery)
 
@@ -717,10 +719,19 @@ def test_draw(client):
                 assert application.status == 'won'
                 assert user.win_count == 1
                 assert user.lose_count == 0
+                assert user.waiting_count == 0
             else:
-                assert application.status == 'lose'
+                assert application.status in {'lose', 'waiting'}
                 assert user.win_count == 0
-                assert user.lose_count == 1
+                if application.status == 'waiting':
+                    assert user.lose_count == 0
+                    assert user.waiting_count == 1
+                    waiting_cnt += 1
+                else:
+                    assert user.lose_count == 1
+                    assert user.waiting_count == 0
+
+        assert waiting_cnt == 3
 
 
 def test_draw_group(client):
@@ -774,19 +785,20 @@ def test_draw_group(client):
 
 
 def test_draw_lots_of_groups(client):
-    """attempt to draw a lottery as 2 groups of 2 members and
-            1 group of 3 members
-            while WINNERS_NUM is 5
+    """attempt to draw a lottery as 3 groups of 2 members and
+            2 group of 3 members
+            while WINNERS_NUM is 5 and WAITING_NUM is 3
         1. make some applications to one lottery as groups
         2. draws the lottery
         3. test: status code
         4. test: DB is changed
         5. test: result of each member
         6. test: number of winners is 5 (*not 4*)
+        7. test: size of waiting list < 3
         target_url: /lotteries/<id>/draw [POST]
     """
     idx = 1
-    groups = {0: [1], 2: [3], 4: [5, 6]}    # rep -> members
+    groups = {0: [1], 2: [3], 4: [5, 6], 7: [8, 9]}    # rep -> members
 
     with client.application.app_context():
         target_lottery = Lottery.query.get(idx)
@@ -816,12 +828,29 @@ def test_draw_lots_of_groups(client):
 
         assert target_lottery.done
 
+        won_cnt = 0
+        lose_cnt = 0
+        waiting_cnt = 0
         for rep, members in groups.items():
             rep_status = get_application(users[rep], target_lottery).status
             members_status = (get_application(users[i], target_lottery).status
                               for i in members)
 
             assert all(status == rep_status for status in members_status)
+
+            if rep_status == "won":
+                won_cnt += 1 + len(members)
+            elif rep_status == "lose":
+                lose_cnt += 1 + len(members)
+            else:
+                # make sure "waiting-pending" does not leak out
+                assert rep_status == "waiting"
+                waiting_cnt += 1 + len(members)
+
+        assert won_cnt == 5
+        assert lose_cnt in {2, 3}
+        assert waiting_cnt in {3, 2}
+        assert lose_cnt + waiting_cnt == 5
 
 
 def test_draw_lots_of_groups_and_normal(client):
@@ -1087,8 +1116,10 @@ def test_draw_all(client):
                 application = Application.query.filter_by(
                     lottery=lottery, user_id=user.id).first()
                 if application:
-                    status = 'won' if user.id in winners_id else 'lose'
-                    assert application.status == status
+                    if user.id in winners_id:
+                        assert application.status == "won"
+                    else:
+                        assert application.status in {"lose", "waiting"}
 
             for lottery in non_target_lotteries:
                 application = Application.query.filter_by(
