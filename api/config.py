@@ -19,10 +19,12 @@ class BaseConfig(object):
     ID_LIST_FILE = ROOT_DIR / Path('cards/ids.json')
     ERROR_TABLE_FILE = ROOT_DIR / Path('errors.json')
     CLASSROOM_TABLE_FILE = ROOT_DIR / Path('classrooms.json')
-    WINNERS_NUM = 90
+    WINNERS_NUM = 85
+    WAITING_NUM = 30
     RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY')
     RECAPTCHA_THRESHOLD = 0.09  # more than 0.09
     TIMEZONE = timezone(timedelta(hours=+9), 'JST')
+    # Don't forget to update START/END DATETIME every year
     START_DATETIME = datetime(2019, 9, 15, 8,  40, 0, tzinfo=TIMEZONE)
     END_DATETIME = datetime(2019, 9, 16, 16, 00, 0, tzinfo=TIMEZONE)    # 敬老の日
     DRAWING_TIME_EXTENSION = timedelta(minutes=10)
@@ -41,6 +43,17 @@ class DevelopmentConfig(BaseConfig):
     TESTING = True
     ENV = 'development'
     ID_LIST_FILE = BaseConfig.ROOT_DIR / 'cards/test_users.json'
+    # Don't forget to update START/END DATETIME every year
+    # Update BaseConfig too
+    START_DATETIME = datetime(2018, 9, 17, 0, 0, 0, tzinfo=BaseConfig.TIMEZONE)
+    END_DATETIME = datetime(2019, 9, 16, 23, 59, 59,
+                            tzinfo=BaseConfig.TIMEZONE)
+    TIMEPOINTS = [
+        # applications are accepted in these durations and TIMEPOINT_END_MARGIN
+        # lottery is carried out during DRAWING_TIME_EXTENTION
+        # modify here when debugging
+        (time(0, 0), time(23, 49)),
+    ]
 
 
 class TestingConfig(BaseConfig):
@@ -50,6 +63,7 @@ class TestingConfig(BaseConfig):
     ENV = 'development'
     ID_LIST_FILE = BaseConfig.ROOT_DIR / 'cards/test_users.json'
     WINNERS_NUM = 5  # just small value
+    WAITING_NUM = 3
     # Recaptcha test key for automated testing.
     # https://developers.google.com/recaptcha/docs/faq#id-like-to-run-automated-tests-with-recaptcha-v2-what-should-i-do
     RECAPTCHA_SECRET_KEY = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
