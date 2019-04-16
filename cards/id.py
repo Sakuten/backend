@@ -52,28 +52,42 @@ def decode_public_id(str_id):
     return sum(alphas[i] * 18**(3-i) for i in range(4))
 
 
-def generate_ids(how_many):
+def generate_ids(for_admin, for_checkers, for_students, for_visitors):
     """
         generate a list of dictionaries that have a pair of
         secret ID and public ID
         return the generated IDs for the use in making
         QR codes
         Args:
-            how_many (int): how many pairs of IDs are needed
+            for_admin (int): number of IDs for admin
+            for_checkers (int): number of IDs for
+            for_students (int): number of IDs for
+            for_visitors (int): number of IDs for
         Return:
             secret_ids (list): all generated IDs
     """
-    public_raw_ids = random.sample(range(max_public_id + 1), how_many)
-    secret_ids = [token_urlsafe(24) for _ in range(how_many)]
+    public_raw_ids = random.sample(
+        range(max_public_id + 1),
+        for_admin + for_checkers + for_students + for_visitors)
 
-    id_dicts = [{
+    def given_auth_kind(num, auth, kind):
+        nonlocal public_raw_ids
+        public_ids = public_raw_ids[:num]
+        public_raw_ids = public_raw_ids[num:]
+        secret_ids = [token_urlsafe(24) for _ in range(num)]
+        return [{
                 "secret_id": secret,
                 "public_id": encode_public_id(public),
-                "authority": "normal"   # normal user (not admin or staff)
+                "authority": auth,
+                "kind": kind
                 }
-                for (secret, public) in zip(secret_ids, public_raw_ids)]
+                for (secret, public) in zip(secret_ids, public_ids)]
 
-    return id_dicts
+    return ( given_auth_kind(for_admin, "admin", "admin")           # noqa
+           + given_auth_kind(for_checkers, "checker", "checker")    # noqa
+           + given_auth_kind(for_students, "normal", "student")     # noqa
+           + given_auth_kind(for_visitors, "normal", "visitor")     # noqa
+           )                                                        # noqa
 
 
 def save_id_json_file(json_path, id_dicts):
