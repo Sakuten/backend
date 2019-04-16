@@ -5,17 +5,17 @@
   <title></title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosansjp.css">
   <style>
+  h2, strong {
+    font-family: 'Noto Sans CJK JP Bold', sans-serif;
+  }
   body, table {
     padding: 0;
     margin: 0;
     font-family: 'Noto Sans CJK JP Regular', sans-serif;
   }
-  h2, strong {
-    font-family: 'Noto Sans CJK JP Medium', sans-serif;
-  }
   .container {
     padding: 10px 10px 30px 30px;
-    width: 29.25%;
+    width: 29%;
     display: inline-block;
     height: 81.5mm;
     border-style: none;
@@ -24,11 +24,9 @@
   .container:nth-child(3n+2), .container:nth-child(3n) {
     border-left-style: dashed;
     border-top-style: dashed;
-    border-bottom-style: dashed;
   }
   .container:nth-child(3n+1) {
     border-top-style: dashed;
-    border-bottom-style: dashed;
   }
   img {
     width: 100%;
@@ -36,7 +34,7 @@
   .image {
     float: left;
     width: 70%;
-    margin-left: 10px;
+    margin-left: -10px;
   }
   .header {
     margin-top: 10px;
@@ -44,7 +42,6 @@
   }
   .description {
     float: left;
-    margin-left: 10px;
     /* width: 50%; */
   }
   .header {
