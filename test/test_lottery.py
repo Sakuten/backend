@@ -341,7 +341,9 @@ def test_apply_group(client):
         group_members = [gm.user_id for gm in GroupMember.query.filter_by(
                          rep_application=application).all()]
         assert application.is_rep is True
-        assert set(group_members) == set(members_id)
+        members_id.sort()
+        group_members.sort()
+        assert group_members == members_id
 
         assert resp.status_code == 200
         assert resp.get_json() == application_schema.dump(application)[0]
