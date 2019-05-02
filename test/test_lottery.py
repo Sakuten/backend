@@ -642,6 +642,9 @@ def test_cancel_group(client):
     with client.application.app_context():
         target_lottery = Lottery.query.get(lottery_id)
         index = target_lottery.index
+
+        first_gm_len = len(GroupMember.query.all())
+
         members_app_id = [
             make_application(client, user['secret_id'], lottery_id)
             for user in members]
@@ -656,6 +659,9 @@ def test_cancel_group(client):
         app_ids = db.session.query(Application.id).all()
         assert rep_app_id not in app_ids
         assert all(member_app not in app_ids for member_app in members_app_id)
+
+        after_gm_len = len(GroupMember.query.all())
+        assert after_gm_len == first_gm_len
 
 
 @pytest.mark.skip(reason='not implemented yet')
