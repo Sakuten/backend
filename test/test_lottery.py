@@ -341,7 +341,7 @@ def test_apply_group(client):
         group_members = [gm.user_id for gm in GroupMember.query.filter_by(
                          rep_application=application).all()]
         assert application.is_rep is True
-        assert group_members == members_id
+        assert set(group_members) == set(members_id)
 
         assert resp.status_code == 200
         assert resp.get_json() == application_schema.dump(application)[0]
@@ -662,6 +662,31 @@ def test_cancel_group(client):
 
         after_gm_len = len(GroupMember.query.all())
         assert after_gm_len == first_gm_len
+
+def test_cancel_duplicated_group(client):
+    """attempt to cancel group applications
+        target_url: /lotteries/<id> [DELETE]
+    """
+    lottery_id = 1
+    members = (test_user1, test_user2, test_user2)
+    rep = test_user
+
+    token = login(client,
+                  rep['secret_id'],
+                  rep['g-recaptcha-response'])['token']
+
+    with client.application.app_context():
+        target_lottery = Lottery.query.get(lottery_id)
+        index = target_lottery.index
+        members_id = [user['secret_id'] for user in members]
+
+        with mock.patch('api.routes.api.get_time_index',
+                        return_value=index):
+            resp = client.post(f'/lotteries/{lottery_id}',
+                                     headers={'Authorization': f'Bearer {token}'},
+                                     json={'group_members': members_id})
+            assert resp.status_code == 400
+            assert 'duplicated' in resp.get_json()['message']
 
 
 @pytest.mark.skip(reason='not implemented yet')
