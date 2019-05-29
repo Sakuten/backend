@@ -685,8 +685,8 @@ def test_cancel_duplicated_group(client):
         with mock.patch('api.routes.api.get_time_index',
                         return_value=index):
             resp = client.post(f'/lotteries/{lottery_id}',
-                                     headers={'Authorization': f'Bearer {token}'},
-                                     json={'group_members': members_id})
+                               headers={'Authorization': f'Bearer {token}'},
+                               json={'group_members': members_id})
             assert resp.status_code == 400
             assert 'duplicated' in resp.get_json()['message']
 
