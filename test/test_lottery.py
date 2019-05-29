@@ -665,6 +665,7 @@ def test_cancel_group(client):
         after_gm_len = len(GroupMember.query.all())
         assert after_gm_len == first_gm_len
 
+
 def test_cancel_duplicated_group(client):
     """attempt to cancel group applications
         target_url: /lotteries/<id> [DELETE]
