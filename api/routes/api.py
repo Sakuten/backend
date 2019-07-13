@@ -381,7 +381,7 @@ def ids_hash():
 @spec('api/checker.yml')
 @login_required('checker')
 def check_id(classroom_id, secret_id):
-    """return if the user is winner of given classroom
+    """return result of application of the user of given classroom
         Args:
             classroom_id (int): target classroom
             secret_id (string): secret id of target user

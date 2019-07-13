@@ -22,13 +22,14 @@ class User(db.Model):
     authority = db.Column(db.String(20))
     win_count = db.Column(db.Integer, default=0)
     lose_count = db.Column(db.Integer, default=0)
+    waiting_count = db.Column(db.Integer, default=0)
     kind = db.Column(db.String(30))
     first_access = db.Column(db.Date, default=None)
 
     def __repr__(self):
         authority_str = f'({self.authority})' if self.authority else ''
         return f'<User {encode_public_id(self.public_id)} {authority_str} ' + \
-               f'{self.win_count}-{self.lose_count}>'
+               f'{self.win_count}-{self.lose_count}/{self.waiting_count}>'
 
 
 class Classroom(db.Model):
@@ -106,7 +107,7 @@ class Application(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(
         'user.id', ondelete='CASCADE'))
     user = db.relationship('User')
-    # status: [ pending, won, lose ]
+    # status: [ pending, won, lose, waiting, waiting-pending(internal) ]
     status = db.Column(db.String,
                        default="pending",
                        nullable=False)
@@ -132,27 +133,33 @@ class Application(db.Model):
         elif self.user.lose_count == 0:
             return 1
         else:
-            return 3 ** max(0, self.user.lose_count - self.user.win_count)
+            return 3 ** max(0, (                # at least 3^0 (= 1)
+                self.user.lose_count            # increase exponentially
+                + self.user.waiting_count / 2   # 2 waiting == 1 lose
+                - self.user.win_count
+                ))
 
     def set_advantage(self, advantage):
         self.advantage = advantage
 
     def set_status(self, new_status):
-        if new_status not in {"pending", "won", "lose"}:
+        if new_status not in {"pending", "waiting-pending",
+                              "won", "lose", "waiting"}:
             raise ValueError
 
-        change_win, change_lose = (1, 0) if new_status == "won" else \
-                                  (0, 1) if new_status == "lose" else \
-                                  (0, 0)
+        if self.status == "won":
+            self.user.win_count -= 1
+        elif self.status == "lose":
+            self.user.lose_count -= 1
+        elif self.status == "waiting":
+            self.user.waiting_count -= 1
 
-        revert_win, revert_lose = (-1, 0) if self.status == "won" else \
-                                  (0, -1) if self.status == "lose" else \
-                                  (0, 0)
-
-        self.user.win_count += change_win
-        self.user.win_count += revert_win
-        self.user.lose_count += change_lose
-        self.user.lose_count += revert_lose
+        if new_status == "won":
+            self.user.win_count += 1
+        elif new_status == "lose":
+            self.user.lose_count += 1
+        elif new_status == "waiting":
+            self.user.waiting_count += 1
 
         self.status = new_status
 

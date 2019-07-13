@@ -50,7 +50,7 @@ def print_cards(cards, path):
         'empty_card': empty_card,
         'horizontal': args.horizontal
     })
-    with open(path, 'w') as f:
+    with open(path, 'w', encoding='utf-8') as f:
         f.write(html)
 
 
