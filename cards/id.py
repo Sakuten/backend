@@ -54,8 +54,8 @@ def decode_public_id(str_id):
 
 def generate_ids(for_admin, for_checkers, for_students, for_visitors):
     """
-        generate a list of dictionaries that have a pair of
-        secret ID and public ID
+        generate a list of dictionaries that have IDs,
+        authority and kind
         return the generated IDs for the use in making
         QR codes
         Args:
