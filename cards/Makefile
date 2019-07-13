@@ -1,5 +1,5 @@
-ID_NUM:=13000
-MAX_QR_NUM:=1000
+ID_NUM:=60
+MAX_QR_NUM:=100
 
 DIST_DIR:=./dist
 QR_DIR:=${DIST_DIR}/qr
@@ -22,7 +22,7 @@ ${OUT_PDF_DIR}/%.pdf: ${OUT_HTML_DIR}/%.html
 
 ${OUT_HTML_DIR}: ${TEMPLATE_FILE} ${ID_LIST_FILE}
 	mkdir -p ${DIST_DIR} ${QR_DIR} ${OUT_HTML_DIR}
-	pipenv run python mkhtml.py --horizontal 2 -i ${ID_LIST_FILE} -o ${OUT_HTML_DIR} -t ${TEMPLATE_FILE} -b ${QR_BASE_URL} -m ${MAX_QR_NUM}
+	pipenv run python mkhtml.py --horizontal 3 -i ${ID_LIST_FILE} -o ${OUT_HTML_DIR} -t ${TEMPLATE_FILE} -b ${QR_BASE_URL} -m ${MAX_QR_NUM}
 
 ${ID_LIST_FILE}:
 	mkdir -p ${DIST_DIR}

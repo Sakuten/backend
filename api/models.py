@@ -17,17 +17,19 @@ class User(db.Model):
             lose_count (int): how many times the user lost
     """
     id = db.Column(db.Integer, primary_key=True)
-    public_id = db.Column(db.Integer)
+    public_id = db.Column(db.Integer, unique=True)
     secret_id = db.Column(db.String(40), unique=True)
     authority = db.Column(db.String(20))
     win_count = db.Column(db.Integer, default=0)
     lose_count = db.Column(db.Integer, default=0)
+    waiting_count = db.Column(db.Integer, default=0)
     kind = db.Column(db.String(30))
     first_access = db.Column(db.Date, default=None)
 
     def __repr__(self):
         authority_str = f'({self.authority})' if self.authority else ''
-        return f'<User {encode_public_id(self.public_id)} {authority_str}>'
+        return f'<User {encode_public_id(self.public_id)} {authority_str} ' + \
+               f'{self.win_count}-{self.lose_count}/{self.waiting_count}>'
 
 
 class Classroom(db.Model):
@@ -48,6 +50,9 @@ class Classroom(db.Model):
 
     def __repr__(self):
         return "<Classroom %r%r>".format(self.grade, self.get_classroom_name)
+
+    def __str__(self):
+        return f'{self.grade}{self.get_classroom_name()}'
 
     def get_classroom_name(self):
         """
@@ -91,6 +96,7 @@ class Application(db.Model):
             user_id (int): user id of this application
             status (Boolen): whether chosen or not. initalized with None
             is_rep (bool): whether rep of a group or not
+            advantage (int): how much advantage does user have
     """
     __tablename__ = 'application'
 
@@ -101,11 +107,12 @@ class Application(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(
         'user.id', ondelete='CASCADE'))
     user = db.relationship('User')
-    # status: [ pending, won, lose ]
+    # status: [ pending, won, lose, waiting, waiting-pending(internal) ]
     status = db.Column(db.String,
                        default="pending",
                        nullable=False)
     is_rep = db.Column(db.Boolean, default=False)
+    advantage = None
     # groupmember_id = db.Column(db.Integer, db.ForeignKey(
     #     'group_members.id', ondelete='CASCADE'))
     # me_group_member = db.relationship('GroupMember', backref='application')
@@ -115,6 +122,50 @@ class Application(db.Model):
             self.lottery, self.user,
             " (rep)" if self.is_rep else "",
             self.status)
+
+    def get_advantage(self):
+        """
+            returns multiplier indicating how more likely
+            the application is to win
+        """
+        if self.advantage:
+            return self.advantage
+        elif self.user.lose_count == 0:
+            return 1
+        else:
+            return 3 ** max(0, (                # at least 3^0 (= 1)
+                self.user.lose_count            # increase exponentially
+                + self.user.waiting_count / 2   # 2 waiting == 1 lose
+                - self.user.win_count
+                ))
+
+    def set_advantage(self, advantage):
+        self.advantage = advantage
+
+    def set_status(self, new_status):
+        if new_status not in {"pending", "waiting-pending",
+                              "won", "lose", "waiting"}:
+            raise ValueError
+
+        if self.status == "won":
+            self.user.win_count -= 1
+        elif self.status == "lose":
+            self.user.lose_count -= 1
+        elif self.status == "waiting":
+            self.user.waiting_count -= 1
+
+        if new_status == "won":
+            self.user.win_count += 1
+        elif new_status == "lose":
+            self.user.lose_count += 1
+        elif new_status == "waiting":
+            self.user.waiting_count += 1
+
+        self.status = new_status
+
+        db.session.add(self.user)
+        db.session.add(self)
+        db.session.commit()
 
 
 class GroupMember(db.Model):
@@ -165,6 +216,10 @@ class Error(db.Model):
         return f'<Error {self.code}: "{self.message}">'
 
 
-def group_member(application):
+def app2member(application):
     return GroupMember(user_id=application.user_id,
                        own_application=application)
+
+
+def apps2members(applications):
+    return [app2member(app) for app in applications]

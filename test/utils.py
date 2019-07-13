@@ -1,4 +1,5 @@
-from api.models import User, Application, db
+from api.models import User, Application, db, apps2members
+from unittest import mock
 
 # --- variables
 
@@ -67,7 +68,7 @@ def as_user_get(client, secret_id, rresp, url):
     return client.get(url, headers={'Authorization': header})
 
 
-def make_application(client, secret_id, lottery_id):
+def make_application(client, secret_id, lottery_id, group_member_apps=[]):
     """make an application with specified user and lottery id
          client (class Flask.testing.FlaskClient): the client
          secret_id (str): the secret_id to apply
@@ -76,8 +77,106 @@ def make_application(client, secret_id, lottery_id):
    """
     with client.application.app_context():
         user = User.query.filter_by(secret_id=secret_id).first()
-        newapplication = Application(
-            lottery_id=lottery_id, user_id=user.id, status="pending")
-        db.session.add(newapplication)
+        group_member_apps = (Application.query.get(app_id)
+                             for app_id in group_member_apps)
+        new_application = Application(
+            lottery_id=lottery_id, user_id=user.id,
+            group_members=apps2members(group_member_apps))
+        db.session.add(new_application)
         db.session.commit()
-        return newapplication.id
+        return new_application.id
+
+
+def user2application(user, target_lottery, **kwargs):
+    if isinstance(target_lottery, int):
+        # when target_lottery is id
+        if isinstance(user, int):
+            # when user is id
+            return Application(lottery_id=target_lottery, user_id=user,
+                               **kwargs)
+        else:
+            return Application(lottery_id=target_lottery, user=user,
+                               **kwargs)
+    else:
+        if isinstance(user, int):
+            return Application(lottery=target_lottery, user_id=user,
+                               **kwargs)
+        else:
+            return Application(lottery=target_lottery, user=user,
+                               **kwargs)
+
+
+def users2application(users, target_lottery, **kwargs):
+    return [user2application(user, target_lottery, **kwargs)
+            for user in users]
+
+
+def rep2application(user, target_lottery, members):
+    if isinstance(members[0], Application):
+        members = apps2members(members)
+    return user2application(user, target_lottery,
+                            is_rep=True,
+                            group_members=members)
+
+
+def get_application(user, target_lottery, **kwargs):
+    if isinstance(target_lottery, int):
+        # when target_lottery is id
+        if isinstance(user, int):
+            # when user is id
+            return Application.query.filter_by(
+                    lottery_id=target_lottery, user_id=user, **kwargs).first()
+        else:
+            return Application.query.filter_by(
+                    lottery_id=target_lottery, user=user, **kwargs).first()
+    else:
+        if isinstance(user, int):
+            return Application.query.filter_by(
+                    lottery=target_lottery, user_id=user, **kwargs).first()
+        else:
+            return Application.query.filter_by(
+                    lottery=target_lottery, user=user, **kwargs).first()
+
+
+def add_db(args):
+    for arg in args:
+        db.session.add(arg)
+    db.session.commit()
+
+
+def get_token(client, login_user):
+    return login(client,
+                 login_user['secret_id'],
+                 login_user['g-recaptcha-response'])['token']
+
+
+def draw(client, token, idx, index=None, time=None):
+    return post(client, f'lotteries/{idx}/draw', token, index, time)
+
+
+def draw_all(client, token, index=None, time=None):
+    return post(client, '/draw_all', token, index, time)
+
+
+def post(client, url, token=None, index=None,
+         time=None, group_members=None, **kwargs):
+    if index is not None:
+        with mock.patch('api.routes.api.get_draw_time_index',
+                        return_value=index):
+            return post(client, url, token, None, time, group_members,
+                        **kwargs)
+    if time is not None:
+        with mock.patch('api.time_management.get_current_datetime',
+                        return_value=time):
+            return post(client, url, token, index, None, group_members,
+                        **kwargs)
+
+    if token is not None:
+        return post(client, url, group_members=group_members,
+                    headers={'Authorization': f'Bearer {token}'},
+                    **kwargs)
+    if group_members is not None:
+        return post(client, url, json={'group_members': group_members},
+                    **kwargs)
+
+    return client.post(url, **kwargs)

@@ -2,7 +2,7 @@ from itertools import chain
 from jinja2 import Environment, FileSystemLoader
 
 from flask import Blueprint, jsonify, g, request, current_app
-from api.models import Lottery, Classroom, User, Application, db, group_member
+from api.models import Lottery, Classroom, User, Application, db, apps2members
 from api.schemas import (
     user_schema,
     users_schema,
@@ -191,35 +191,28 @@ def apply_lottery(idx):
             for app in previous.all()):
         # Your application is already accepted
         return error_response(16)
-    application = previous.filter_by(lottery_id=lottery.id).first()
     # access DB
     # 6. 7.
-    if application:
-        result = application_schema.dump(application)[0]
+    if len(group_members) == 0:
+        new_application = Application(
+            lottery_id=lottery.id, user_id=rep_user.id, status="pending")
+        db.session.add(new_application)
+        db.session.commit()
+        result = application_schema.dump(new_application)[0]
         return jsonify(result)
-    else:
-        if len(group_members) == 0:
-            newapplication = Application(
-                lottery_id=lottery.id, user_id=rep_user.id, status="pending")
-            db.session.add(newapplication)
-            db.session.commit()
-            result = application_schema.dump(newapplication)[0]
-            return jsonify(result)
-        else:
-            # 8.
-            members_app = [Application(
-                    lottery_id=lottery.id, user_id=member.id, status="pending")
-                    for member in group_members]
+    # 8.
+    members_app = [Application(
+            lottery_id=lottery.id, user_id=member.id, status="pending")
+            for member in group_members]
 
-            for application in members_app:
-                db.session.add(application)
-            db.session.commit()
-            rep_application = Application(
-                lottery_id=lottery.id, user_id=rep_user.id, status="pending",
-                is_rep=True,
-                group_members=[group_member(app)
-                               for app in members_app])
-            db.session.add(rep_application)
+    for application in members_app:
+        db.session.add(application)
+    db.session.commit()
+    rep_application = Application(
+        lottery_id=lottery.id, user_id=rep_user.id, status="pending",
+        is_rep=True,
+        group_members=apps2members(members_app))
+    db.session.add(rep_application)
 
     # 9.
     db.session.commit()
@@ -274,6 +267,8 @@ def cancel_application(idx):
     if application.status != "pending":
         # The Application has already fullfilled
         return error_response(10)
+    for member in application.group_members:
+        db.session.delete(member.own_application)
     db.session.delete(application)
     db.session.commit()
     return jsonify({"message": "Successful Operation"})
@@ -386,7 +381,7 @@ def ids_hash():
 @spec('api/checker.yml')
 @login_required('checker')
 def check_id(classroom_id, secret_id):
-    """return if the user is winner of given classroom
+    """return result of application of the user of given classroom
         Args:
             classroom_id (int): target classroom
             secret_id (string): secret id of target user
@@ -442,23 +437,28 @@ def results():
     # 2.
     lotteries = Lottery.query.filter_by(index=index)
 
+    kinds = ('visitor', 'student')
+
     # 5.
-    whole_results = {'visitor': [], 'student': []}
-    for kind in whole_results.keys():
-        for lottery in lotteries:
-            public_ids = list(public_id_generator(lottery, kind))
-            cl = Classroom.query.get(lottery.classroom_id)
-            result = {'classroom': f'{cl.grade}{cl.get_classroom_name()}',
+    data = []
+
+    for lottery in lotteries:
+        cl = Classroom.query.get(lottery.classroom_id)
+
+        lottery_result = []
+        for kind in kinds:
+            public_ids = list(sorted(public_id_generator(lottery, kind)))
+            result = {'kind': kind,
                       'winners': public_ids}
-            whole_results[kind].append(result)
-    data = {'kinds': [], 'horizontal': 3}
-    for key, value in whole_results.items():
-        data['kinds'].append({'lotteries': value, 'kind': key})
+            lottery_result.append(result)
+
+        data.append({'classroom': str(cl),
+                     'kinds': lottery_result})
 
     # 6.
     env = Environment(loader=FileSystemLoader('api/templates'))
     template = env.get_template('results.html')
-    return template.render(data)
+    return template.render(lotteries=data)
 
 
 @bp.route('/health')

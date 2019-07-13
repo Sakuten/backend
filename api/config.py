@@ -19,19 +19,19 @@ class BaseConfig(object):
     ID_LIST_FILE = ROOT_DIR / Path('cards/ids.json')
     ERROR_TABLE_FILE = ROOT_DIR / Path('errors.json')
     CLASSROOM_TABLE_FILE = ROOT_DIR / Path('classrooms.json')
-    WINNERS_NUM = 90
+    WINNERS_NUM = 85
+    WAITING_NUM = 30
     RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY')
     RECAPTCHA_THRESHOLD = 0.09  # more than 0.09
     TIMEZONE = timezone(timedelta(hours=+9), 'JST')
-    START_DATETIME = datetime(2018, 9, 16, 8,  40, 0, tzinfo=TIMEZONE)
-    END_DATETIME = datetime(2018, 9, 17, 16, 00, 0, tzinfo=TIMEZONE)
+    # Don't forget to update START/END DATETIME every year
+    # DONT MERGE THIS TO MASTER/DEVELOP - THIS CONFIGURATION IS TEMPORARILY
+    START_DATETIME = datetime(2019, 4, 18, 12, 00, 0, tzinfo=TIMEZONE)
+    END_DATETIME = datetime(2019, 4, 18, 13, 00, 0, tzinfo=TIMEZONE)
     DRAWING_TIME_EXTENSION = timedelta(minutes=10)
     TIMEPOINT_END_MARGIN = timedelta(minutes=1)
     TIMEPOINTS = [
-        (time(8,  50), time(9,  20)),
-        (time(10, 15), time(10, 45)),
-        (time(12, 25), time(12, 55)),
-        (time(13, 50), time(14, 20))
+        (time(12, 15), time(12, 35)),
     ]
     ONE_DAY_KIND = ['visitor']
 
@@ -41,6 +41,17 @@ class DevelopmentConfig(BaseConfig):
     TESTING = True
     ENV = 'development'
     ID_LIST_FILE = BaseConfig.ROOT_DIR / 'cards/test_users.json'
+    # Don't forget to update START/END DATETIME every year
+    # Update BaseConfig too
+    START_DATETIME = datetime(2018, 9, 17, 0, 0, 0, tzinfo=BaseConfig.TIMEZONE)
+    END_DATETIME = datetime(2019, 9, 16, 23, 59, 59,
+                            tzinfo=BaseConfig.TIMEZONE)
+    TIMEPOINTS = [
+        # applications are accepted in these durations and TIMEPOINT_END_MARGIN
+        # lottery is carried out during DRAWING_TIME_EXTENTION
+        # modify here when debugging
+        (time(0, 0), time(23, 49)),
+    ]
 
 
 class TestingConfig(BaseConfig):
@@ -49,7 +60,8 @@ class TestingConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = 'sqlite://'
     ENV = 'development'
     ID_LIST_FILE = BaseConfig.ROOT_DIR / 'cards/test_users.json'
-    WINNERS_NUM = 3  # just small value
+    WINNERS_NUM = 5  # just small value
+    WAITING_NUM = 3
     # Recaptcha test key for automated testing.
     # https://developers.google.com/recaptcha/docs/faq#id-like-to-run-automated-tests-with-recaptcha-v2-what-should-i-do
     RECAPTCHA_SECRET_KEY = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
