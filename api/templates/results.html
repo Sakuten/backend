@@ -17,6 +17,7 @@
         font-family: Consolas, 'Droid Sans Mono Slashed', 'Ubuntu Mono', Osaka-Mono, monospace;
       }
       .one_page {
+        page-break-before: always;
         height: var(--a0-height);
         color: black;
       }
@@ -29,9 +30,11 @@
         padding: 7mm 10mm;
       }
       .winner {
-        font-size: 2em;
+        font-size: 2.7em;
         font-weight: bold;
-        line-height: 1.7;
+        display: inline-block;
+        width: 90mm;
+        line-height: 1;
         margin: 3mm 20mm 7mm 30mm;
       }
       .classroom {
@@ -59,13 +62,13 @@
           </span>
         </p>
         <div class="container">
-          <ul>
+          <!-- <ul> -->
             {% for winner in kind['winners'] %}
-            <li>
-              <span class="winner">{{winner}}</span>
-            </li>
+            <!-- <li> -->
+              <div class="winner">{{winner}}</div>
+            <!-- </li> -->
             {% endfor %}
-          </ul>
+          <!-- </ul> -->
         </div>
       </div>
     </div>
