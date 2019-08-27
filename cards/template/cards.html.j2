@@ -15,57 +15,58 @@
   }
   .container {
     padding: 10px 10px 30px 30px;
-    width: 29.25%;
+    width: 45.9%;
     display: inline-block;
-    height: 81.5mm;
+    height: 63mm;
     border-style: none;
     border-width: 1px;
   }
-  .container:nth-child(3n+2), .container:nth-child(3n) {
+  .container:nth-child(even) {
     border-left-style: dashed;
     border-top-style: dashed;
-    border-bottom-style: dashed;
   }
-  .container:nth-child(3n+1) {
+  .container:nth-child(odd) {
     border-top-style: dashed;
-    border-bottom-style: dashed;
   }
   img {
-    width: 100%;
+    width: 97%;
   }
   .image {
     float: left;
-    width: 70%;
-    margin-left: 10px;
+    width: 43%;
+    margin: 3px 7px 0px -10px;
   }
   .header {
     margin-top: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 0px;
   }
   .description {
     float: left;
-    margin-left: 10px;
-    /* width: 50%; */
+    width: 55%;
   }
   .header {
     font-size: 2rem;
   }
   .explanation {
-    display: none;
     font-size: 1.0rem;
+  }
+  p {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
   }
   .public-id {
     font-size: 1.6rem;
+    margin-top: 0.6em;
   }
   .outer-container {
     width: 100%;
     font-size: 0;
   }
-  .row:nth-child(4n+1) > .container {
+  .row:nth-child(5n+1) > .container {
     page-break-before: always;
     border-top-style: none;
   }
-  .row:nth-child(4n) > .container {
+  .row:nth-child(5n) > .container {
     border-bottom-style: none;
   }
   </style>
@@ -78,15 +79,14 @@
       {% set card_index = (row * horizontal) + column  %}
       {% set card = cards[card_index -1]|default(empty_card) %}
       <div class="container">
-        <h2 class="header">抽選カード 4/18</h2>
+        <h2 class="header">抽選カード</h2>
         <div class="image">
           <img src="{{ card.qr_path }}">
         </div>
         <div class="description">
           <div class="explanation">
-            <p>スマートフォンは左のQRコードから、
-            お持ちでない人は3Fアリーナの有人受付から劇にお申し込みいただけます。</p>
-            <p>詳細は立志・小立志のS4ページをご覧ください。</p>
+            <p>左のQRコード、または3Fアリーナの友人受付から劇にご応募いただけます。</p>
+            <p>詳細は立志の28ページまたは小立志の4ページをご覧ください。</p>
           </div>
           <div class="public-id">
             確認用ID: <strong>{{ card.public_id }}</strong>
