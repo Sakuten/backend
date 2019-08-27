@@ -152,7 +152,7 @@ def apply_lottery(idx):
         return error_response(11)  # This lottery is not acceptable now.
 
     # 2. 3. 4.
-    group_members = []
+    group_members = set()
     if len(group_members_secret_id) != 0:
         if len(group_members_secret_id) > 3:
             return error_response(21)
@@ -161,7 +161,10 @@ def apply_lottery(idx):
                 user = todays_user(secret_id=sec_id)
             except (UserNotFoundError, UserDisabledError):
                 return error_response(1)  # Invalid group member secret id
-            group_members.append(user)
+            group_members.add(user)
+        if len(group_members) != len(group_members_secret_id):
+            # Group members duplicated
+            return error_response(23)
         for user in group_members:
             previous = Application.query.filter_by(user_id=user.id)
             if any(app.lottery.index == lottery.index and
@@ -269,6 +272,7 @@ def cancel_application(idx):
         return error_response(10)
     for member in application.group_members:
         db.session.delete(member.own_application)
+        db.session.delete(member)
     db.session.delete(application)
     db.session.commit()
     return jsonify({"message": "Successful Operation"})
