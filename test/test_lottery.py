@@ -341,6 +341,8 @@ def test_apply_group(client):
         group_members = [gm.user_id for gm in GroupMember.query.filter_by(
                          rep_application=application).all()]
         assert application.is_rep is True
+        members_id.sort()
+        group_members.sort()
         assert group_members == members_id
 
         assert resp.status_code == 200
@@ -642,6 +644,9 @@ def test_cancel_group(client):
     with client.application.app_context():
         target_lottery = Lottery.query.get(lottery_id)
         index = target_lottery.index
+
+        first_gm_len = len(GroupMember.query.all())
+
         members_app_id = [
             make_application(client, user['secret_id'], lottery_id)
             for user in members]
@@ -656,6 +661,35 @@ def test_cancel_group(client):
         app_ids = db.session.query(Application.id).all()
         assert rep_app_id not in app_ids
         assert all(member_app not in app_ids for member_app in members_app_id)
+
+        after_gm_len = len(GroupMember.query.all())
+        assert after_gm_len == first_gm_len
+
+
+def test_cancel_duplicated_group(client):
+    """attempt to cancel group applications
+        target_url: /lotteries/<id> [DELETE]
+    """
+    lottery_id = 1
+    members = (test_user1, test_user2, test_user2)
+    rep = test_user
+
+    token = login(client,
+                  rep['secret_id'],
+                  rep['g-recaptcha-response'])['token']
+
+    with client.application.app_context():
+        target_lottery = Lottery.query.get(lottery_id)
+        index = target_lottery.index
+        members_id = [user['secret_id'] for user in members]
+
+        with mock.patch('api.routes.api.get_time_index',
+                        return_value=index):
+            resp = client.post(f'/lotteries/{lottery_id}',
+                               headers={'Authorization': f'Bearer {token}'},
+                               json={'group_members': members_id})
+            assert resp.status_code == 400
+            assert 'duplicated' in resp.get_json()['message']
 
 
 @pytest.mark.skip(reason='not implemented yet')
