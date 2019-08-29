@@ -1,8 +1,8 @@
 ADMIN_NUM:=1
-CHECKER_NUM:=20
-STUDENT_NUM:=1000
-VISITOR_NUM:=0
-MAX_QR_NUM:=100
+CHECKER_NUM:=19
+STUDENT_NUM:=1020
+VISITOR_NUM:=13960
+MAX_QR_NUM:=1000
 
 DIST_DIR:=./dist
 QR_DIR:=${DIST_DIR}/qr
@@ -29,7 +29,7 @@ ${OUT_HTML_DIR}: ${TEMPLATE_FILE} ${ID_LIST_FILE}
 
 ${ID_LIST_FILE}:
 	mkdir -p ${DIST_DIR}
-	pipenv run python mkid.py -a ${ADMIN_NUM} -c ${CHECKER_NUM} -s ${STUDENT_NUM} -v ${VISITOR_NUM} -o ${ID_LIST_FILE}
+	# pipenv run python mkid.py -a ${ADMIN_NUM} -c ${CHECKER_NUM} -s ${STUDENT_NUM} -v ${VISITOR_NUM} -o ${ID_LIST_FILE}
 
 .PHONY: clean
 clean:
