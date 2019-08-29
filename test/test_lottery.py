@@ -1202,6 +1202,50 @@ def test_draw_all_invalid(client):
         try_with_datetime(mod_time(en, +ext+res))
 
 
+def test_draw_all_multiple(client):
+    """hit /draw_all twice in one time index
+        test: the result does not change
+        target_url: /draw_all [POST]
+    """
+    idx = 1
+
+    with client.application.app_context():
+        target_lottery = Lottery.query.get(idx)
+        index = target_lottery.index
+        users = (user for user in User.query.all()
+                 if user.authority == 'normal')
+        for user in users:
+            app = Application(lottery=target_lottery, user_id=user.id)
+            db.session.add(app)
+        db.session.commit()
+
+        token = login(client,
+                      admin['secret_id'],
+                      admin['g-recaptcha-response'])['token']
+
+        resp1 = draw_all(client, token, index=index)
+        assert resp1.status_code == 200
+        win1 = {
+            app.id for app in Application.query.filter_by(status='won')}
+        lose1 = {
+            app.id for app in Application.query.filter_by(status='lose')}
+        waiting1 = {
+            app.id for app in Application.query.filter_by(status='waiting')}
+
+        resp2 = draw_all(client, token, index=index)
+        assert resp2.status_code == 200
+        win2 = {
+            app.id for app in Application.query.filter_by(status='won')}
+        lose2 = {
+            app.id for app in Application.query.filter_by(status='lose')}
+        waiting2 = {
+            app.id for app in Application.query.filter_by(status='waiting')}
+
+        assert win1 == win2
+        assert lose1 == lose2
+        assert waiting1 == waiting2
+
+
 def test_get_winners(client):
     """test proper public_id's are returned from the API
         target_url: /lotteries/<id>/winners
