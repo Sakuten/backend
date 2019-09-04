@@ -29,9 +29,9 @@
         padding: 7mm 10mm;
       }
       .winner {
-        font-size: 2em;
+        font-size: 2.7em;
         font-weight: bold;
-        line-height: 1.7;
+        line-height: 1.3;
         margin: 3mm 20mm 7mm 30mm;
       }
       .classroom {
@@ -46,21 +46,19 @@
   <body>
     {% for lottery in lotteries %}
     {% for kind in lottery['kinds'] %}
+    {% for status in kind['status'] %}
     <div class="one_page">
       <div class="inner-page">
-        <p style="margin-bottom: 30mm">
+        <p style="margin-bottom: 50mm">
           <span class="kind">
-            {{ '来場者' if kind['kind'] == 'visitor' else '生徒' }}
-          </span>
-        </p>
-        <p>
+            {{ '来場者' if kind['kind'] == 'visitor' else '生徒' }}</span>
           <span class="classroom" style="text-decoration: underline;">
             {{ lottery['classroom'] }}
-          </span>
+            {{ '当選' if status['status'] == 'win' else 'キャンセル待ち' }} </span>
         </p>
         <div class="container">
           <ul>
-            {% for winner in kind['winners'] %}
+            {% for winner in status['winners'] %}
             <li>
               <span class="winner">{{winner}}</span>
             </li>
@@ -69,6 +67,7 @@
         </div>
       </div>
     </div>
+    {% endfor %}
     {% endfor %}
     {% endfor %}
   </body>
