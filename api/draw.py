@@ -3,6 +3,7 @@ from flask import current_app
 from api.models import Lottery, Application, db
 from itertools import chain
 from numpy.random import choice
+from datetime import date
 
 
 class GroupAdvantage:
@@ -36,7 +37,11 @@ def draw_one(lottery):
     lottery.done = True
 
     idx = lottery.id
-    applications = Application.query.filter_by(lottery_id=idx).all()
+    applications = (
+        Application.query
+        .filter_by(lottery_id=idx, created_on=date.today())
+        .all()
+    )
 
     if len(applications) == 0:
         winners = []

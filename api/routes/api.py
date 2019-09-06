@@ -1,4 +1,5 @@
 from itertools import chain
+from datetime import date
 from jinja2 import Environment, FileSystemLoader
 
 from flask import Blueprint, jsonify, g, request, current_app
@@ -166,7 +167,8 @@ def apply_lottery(idx):
             # Group members duplicated
             return error_response(23)
         for user in group_members:
-            previous = Application.query.filter_by(user_id=user.id)
+            previous = Application.query.filter_by(user_id=user.id,
+                                                   created_on=date.today())
             if any(app.lottery.index == lottery.index and
                    app.lottery.id != lottery.id
                    for app in previous.all()):
@@ -183,7 +185,8 @@ def apply_lottery(idx):
 
     # 5.
     rep_user = User.query.filter_by(id=g.token_data['user_id']).first()
-    previous = Application.query.filter_by(user_id=rep_user.id)
+    previous = Application.query.filter_by(user_id=rep_user.id,
+                                           created_on=date.today())
     if any(app.lottery.index == lottery.index and
             app.lottery.id != lottery.id
             for app in previous.all()):
@@ -235,7 +238,8 @@ def list_applications():
 #     sort = request.args.get('sort')
 
     user = User.query.filter_by(id=g.token_data['user_id']).first()
-    applications = Application.query.filter_by(user_id=user.id)
+    applications = Application.query.filter_by(user_id=user.id,
+                                               created_on=date.today())
     result = applications_schema.dump(applications)[0]
     return jsonify(result)
 
@@ -249,7 +253,7 @@ def list_application(idx):
     """
     user = User.query.filter_by(id=g.token_data['user_id']).first()
     application = Application.query.filter_by(
-        user_id=user.id).filter_by(id=idx).first()
+        user_id=user.id, created_on=date.today()).filter_by(id=idx).first()
     if application is None:
         return error_response(7)  # Not found
     result = application_schema.dump(application)[0]
@@ -338,7 +342,7 @@ def get_winners_id(idx):
 
     def public_id_generator():
         for app in lottery.application:
-            if app.status == 'won':
+            if app.created_on == date.today() and app.status == 'won':
                 yield app.user.public_id
     return jsonify(list(public_id_generator()))
 
@@ -399,8 +403,8 @@ def check_id(classroom_id, secret_id):
         return error_response(6)  # not acceptable time
     lottery = Lottery.query.filter_by(classroom_id=classroom_id,
                                       index=index).first()
-    application = Application.query.filter_by(user=user,
-                                              lottery=lottery).first()
+    application = Application.query.filter_by(
+                    user=user, lottery=lottery, created_on=date.today()).first()
     if not application:
         return error_response(19)  # no application found
 
@@ -430,7 +434,8 @@ def results():
             original at: L.336, written by @tamazasa
         """
         for app in lottery.application:
-            if app.status == 'won' and app.user.kind == kind:
+            if app.created_on == date.today() and \
+               app.status == 'won' and app.user.kind == kind:
                 yield encode_public_id(app.user.public_id)
 
     # 1.
