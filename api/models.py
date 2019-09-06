@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from cards.id import encode_public_id
+from datetime import date
 
 db = SQLAlchemy()
 
@@ -97,6 +98,7 @@ class Application(db.Model):
             status (Boolen): whether chosen or not. initalized with None
             is_rep (bool): whether rep of a group or not
             advantage (int): how much advantage does user have
+            created_on (date): when applciation is made
     """
     __tablename__ = 'application'
 
@@ -112,10 +114,17 @@ class Application(db.Model):
                        default="pending",
                        nullable=False)
     is_rep = db.Column(db.Boolean, default=False)
+    created_on = db.Column(db.Date, nullable=False)
     advantage = None
     # groupmember_id = db.Column(db.Integer, db.ForeignKey(
     #     'group_members.id', ondelete='CASCADE'))
     # me_group_member = db.relationship('GroupMember', backref='application')
+
+    def __init__(self, **kwargs):
+        """
+            construct object with column `created_on` automatically set
+        """
+        super().__init__(created_on=date.today(), **kwargs)
 
     def __repr__(self):
         return "<Application {}{}{} {}>".format(
