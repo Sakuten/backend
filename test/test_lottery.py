@@ -1243,7 +1243,7 @@ def test_get_winners_undone(client):
     with client.application.app_context():
         token = get_token(client, admin)
 
-        resp = get(f'/lotteries/{idx}/winners', token=token)
+        resp = get(client, f'/lotteries/{idx}/winners', token=token)
 
         assert resp.status_code == 400
 
