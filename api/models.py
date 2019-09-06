@@ -84,7 +84,7 @@ class Lottery(db.Model):
     previous_on = db.Column(db.Boolean)
 
     def is_done_today(self):
-        return self.previous_on = date.today()
+        return self.previous_on == date.today()
 
     def __repr__(self):
 

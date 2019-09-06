@@ -1241,8 +1241,6 @@ def test_get_winners_undone(client):
     idx = 1
 
     with client.application.app_context():
-        target_lottery = Lottery.query.get(idx)
-
         token = get_token(client, admin)
 
         resp = get(f'/lotteries/{idx}/winners', token=token)

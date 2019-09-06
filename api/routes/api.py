@@ -404,7 +404,7 @@ def check_id(classroom_id, secret_id):
     lottery = Lottery.query.filter_by(classroom_id=classroom_id,
                                       index=index).first()
     application = Application.query.filter_by(
-                    user=user, lottery=lottery, created_on=date.today()).first()
+                user=user, lottery=lottery, created_on=date.today()).first()
     if not application:
         return error_response(19)  # no application found
 
