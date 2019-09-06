@@ -337,7 +337,7 @@ def get_winners_id(idx):
     lottery = Lottery.query.get(idx)
     if lottery is None:
         return error_response(7)  # Not found
-    if not lottery.done:
+    if not lottery.is_done_today():
         return error_response(12)  # This lottery is not done yet.
 
     def public_id_generator():

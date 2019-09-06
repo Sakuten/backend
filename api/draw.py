@@ -31,10 +31,8 @@ def draw_one(lottery):
           lottery(Lottery): The lottery to be drawn
         Return:
           applications([User]): The list of applications handled
-        Raises:
-            AlreadyDoneError
     """
-    lottery.done = True
+    lottery.previous_on = date.today()
 
     idx = lottery.id
     applications = (
@@ -207,7 +205,6 @@ def draw_all_at_index(index):
                for lottery in lotteries]
 
     for lottery in lotteries:
-        lottery.done = True
         db.session.add(lottery)
     db.session.commit()
 

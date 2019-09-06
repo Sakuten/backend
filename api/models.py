@@ -69,20 +69,22 @@ class Lottery(db.Model):
         Args:
             classroom_id (int): classroom id(unique id)
             index (int): class number(0->A,1->B,2->C,3->D)
-            done (bool): whether the lottery is done or not
         DB contents:
             id (int): lottery unique id
             classroom_id (int): associated classroom id
             classroom (relationship): associated classroom
             index (int): number of peformance. {0..4}
-            done (bool): whether it's done or not
+            previous_on (bool): when the lottery was previously done
     """
     id = db.Column(db.Integer, primary_key=True)  # 'id' should be defined,
     classroom_id = db.Column(db.Integer, db.ForeignKey(
         'classroom.id', ondelete='CASCADE'))
     classroom = db.relationship('Classroom')
     index = db.Column(db.Integer)
-    done = db.Column(db.Boolean)
+    previous_on = db.Column(db.Boolean)
+
+    def is_done_today(self):
+        return self.previous_on = date.today()
 
     def __repr__(self):
 
