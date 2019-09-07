@@ -743,8 +743,6 @@ def test_draw(client):
         users = User.query.all()
         target_lottery = Lottery.query.get(idx)
 
-        assert target_lottery.is_done_today()
-
         waiting_cnt = 0
 
         for user in users:
@@ -806,8 +804,6 @@ def test_draw_group(client):
         users = User.query.all()
         target_lottery = Lottery.query.get(idx)
 
-        assert target_lottery.is_done_today()
-
         rep_status = get_application(users[0], target_lottery).status
 
         assert rep_status == "won"
@@ -860,8 +856,6 @@ def test_draw_lots_of_groups(client):
 
         users = User.query.all()
         target_lottery = Lottery.query.get(idx)
-
-        assert target_lottery.is_done_today()
 
         won_cnt = 0
         lose_cnt = 0
@@ -929,8 +923,6 @@ def test_draw_lots_of_groups_and_normal(client):
 
         users = User.query.all()
         target_lottery = Lottery.query.get(idx)
-
-        assert target_lottery.is_done_today()
 
         for rep, member in zip(reps, members):
             rep_status = get_application(users[rep], target_lottery).status
@@ -1141,8 +1133,6 @@ def test_draw_all(client):
     assert resp.status_code == 200
 
     winners_id = [winner['id'] for winner in resp.get_json()]
-    assert all(lottery.is_done_today() for lottery in target_lotteries)
-    assert all(not lottery.is_done_today() for lottery in non_target_lotteries)
 
     with client.application.app_context():
         users = User.query.all()

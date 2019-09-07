@@ -32,8 +32,6 @@ def draw_one(lottery):
         Return:
           applications([User]): The list of applications handled
     """
-    lottery.previous_on = date.today()
-
     idx = lottery.id
     applications = (
         Application.query
