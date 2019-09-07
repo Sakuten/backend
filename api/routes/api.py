@@ -125,7 +125,8 @@ def apply_lottery(idx):
         specify the lottery id in the URL.
         1. check request errors
         2. check whether all group_member's secret_id are correct
-        3. check wehter nobody in members made application to the same period
+        3. check wehter nobody in members made application to the same or
+           previous period
         4. get all `user_id` of members
         5. make application of token's owner
         6. if length of 'group_members' list is 0, goto *8.*
@@ -167,36 +168,15 @@ def apply_lottery(idx):
             # Group members duplicated
             return error_response(23)
         for user in group_members:
-            previous = Application.query.filter_by(user_id=user.id,
-                                                   created_on=date.today())
-            if any(app.lottery.index == lottery.index and
-                   app.lottery.id != lottery.id
-                   for app in previous.all()):
-                # Someone in the group is
-                # already applying to a lottery in this period
-                return error_response(8)
-            if any(app.lottery.index == lottery.index and
-                   app.lottery.id == lottery.id
-                   for app in previous.all()):
-
-                # someone in the group is already
-                # applying to this lottery
-                return error_response(9)
+            resp = can_group_member_apply(user, lottery)
+            if resp != 'OK':    # error
+                return resp
 
     # 5.
     rep_user = User.query.filter_by(id=g.token_data['user_id']).first()
-    previous = Application.query.filter_by(user_id=rep_user.id,
-                                           created_on=date.today())
-    if any(app.lottery.index == lottery.index and
-            app.lottery.id != lottery.id
-            for app in previous.all()):
-        # You're already applying to a lottery in this period
-        return error_response(17)
-    if any(app.lottery.index == lottery.index and
-            app.lottery.id == lottery.id
-            for app in previous.all()):
-        # Your application is already accepted
-        return error_response(16)
+    resp = can_rep_apply(rep_user, lottery)
+    if resp != 'OK':    # error
+        return resp
     # access DB
     # 6. 7.
     if len(group_members) == 0:
@@ -224,6 +204,52 @@ def apply_lottery(idx):
     db.session.commit()
     result = application_schema.dump(rep_application)[0]
     return jsonify(result)
+
+
+def can_group_member_apply(user, lottery):
+    previous = Application.query.filter_by(user_id=user.id,
+                                           created_on=date.today())
+    if any(app.lottery.index == lottery.index and
+           app.lottery.id != lottery.id
+           for app in previous.all()):
+        # Someone in the group is
+        # already applying to a lottery in this period
+        return error_response(8)
+    if any(app.lottery.index == lottery.index and
+           app.lottery.id == lottery.id
+           for app in previous.all()):
+        # someone in the group is already
+        # applying to this lottery
+        return error_response(9)
+    if any(app.created_on == date.today() and
+           app.lottery.index == lottery.index - 1 and
+           app.status == 'won'
+           for app in previous.all()):
+        # You cannot apply while watching a show
+        return error_response(24)
+    return 'OK'
+
+
+def can_rep_apply(user, lottery):
+    previous = Application.query.filter_by(user_id=user.id,
+                                           created_on=date.today())
+    if any(app.lottery.index == lottery.index and
+           app.lottery.id != lottery.id
+           for app in previous.all()):
+        # You're already applying to a lottery in this period
+        return error_response(17)
+    if any(app.lottery.index == lottery.index and
+           app.lottery.id == lottery.id
+           for app in previous.all()):
+        # Your application is already accepted
+        return error_response(16)
+    if any(app.created_on == date.today() and
+           app.lottery.index == lottery.index - 1 and
+           app.status == 'won'
+           for app in previous.all()):
+        # You cannot apply while watching a show
+        return error_response(24)
+    return 'OK'
 
 
 @bp.route('/applications')
