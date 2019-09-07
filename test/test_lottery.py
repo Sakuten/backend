@@ -1234,34 +1234,3 @@ def test_draw_all_multiple(client):
         assert win1 == win2
         assert lose1 == lose2
         assert waiting1 == waiting2
-
-
-def test_get_winners(client):
-    """test proper public_id's are returned from the API
-        target_url: /lotteries/<id>/winners
-    """
-    idx = 1
-
-    with client.application.app_context():
-        target_lottery = Lottery.query.get(idx)
-        index = target_lottery.index
-        users = User.query.all()
-        for user in users:
-            application = Application(lottery=target_lottery, user_id=user.id)
-            db.session.add(application)
-        db.session.commit()
-
-        token = login(client,
-                      admin['secret_id'],
-                      admin['g-recaptcha-response'])['token']
-
-        draw_resp = draw(client, token, idx, index)
-        with mock.patch('api.routes.api.get_draw_time_index',
-                        return_value=index):
-            winners_resp = client.get(
-                f'/lotteries/{idx}/winners',
-                headers={'Authorization': f'Bearer {token}'})
-
-        winners_id = set(User.query.get(winner['id']).public_id
-                         for winner in draw_resp.get_json())
-        assert winners_id == set(winners_resp.get_json())
