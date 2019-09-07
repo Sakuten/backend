@@ -133,7 +133,7 @@ def todays_user(secret_id='', user_id=''):
     if user.first_access is None:
         user.first_access = date.today()
         db.session.add(user)
-        db.session.commit
+        db.session.commit()
         return user
     elif user.first_access == date.today():
         return user
