@@ -180,11 +180,3 @@ def post(client, url, token=None, index=None,
                     **kwargs)
 
     return client.post(url, **kwargs)
-
-
-def get(client, url, token=None, **kwargs):
-    if token is not None:
-        return get(client, url, headers={'Authorization': f'Bearer {token}'},
-                   **kwargs)
-
-    return client.get(url, **kwargs)
