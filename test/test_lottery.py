@@ -291,6 +291,55 @@ def test_apply_same_period_same_lottery(client):
     assert 'already accepted' in message
 
 
+def test_apply_consecutive(client):
+    """attempt to apply after previous won / lose / waiting
+        test: win -> refused (because he/she should be watching a show)
+        test: lose / waiting -> accepted
+        target_url: /lotteries/<id> [POST]
+    """
+    idx1 = 1
+    token_admin = get_token(client, admin)
+
+    with client.application.app_context():
+        lottery1 = Lottery.query.get(idx1)
+        index1 = lottery1.index
+        lottery2 = Lottery.query.filter_by(
+            classroom_id=lottery1.classroom_id,
+            index=lottery1.index + 1).one()
+        idx2 = lottery2.id
+        index2 = lottery2.index
+
+        # 5 won, 2 lose, 3 waiting
+        users = User.query.filter_by(authority='normal').limit(10).all()
+        apps = users2application(users, lottery1)
+        add_db(apps)
+        user_sids = [user.secret_id for user in users]
+        app_ids = [app.id for app in apps]
+
+        draw_all(client, token_admin, index=index1)
+
+        for user_sid, app_id in zip(user_sids, app_ids):
+            app_after = Application.query.get(app_id)
+
+            token = login(client, user_sid, '')['token']
+            with mock.patch('api.routes.api.get_time_index',
+                            return_value=index2):
+                resp = post(client, f'/lotteries/{idx2}', token=token,
+                            group_members=[])
+
+            if app_after.status == 'won':
+                if resp.status_code != 403:
+                    print(resp.get_json())
+                    print(resp.headers.to_list())
+                assert resp.status_code == 403
+                assert 'while watching a show' in resp.get_json()['message']
+            else:
+                if resp.status_code != 200:
+                    print(resp.get_json())
+                    print(resp.headers.to_list())
+                assert resp.status_code == 200
+
+
 def test_apply_time_invalid(client):
     """attempt to apply to lottery out of range
         target_url: /lotteries/<id> [POST]
