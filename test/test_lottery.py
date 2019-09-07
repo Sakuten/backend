@@ -20,7 +20,6 @@ from utils import (
     add_db,
     get_token,
     post,
-    get,
     draw,
     draw_all
 )
