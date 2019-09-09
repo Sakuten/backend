@@ -328,15 +328,9 @@ def test_apply_consecutive(client):
                             group_members=[])
 
             if app_after.status == 'won':
-                if resp.status_code != 403:
-                    print(resp.get_json())
-                    print(resp.headers.to_list())
                 assert resp.status_code == 403
                 assert 'while watching a show' in resp.get_json()['message']
             else:
-                if resp.status_code != 200:
-                    print(resp.get_json())
-                    print(resp.headers.to_list())
                 assert resp.status_code == 200
 
 
