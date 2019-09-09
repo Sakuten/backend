@@ -525,19 +525,23 @@ def test_get_allapplications(client):
     """test proper infomation is returned from the API to a normal user
         target_url: /applications
     """
-    lottery_id = 1
-    make_application(client, test_user['secret_id'], lottery_id)
-
-    resp = as_user_get(client,
-                       test_user['secret_id'],
-                       test_user['g-recaptcha-response'],
-                       '/applications')
-
     with client.application.app_context():
-        db_status = Application.query.all()
-        application_list = applications_schema.dump(db_status)[0]
+        lottery = Lottery.query.get(1)
+        user = User.query.filter_by(secret_id=test_user['secret_id']).one()
 
-    assert resp.get_json() == application_list
+        apps = [user2application(user, lottery) for _ in range(2)]
+        apps[1].created_on += datetime.timedelta(days=-1)
+
+        add_db(apps)
+
+        correct_resp = applications_schema.dump([apps[0]])[0]
+
+        resp = as_user_get(client,
+                           test_user['secret_id'],
+                           test_user['g-recaptcha-response'],
+                           '/applications')
+
+        assert resp.get_json() == correct_resp
 
 
 def test_get_allapplications_admin(client):
