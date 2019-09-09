@@ -28,18 +28,18 @@ def encode_public_id(num_id):
 
 
 def gen_data():
+    def public_id_generator(lottery, status):
+        return map(encode_public_id, range(85))
+
     data = []
-    for cl in ['5A', '5B']:
+    for cl in ["5A", "5B"]:
         lottery_result = []
-        for kind in ['visitor', 'student']:
-            kind_result = []
-            for status in ['win', 'waiting']:
-                kind_result.append({
-                    'status': status,
-                    'winners': [encode_public_id(x) for x in range(85 if status == 'win' else 30)]
-                })
-            lottery_result.append({'kind': kind, 'status': kind_result})
-        data.append({'classroom': cl, 'kinds': lottery_result})
+        for status in "won", "waiting":
+            public_ids = list(sorted(public_id_generator(cl, status)))
+            lottery_result.append({'status': status, 'winners': public_ids})
+
+        data.append({'classroom': str(cl),
+                     'statuses': lottery_result})
 
     env = Environment(loader=FileSystemLoader('./api/templates'))
     template = env.get_template('results.html')

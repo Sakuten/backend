@@ -436,13 +436,12 @@ def results():
     #  8. Caches that file locally
     #  9. Return file
 
-    def public_id_generator(lottery, kind, status):
+    def public_id_generator(lottery, status):
         """return list of winners' public_id for selected 'kind'
             original at: L.336, written by @tamazasa
         """
         for app in lottery.application:
-            if app.created_on == date.today() and \
-               app.status == status and app.user.kind == kind:
+            if app.created_on == date.today() and app.status == status:
                 yield encode_public_id(app.user.public_id)
 
     # 1.
@@ -453,7 +452,6 @@ def results():
     # 2.
     lotteries = Lottery.query.filter_by(index=index)
 
-    kinds = ('visitor', 'student')
     statuses =  ('won', 'waiting')
 
     # 5.
@@ -463,17 +461,12 @@ def results():
         cl = Classroom.query.get(lottery.classroom_id)
 
         lottery_result = []
-        for kind in kinds:
-            kind_result = []
-            for status in statuses:
-                public_ids = list(sorted(public_id_generator(lottery, kind, status)))
-                result = {'status': status,
-                          'winners': public_ids}
-                kind_result.append(result)
-            lottery_result.append({'kind': kind, 'status': kind_result})
+        for status in statuses:
+            public_ids = list(sorted(public_id_generator(lottery, status)))
+            lottery_result.append({'status': status, 'winners': public_ids})
 
         data.append({'classroom': str(cl),
-                     'kinds': lottery_result})
+                     'statuses': lottery_result})
 
     # 6.
     env = Environment(loader=FileSystemLoader('api/templates'))
