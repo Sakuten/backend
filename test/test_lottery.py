@@ -356,8 +356,6 @@ def test_apply_member_consecutive(client):
         users = User.query.filter_by(authority='normal').limit(10).all()
         apps = users2application(users, lottery1)
         add_db(apps)
-        user_sids = [user.secret_id for user in users]
-        app_ids = [app.id for app in apps]
 
         draw_all(client, token_admin, index=index1)
 
