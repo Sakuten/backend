@@ -334,6 +334,52 @@ def test_apply_consecutive(client):
                 assert resp.status_code == 200
 
 
+def test_apply_member_consecutive(client):
+    """attempt to apply after a member's previous won / lose / waiting
+        test: win -> refused (because he/she should be watching a show)
+        test: lose / waiting -> accepted
+        target_url: /lotteries/<id> [POST]
+    """
+    idx1 = 1
+    token_admin = get_token(client, admin)
+
+    with client.application.app_context():
+        lottery1 = Lottery.query.get(idx1)
+        index1 = lottery1.index
+        lottery2 = Lottery.query.filter_by(
+            classroom_id=lottery1.classroom_id,
+            index=lottery1.index + 1).one()
+        idx2 = lottery2.id
+        index2 = lottery2.index
+
+        # 5 won, 2 lose, 3 waiting
+        users = User.query.filter_by(authority='normal').limit(10).all()
+        apps = users2application(users, lottery1)
+        add_db(apps)
+        user_sids = [user.secret_id for user in users]
+        app_ids = [app.id for app in apps]
+
+        draw_all(client, token_admin, index=index1)
+
+        people = [Application.query.filter_by(status=s).first().user
+                  for s in ('won', 'lose', 'waiting')]
+        sids = [person.secret_id for person in people]
+        tokens = [login(client, person.secret_id, '')['token']
+                  for person in people]
+
+        for i, (token_i, member_i) in enumerate(((0, 1), (2, 0), (1, 2))):
+            with mock.patch('api.routes.api.get_time_index',
+                            return_value=index2):
+                resp = post(client, f'/lotteries/{idx2}',
+                            token=tokens[token_i],
+                            group_members=[sids[member_i]])
+                if i == 2:
+                    assert resp.status_code == 200
+                else:
+                    assert resp.status_code == 403
+                    assert 'while watching' in resp.get_json()['message']
+
+
 def test_apply_time_invalid(client):
     """attempt to apply to lottery out of range
         target_url: /lotteries/<id> [POST]
