@@ -676,9 +676,11 @@ def test_cancel_group_member(client):
         target = Lottery.query.get(lottery_id)
         index = target.index
         members = [test_user1, test_user2]
-        members_app_id = [make_application(client, user['secret_id'], lottery_id)
-                       for user in members]
-        rep_app_id = make_application(client, test_user['secret_id'], lottery_id,
+        members_app_id = [
+            make_application(client, user['secret_id'], lottery_id)
+            for user in members]
+        rep_app_id = make_application(client, test_user['secret_id'],
+                                      lottery_id,
                                       group_member_apps=members_app_id)
 
         assert Application.query.count() == 3
@@ -687,9 +689,9 @@ def test_cancel_group_member(client):
         with mock.patch('api.routes.api.get_draw_time_index',
                         return_value=index):
             token = login(client, test_user['secret_id'],
-                        test_user['g-recaptcha-response'])['token']
+                          test_user['g-recaptcha-response'])['token']
             resp = client.delete(f'/applications/{members_app_id[0]}',
-                                headers={'Authorization': f'Bearer {token}'})
+                                 headers={'Authorization': f'Bearer {token}'})
 
         assert resp.status_code == 200
         assert Application.query.count() == 2
