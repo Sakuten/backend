@@ -272,7 +272,6 @@ def cancel_application(idx):
         return error_response(10)
     for member in application.group_members:
         db.session.delete(member.own_application)
-        db.session.delete(member)
     db.session.delete(application)
     db.session.commit()
     return jsonify({"message": "Successful Operation"})
