@@ -666,6 +666,40 @@ def test_cancel_group(client):
         assert after_gm_len == first_gm_len
 
 
+def test_cancel_group_member(client):
+    """attempt to cancel one group member's applications
+        test: Application and GroupMember are correctly deleted from DB
+        target_url: /lotteries/<id> [DELETE]
+    """
+    lottery_id = 1
+    with client.application.app_context():
+        target = Lottery.query.get(lottery_id)
+        index = target.index
+        members = [test_user1, test_user2]
+        members_app_id = [make_application(client, user['secret_id'], lottery_id)
+                       for user in members]
+        rep_app_id = make_application(client, test_user['secret_id'], lottery_id,
+                                      group_member_apps=members_app_id)
+
+        assert Application.query.count() == 3
+        assert GroupMember.query.count() == 2
+
+        with mock.patch('api.routes.api.get_draw_time_index',
+                        return_value=index):
+            token = login(client, test_user['secret_id'],
+                        test_user['g-recaptcha-response'])['token']
+            resp = client.delete(f'/applications/{members_app_id[0]}',
+                                headers={'Authorization': f'Bearer {token}'})
+
+        assert resp.status_code == 200
+        assert Application.query.count() == 2
+        result = Application.query.all()
+        assert all(app.id in (members_app_id[1], rep_app_id)
+                   for app in result)
+        assert GroupMember.query.count() == 1
+        assert GroupMember.query.one().own_application_id == members_app_id[1]
+
+
 def test_cancel_duplicated_group(client):
     """attempt to cancel group applications
         target_url: /lotteries/<id> [DELETE]
