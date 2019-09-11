@@ -452,7 +452,7 @@ def results():
     # 2.
     lotteries = Lottery.query.filter_by(index=index)
 
-    statuses =  ('won', 'waiting')
+    statuses = ('won', 'waiting')
 
     # 5.
     data = []
