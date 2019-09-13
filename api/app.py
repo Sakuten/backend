@@ -153,8 +153,7 @@ def generate():
         new_room = Classroom.query.filter_by(grade=class_data['grade'],
                                              index=class_data['index']).first()
         for perf_index in range(total_index):
-            lottery = Lottery(classroom_id=new_room.id,
-                              index=perf_index, done=False)
+            lottery = Lottery(classroom_id=new_room.id, index=perf_index)
             db.session.add(lottery)
 
     User.query.delete()
