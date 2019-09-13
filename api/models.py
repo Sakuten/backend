@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from cards.id import encode_public_id
+from datetime import date
 
 db = SQLAlchemy()
 
@@ -68,20 +69,17 @@ class Lottery(db.Model):
         Args:
             classroom_id (int): classroom id(unique id)
             index (int): class number(0->A,1->B,2->C,3->D)
-            done (bool): whether the lottery is done or not
         DB contents:
             id (int): lottery unique id
             classroom_id (int): associated classroom id
             classroom (relationship): associated classroom
             index (int): number of peformance. {0..4}
-            done (bool): whether it's done or not
     """
     id = db.Column(db.Integer, primary_key=True)  # 'id' should be defined,
     classroom_id = db.Column(db.Integer, db.ForeignKey(
         'classroom.id', ondelete='CASCADE'))
     classroom = db.relationship('Classroom')
     index = db.Column(db.Integer)
-    done = db.Column(db.Boolean)
 
     def __repr__(self):
 
@@ -97,6 +95,7 @@ class Application(db.Model):
             status (Boolen): whether chosen or not. initalized with None
             is_rep (bool): whether rep of a group or not
             advantage (int): how much advantage does user have
+            created_on (date): when applciation is made
     """
     __tablename__ = 'application'
 
@@ -112,10 +111,27 @@ class Application(db.Model):
                        default="pending",
                        nullable=False)
     is_rep = db.Column(db.Boolean, default=False)
+    created_on = db.Column(db.Date, nullable=False)
     advantage = None
+    group_members_not_rep = db.relationship(
+        'GroupMember',
+        backref='own_application',
+        cascade='all, delete-orphan',
+        foreign_keys="GroupMember.own_application_id")
+    group_members = db.relationship(
+        'GroupMember',
+        backref='rep_application',
+        cascade='all, delete-orphan',
+        foreign_keys="GroupMember.rep_application_id")
     # groupmember_id = db.Column(db.Integer, db.ForeignKey(
     #     'group_members.id', ondelete='CASCADE'))
     # me_group_member = db.relationship('GroupMember', backref='application')
+
+    def __init__(self, **kwargs):
+        """
+            construct object with column `created_on` automatically set
+        """
+        super().__init__(created_on=date.today(), **kwargs)
 
     def __repr__(self):
         return "<Application {}{}{} {}>".format(
@@ -176,6 +192,7 @@ class GroupMember(db.Model):
             rep_application_id (int): rep application id
     """
     __tablename__ = 'group_members'
+    __mapper_args__ = {'confirm_deleted_rows': False}
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(
@@ -185,14 +202,9 @@ class GroupMember(db.Model):
 
     own_application_id = db.Column(db.Integer, db.ForeignKey(
         'application.id', ondelete='CASCADE'))
-    own_application = db.relationship('Application',
-                                      foreign_keys=[own_application_id])
 
     rep_application_id = db.Column(db.Integer, db.ForeignKey(
         'application.id', ondelete='CASCADE'))
-    rep_application = db.relationship('Application',
-                                      foreign_keys=[rep_application_id],
-                                      backref='group_members')
 
     def __repr__(self):
         return f"<GroupMember {self.user}>"
