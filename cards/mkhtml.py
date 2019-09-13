@@ -17,7 +17,7 @@ parser.add_argument("-b", "--base-url", type=str,
 parser.add_argument("-t", "--template", type=str,
                     default="./template/cards.html.j2",
                     help="Template file path")
-parser.add_argument("--horizontal", type=int, default=3,
+parser.add_argument("--horizontal", type=int, default=2,
                     help="How many cards listed in horizontal line")
 parser.add_argument("-o", "--output", type=str,
                     required=True, help="Output html file directory")

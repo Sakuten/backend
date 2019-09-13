@@ -1,4 +1,5 @@
 from itertools import chain
+from datetime import date
 from jinja2 import Environment, FileSystemLoader
 
 from flask import Blueprint, jsonify, g, request, current_app
@@ -124,7 +125,8 @@ def apply_lottery(idx):
         specify the lottery id in the URL.
         1. check request errors
         2. check whether all group_member's secret_id are correct
-        3. check wehter nobody in members made application to the same period
+        3. check wehter nobody in members made application to the same or
+           previous period
         4. get all `user_id` of members
         5. make application of token's owner
         6. if length of 'group_members' list is 0, goto *8.*
@@ -166,34 +168,15 @@ def apply_lottery(idx):
             # Group members duplicated
             return error_response(23)
         for user in group_members:
-            previous = Application.query.filter_by(user_id=user.id)
-            if any(app.lottery.index == lottery.index and
-                   app.lottery.id != lottery.id
-                   for app in previous.all()):
-                # Someone in the group is
-                # already applying to a lottery in this period
-                return error_response(8)
-            if any(app.lottery.index == lottery.index and
-                   app.lottery.id == lottery.id
-                   for app in previous.all()):
-
-                # someone in the group is already
-                # applying to this lottery
-                return error_response(9)
+            resp = can_group_member_apply(user, lottery)
+            if resp != 'OK':    # error
+                return resp
 
     # 5.
     rep_user = User.query.filter_by(id=g.token_data['user_id']).first()
-    previous = Application.query.filter_by(user_id=rep_user.id)
-    if any(app.lottery.index == lottery.index and
-            app.lottery.id != lottery.id
-            for app in previous.all()):
-        # You're already applying to a lottery in this period
-        return error_response(17)
-    if any(app.lottery.index == lottery.index and
-            app.lottery.id == lottery.id
-            for app in previous.all()):
-        # Your application is already accepted
-        return error_response(16)
+    resp = can_rep_apply(rep_user, lottery)
+    if resp != 'OK':    # error
+        return resp
     # access DB
     # 6. 7.
     if len(group_members) == 0:
@@ -223,6 +206,52 @@ def apply_lottery(idx):
     return jsonify(result)
 
 
+def can_group_member_apply(user, lottery):
+    previous = Application.query.filter_by(user_id=user.id,
+                                           created_on=date.today())
+    if any(app.lottery.index == lottery.index and
+           app.lottery.id != lottery.id
+           for app in previous.all()):
+        # Someone in the group is
+        # already applying to a lottery in this period
+        return error_response(8)
+    if any(app.lottery.index == lottery.index and
+           app.lottery.id == lottery.id
+           for app in previous.all()):
+        # someone in the group is already
+        # applying to this lottery
+        return error_response(9)
+    if any(app.created_on == date.today() and
+           app.lottery.index == lottery.index - 1 and
+           app.status == 'won'
+           for app in previous.all()):
+        # You cannot apply while watching a show
+        return error_response(24)
+    return 'OK'
+
+
+def can_rep_apply(user, lottery):
+    previous = Application.query.filter_by(user_id=user.id,
+                                           created_on=date.today())
+    if any(app.lottery.index == lottery.index and
+           app.lottery.id != lottery.id
+           for app in previous.all()):
+        # You're already applying to a lottery in this period
+        return error_response(17)
+    if any(app.lottery.index == lottery.index and
+           app.lottery.id == lottery.id
+           for app in previous.all()):
+        # Your application is already accepted
+        return error_response(16)
+    if any(app.created_on == date.today() and
+           app.lottery.index == lottery.index - 1 and
+           app.status == 'won'
+           for app in previous.all()):
+        # You cannot apply while watching a show
+        return error_response(24)
+    return 'OK'
+
+
 @bp.route('/applications')
 @spec('api/applications.yml')
 @login_required('normal')
@@ -235,7 +264,8 @@ def list_applications():
 #     sort = request.args.get('sort')
 
     user = User.query.filter_by(id=g.token_data['user_id']).first()
-    applications = Application.query.filter_by(user_id=user.id)
+    applications = Application.query.filter_by(user_id=user.id,
+                                               created_on=date.today())
     result = applications_schema.dump(applications)[0]
     return jsonify(result)
 
@@ -249,7 +279,7 @@ def list_application(idx):
     """
     user = User.query.filter_by(id=g.token_data['user_id']).first()
     application = Application.query.filter_by(
-        user_id=user.id).filter_by(id=idx).first()
+        user_id=user.id, created_on=date.today()).filter_by(id=idx).first()
     if application is None:
         return error_response(7)  # Not found
     result = application_schema.dump(application)[0]
@@ -272,7 +302,6 @@ def cancel_application(idx):
         return error_response(10)
     for member in application.group_members:
         db.session.delete(member.own_application)
-        db.session.delete(member)
     db.session.delete(application)
     db.session.commit()
     return jsonify({"message": "Successful Operation"})
@@ -322,25 +351,6 @@ def draw_all_lotteries():
     flattened = list(chain.from_iterable(winners))
     result = users_schema.dump(flattened)
     return jsonify(result[0])
-
-
-@bp.route('/lotteries/<int:idx>/winners')
-@spec('api/lotteries/winners.yml')
-def get_winners_id(idx):
-    """
-        Return winners' public_id for 'idx' lottery
-    """
-    lottery = Lottery.query.get(idx)
-    if lottery is None:
-        return error_response(7)  # Not found
-    if not lottery.done:
-        return error_response(12)  # This lottery is not done yet.
-
-    def public_id_generator():
-        for app in lottery.application:
-            if app.status == 'won':
-                yield app.user.public_id
-    return jsonify(list(public_id_generator()))
 
 
 @bp.route('/status', methods=['GET'])
@@ -399,8 +409,8 @@ def check_id(classroom_id, secret_id):
         return error_response(6)  # not acceptable time
     lottery = Lottery.query.filter_by(classroom_id=classroom_id,
                                       index=index).first()
-    application = Application.query.filter_by(user=user,
-                                              lottery=lottery).first()
+    application = Application.query.filter_by(
+                user=user, lottery=lottery, created_on=date.today()).first()
     if not application:
         return error_response(19)  # no application found
 
@@ -430,7 +440,8 @@ def results():
             original at: L.336, written by @tamazasa
         """
         for app in lottery.application:
-            if app.status == 'won' and app.user.kind == kind:
+            if app.created_on == date.today() and \
+               app.status == 'won' and app.user.kind == kind:
                 yield encode_public_id(app.user.public_id)
 
     # 1.

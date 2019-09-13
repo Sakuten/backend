@@ -291,6 +291,93 @@ def test_apply_same_period_same_lottery(client):
     assert 'already accepted' in message
 
 
+def test_apply_consecutive(client):
+    """attempt to apply after previous won / lose / waiting
+        test: win -> refused (because he/she should be watching a show)
+        test: lose / waiting -> accepted
+        target_url: /lotteries/<id> [POST]
+    """
+    idx1 = 1
+    token_admin = get_token(client, admin)
+
+    with client.application.app_context():
+        lottery1 = Lottery.query.get(idx1)
+        index1 = lottery1.index
+        lottery2 = Lottery.query.filter_by(
+            classroom_id=lottery1.classroom_id,
+            index=lottery1.index + 1).one()
+        idx2 = lottery2.id
+        index2 = lottery2.index
+
+        # 5 won, 2 lose, 3 waiting
+        users = User.query.filter_by(authority='normal').limit(10).all()
+        apps = users2application(users, lottery1)
+        add_db(apps)
+        user_sids = [user.secret_id for user in users]
+        app_ids = [app.id for app in apps]
+
+        draw_all(client, token_admin, index=index1)
+
+        for user_sid, app_id in zip(user_sids, app_ids):
+            app_after = Application.query.get(app_id)
+
+            token = login(client, user_sid, '')['token']
+            with mock.patch('api.routes.api.get_time_index',
+                            return_value=index2):
+                resp = post(client, f'/lotteries/{idx2}', token=token,
+                            group_members=[])
+
+            if app_after.status == 'won':
+                assert resp.status_code == 403
+                assert 'while watching a show' in resp.get_json()['message']
+            else:
+                assert resp.status_code == 200
+
+
+def test_apply_member_consecutive(client):
+    """attempt to apply after a member's previous won / lose / waiting
+        test: win -> refused (because he/she should be watching a show)
+        test: lose / waiting -> accepted
+        target_url: /lotteries/<id> [POST]
+    """
+    idx1 = 1
+    token_admin = get_token(client, admin)
+
+    with client.application.app_context():
+        lottery1 = Lottery.query.get(idx1)
+        index1 = lottery1.index
+        lottery2 = Lottery.query.filter_by(
+            classroom_id=lottery1.classroom_id,
+            index=lottery1.index + 1).one()
+        idx2 = lottery2.id
+        index2 = lottery2.index
+
+        # 5 won, 2 lose, 3 waiting
+        users = User.query.filter_by(authority='normal').limit(10).all()
+        apps = users2application(users, lottery1)
+        add_db(apps)
+
+        draw_all(client, token_admin, index=index1)
+
+        people = [Application.query.filter_by(status=s).first().user
+                  for s in ('won', 'lose', 'waiting')]
+        sids = [person.secret_id for person in people]
+        tokens = [login(client, person.secret_id, '')['token']
+                  for person in people]
+
+        for i, (token_i, member_i) in enumerate(((0, 1), (2, 0), (1, 2))):
+            with mock.patch('api.routes.api.get_time_index',
+                            return_value=index2):
+                resp = post(client, f'/lotteries/{idx2}',
+                            token=tokens[token_i],
+                            group_members=[sids[member_i]])
+                if i == 2:
+                    assert resp.status_code == 200
+                else:
+                    assert resp.status_code == 403
+                    assert 'while watching' in resp.get_json()['message']
+
+
 def test_apply_time_invalid(client):
     """attempt to apply to lottery out of range
         target_url: /lotteries/<id> [POST]
@@ -476,19 +563,23 @@ def test_get_allapplications(client):
     """test proper infomation is returned from the API to a normal user
         target_url: /applications
     """
-    lottery_id = 1
-    make_application(client, test_user['secret_id'], lottery_id)
-
-    resp = as_user_get(client,
-                       test_user['secret_id'],
-                       test_user['g-recaptcha-response'],
-                       '/applications')
-
     with client.application.app_context():
-        db_status = Application.query.all()
-        application_list = applications_schema.dump(db_status)[0]
+        lottery = Lottery.query.get(1)
+        user = User.query.filter_by(secret_id=test_user['secret_id']).one()
 
-    assert resp.get_json() == application_list
+        apps = [user2application(user, lottery) for _ in range(2)]
+        apps[1].created_on += datetime.timedelta(days=-1)
+
+        add_db(apps)
+
+        correct_resp = applications_schema.dump([apps[0]])[0]
+
+        resp = as_user_get(client,
+                           test_user['secret_id'],
+                           test_user['g-recaptcha-response'],
+                           '/applications')
+
+        assert resp.get_json() == correct_resp
 
 
 def test_get_allapplications_admin(client):
@@ -666,6 +757,42 @@ def test_cancel_group(client):
         assert after_gm_len == first_gm_len
 
 
+def test_cancel_group_member(client):
+    """attempt to cancel one group member's applications
+        test: Application and GroupMember are correctly deleted from DB
+        target_url: /lotteries/<id> [DELETE]
+    """
+    lottery_id = 1
+    with client.application.app_context():
+        target = Lottery.query.get(lottery_id)
+        index = target.index
+        members = [test_user1, test_user2]
+        members_app_id = [
+            make_application(client, user['secret_id'], lottery_id)
+            for user in members]
+        rep_app_id = make_application(client, test_user['secret_id'],
+                                      lottery_id,
+                                      group_member_apps=members_app_id)
+
+        assert Application.query.count() == 3
+        assert GroupMember.query.count() == 2
+
+        with mock.patch('api.routes.api.get_draw_time_index',
+                        return_value=index):
+            token = login(client, test_user['secret_id'],
+                          test_user['g-recaptcha-response'])['token']
+            resp = client.delete(f'/applications/{members_app_id[0]}',
+                                 headers={'Authorization': f'Bearer {token}'})
+
+        assert resp.status_code == 200
+        assert Application.query.count() == 2
+        result = Application.query.all()
+        assert all(app.id in (members_app_id[1], rep_app_id)
+                   for app in result)
+        assert GroupMember.query.count() == 1
+        assert GroupMember.query.one().own_application_id == members_app_id[1]
+
+
 def test_cancel_duplicated_group(client):
     """attempt to cancel group applications
         target_url: /lotteries/<id> [DELETE]
@@ -742,8 +869,6 @@ def test_draw(client):
         users = User.query.all()
         target_lottery = Lottery.query.get(idx)
 
-        assert target_lottery.done
-
         waiting_cnt = 0
 
         for user in users:
@@ -805,8 +930,6 @@ def test_draw_group(client):
         users = User.query.all()
         target_lottery = Lottery.query.get(idx)
 
-        assert target_lottery.done
-
         rep_status = get_application(users[0], target_lottery).status
 
         assert rep_status == "won"
@@ -859,8 +982,6 @@ def test_draw_lots_of_groups(client):
 
         users = User.query.all()
         target_lottery = Lottery.query.get(idx)
-
-        assert target_lottery.done
 
         won_cnt = 0
         lose_cnt = 0
@@ -928,8 +1049,6 @@ def test_draw_lots_of_groups_and_normal(client):
 
         users = User.query.all()
         target_lottery = Lottery.query.get(idx)
-
-        assert target_lottery.done
 
         for rep, member in zip(reps, members):
             rep_status = get_application(users[rep], target_lottery).status
@@ -1140,8 +1259,6 @@ def test_draw_all(client):
     assert resp.status_code == 200
 
     winners_id = [winner['id'] for winner in resp.get_json()]
-    assert all(lottery.done for lottery in target_lotteries)
-    assert all(not lottery.done for lottery in non_target_lotteries)
 
     with client.application.app_context():
         users = User.query.all()
@@ -1244,34 +1361,3 @@ def test_draw_all_multiple(client):
         assert win1 == win2
         assert lose1 == lose2
         assert waiting1 == waiting2
-
-
-def test_get_winners(client):
-    """test proper public_id's are returned from the API
-        target_url: /lotteries/<id>/winners
-    """
-    idx = 1
-
-    with client.application.app_context():
-        target_lottery = Lottery.query.get(idx)
-        index = target_lottery.index
-        users = User.query.all()
-        for user in users:
-            application = Application(lottery=target_lottery, user_id=user.id)
-            db.session.add(application)
-        db.session.commit()
-
-        token = login(client,
-                      admin['secret_id'],
-                      admin['g-recaptcha-response'])['token']
-
-        draw_resp = draw(client, token, idx, index)
-        with mock.patch('api.routes.api.get_draw_time_index',
-                        return_value=index):
-            winners_resp = client.get(
-                f'/lotteries/{idx}/winners',
-                headers={'Authorization': f'Bearer {token}'})
-
-        winners_id = set(User.query.get(winner['id']).public_id
-                         for winner in draw_resp.get_json())
-        assert winners_id == set(winners_resp.get_json())
