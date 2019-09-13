@@ -94,5 +94,9 @@
   "23": {
     "message": "Group members duplicated",
     "status": 400
+  },
+  "24": {
+    "message": "You cannot apply while watching a show",
+    "status": 403
   }
 }
