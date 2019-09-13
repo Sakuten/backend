@@ -113,6 +113,16 @@ class Application(db.Model):
     is_rep = db.Column(db.Boolean, default=False)
     created_on = db.Column(db.Date, nullable=False)
     advantage = None
+    group_members_not_rep = db.relationship(
+        'GroupMember',
+        backref='own_application',
+        cascade='all, delete-orphan',
+        foreign_keys="GroupMember.own_application_id")
+    group_members = db.relationship(
+        'GroupMember',
+        backref='rep_application',
+        cascade='all, delete-orphan',
+        foreign_keys="GroupMember.rep_application_id")
     # groupmember_id = db.Column(db.Integer, db.ForeignKey(
     #     'group_members.id', ondelete='CASCADE'))
     # me_group_member = db.relationship('GroupMember', backref='application')
@@ -182,6 +192,7 @@ class GroupMember(db.Model):
             rep_application_id (int): rep application id
     """
     __tablename__ = 'group_members'
+    __mapper_args__ = {'confirm_deleted_rows': False}
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(
@@ -191,14 +202,9 @@ class GroupMember(db.Model):
 
     own_application_id = db.Column(db.Integer, db.ForeignKey(
         'application.id', ondelete='CASCADE'))
-    own_application = db.relationship('Application',
-                                      foreign_keys=[own_application_id])
 
     rep_application_id = db.Column(db.Integer, db.ForeignKey(
         'application.id', ondelete='CASCADE'))
-    rep_application = db.relationship('Application',
-                                      foreign_keys=[rep_application_id],
-                                      backref='group_members')
 
     def __repr__(self):
         return f"<GroupMember {self.user}>"
