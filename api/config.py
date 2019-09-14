@@ -25,12 +25,15 @@ class BaseConfig(object):
     RECAPTCHA_THRESHOLD = 0.09  # more than 0.09
     TIMEZONE = timezone(timedelta(hours=+9), 'JST')
     # Don't forget to update START/END DATETIME every year
-    START_DATETIME = datetime(2019, 9, 14, 11, 40, 0, tzinfo=TIMEZONE)
-    END_DATETIME = datetime(2019, 9, 14, 20, 00, 0, tzinfo=TIMEZONE)    # 敬老の日
-    DRAWING_TIME_EXTENSION = timedelta(minutes=10)
+    START_DATETIME = datetime(2019, 9, 15, 8, 40, 0, tzinfo=TIMEZONE)
+    END_DATETIME = datetime(2019, 9, 16, 16, 00, 0, tzinfo=TIMEZONE)
+    DRAWING_TIME_EXTENSION = timedelta(minutes=30)
     TIMEPOINT_END_MARGIN = timedelta(minutes=1)
     TIMEPOINTS = [
-        (time(17, 00), time(17, 30))
+        (time(8,  50), time(9,  25)),
+        (time(10, 20), time(10, 55)),
+        (time(12, 10), time(12, 45)),
+        (time(13, 40), time(14, 15))
     ]
     ONE_DAY_KIND = ['visitor']
 
