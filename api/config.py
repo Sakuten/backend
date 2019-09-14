@@ -26,11 +26,11 @@ class BaseConfig(object):
     TIMEZONE = timezone(timedelta(hours=+9), 'JST')
     # Don't forget to update START/END DATETIME every year
     START_DATETIME = datetime(2019, 9, 14, 11, 40, 0, tzinfo=TIMEZONE)
-    END_DATETIME = datetime(2019, 9, 14, 16, 00, 0, tzinfo=TIMEZONE)    # 敬老の日
+    END_DATETIME = datetime(2019, 9, 14, 20, 00, 0, tzinfo=TIMEZONE)    # 敬老の日
     DRAWING_TIME_EXTENSION = timedelta(minutes=10)
     TIMEPOINT_END_MARGIN = timedelta(minutes=1)
     TIMEPOINTS = [
-        (time(13, 00), time(13, 30))
+        (time(17, 00), time(17, 30))
     ]
     ONE_DAY_KIND = ['visitor']
 
