@@ -3,7 +3,7 @@ from flask import current_app
 from api.models import Lottery, Application, db
 from itertools import chain
 from numpy.random import choice
-from datetime import date
+from api.time_management import get_current_datetime
 
 
 class GroupAdvantage:
@@ -35,7 +35,7 @@ def draw_one(lottery):
     idx = lottery.id
     applications = (
         Application.query
-        .filter_by(lottery_id=idx, created_on=date.today())
+        .filter_by(lottery_id=idx, created_on=get_current_datetime().date())
         .all()
     )
 

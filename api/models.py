@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from cards.id import encode_public_id
-from datetime import date
+from api.time_management import get_current_datetime
 
 db = SQLAlchemy()
 
@@ -131,7 +131,7 @@ class Application(db.Model):
         """
             construct object with column `created_on` automatically set
         """
-        super().__init__(created_on=date.today(), **kwargs)
+        super().__init__(created_on=get_current_datetime().date(), **kwargs)
 
     def __repr__(self):
         return "<Application {}{}{} {}>".format(
