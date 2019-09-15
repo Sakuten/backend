@@ -1,5 +1,5 @@
 from unittest import mock
-from datetime import date
+from datetime import datetime, date, time
 from utils import (
     as_user_get,
     login_with_form,
@@ -178,8 +178,8 @@ def test_auth_used_user(client):
         db.session.add(user)
         db.session.commit()
 
-    with mock.patch('api.auth.date',
-                    return_value=date_login):
+    with mock.patch('api.auth.get_current_datetime',
+                    return_value=datetime.combine(date_login, time(9, 0))):
         resp = client.post('/auth', json={
                            'id': login_user['secret_id'],
                            'g-recaptcha-response':
@@ -204,8 +204,8 @@ def test_auth_overtime_as_student(client):
         db.session.add(user)
         db.session.commit()
 
-    with mock.patch('api.auth.date',
-                    return_value=date_login):
+    with mock.patch('api.auth.get_current_datetime',
+                    return_value=datetime.combine(date_login, time(9, 0))):
         resp = client.post('/auth', json={
                            'id': login_user['secret_id'],
                            'g-recaptcha-response':
