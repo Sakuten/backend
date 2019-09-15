@@ -4,7 +4,7 @@ from api.models import Application, Lottery
 from cards.id import encode_public_id
 from api.time_management import mod_time
 import base64
-from datetime import date
+from api.time_management import get_current_datetime
 
 
 class UserSchema(Schema):
@@ -95,7 +95,8 @@ class LotterySchema(Schema):
 
     def get_winners(self, lottery):
         winners = Application.query.filter_by(
-            lottery_id=lottery.id, created_on=date.today(), status="won").all()
+            lottery_id=lottery.id, created_on=get_current_datetime().date(),
+            status="won").all()
         return [winner.public_id for winner in winners]
 
     def calc_end_of_drawing(self, lottery):

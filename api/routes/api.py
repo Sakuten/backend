@@ -1,5 +1,4 @@
 from itertools import chain
-from datetime import date
 from jinja2 import Environment, FileSystemLoader
 
 from flask import Blueprint, jsonify, g, request, current_app
@@ -22,6 +21,7 @@ from api.auth import (
 )
 from api.swagger import spec
 from api.time_management import (
+    get_current_datetime,
     get_draw_time_index,
     OutOfHoursError,
     OutOfAcceptingHoursError,
@@ -207,8 +207,9 @@ def apply_lottery(idx):
 
 
 def can_group_member_apply(user, lottery):
-    previous = Application.query.filter_by(user_id=user.id,
-                                           created_on=date.today())
+    previous = Application.query.filter_by(
+        user_id=user.id,
+        created_on=get_current_datetime().date())
     if any(app.lottery.index == lottery.index and
            app.lottery.id != lottery.id
            for app in previous.all()):
@@ -221,7 +222,7 @@ def can_group_member_apply(user, lottery):
         # someone in the group is already
         # applying to this lottery
         return error_response(9)
-    if any(app.created_on == date.today() and
+    if any(app.created_on == get_current_datetime().date() and
            app.lottery.index == lottery.index - 1 and
            app.status == 'won'
            for app in previous.all()):
@@ -231,8 +232,9 @@ def can_group_member_apply(user, lottery):
 
 
 def can_rep_apply(user, lottery):
-    previous = Application.query.filter_by(user_id=user.id,
-                                           created_on=date.today())
+    previous = Application.query.filter_by(
+        user_id=user.id,
+        created_on=get_current_datetime().date())
     if any(app.lottery.index == lottery.index and
            app.lottery.id != lottery.id
            for app in previous.all()):
@@ -243,7 +245,7 @@ def can_rep_apply(user, lottery):
            for app in previous.all()):
         # Your application is already accepted
         return error_response(16)
-    if any(app.created_on == date.today() and
+    if any(app.created_on == get_current_datetime().date() and
            app.lottery.index == lottery.index - 1 and
            app.status == 'won'
            for app in previous.all()):
@@ -264,8 +266,9 @@ def list_applications():
 #     sort = request.args.get('sort')
 
     user = User.query.filter_by(id=g.token_data['user_id']).first()
-    applications = Application.query.filter_by(user_id=user.id,
-                                               created_on=date.today())
+    applications = Application.query.filter_by(
+        user_id=user.id,
+        created_on=get_current_datetime().date())
     result = applications_schema.dump(applications)[0]
     return jsonify(result)
 
@@ -279,7 +282,8 @@ def list_application(idx):
     """
     user = User.query.filter_by(id=g.token_data['user_id']).first()
     application = Application.query.filter_by(
-        user_id=user.id, created_on=date.today()).filter_by(id=idx).first()
+        user_id=user.id, created_on=get_current_datetime().date()
+        ).filter_by(id=idx).first()
     if application is None:
         return error_response(7)  # Not found
     result = application_schema.dump(application)[0]
@@ -410,7 +414,8 @@ def check_id(classroom_id, secret_id):
     lottery = Lottery.query.filter_by(classroom_id=classroom_id,
                                       index=index).first()
     application = Application.query.filter_by(
-                user=user, lottery=lottery, created_on=date.today()).first()
+        user=user, lottery=lottery,
+        created_on=get_current_datetime().date()).first()
     if not application:
         return error_response(19)  # no application found
 
@@ -440,7 +445,8 @@ def results():
             original at: L.336, written by @tamazasa
         """
         for app in lottery.application:
-            if app.created_on == date.today() and app.status == status:
+            if app.created_on == get_current_datetime().date() and \
+               app.status == status:
                 yield encode_public_id(app.user.public_id)
 
     # 1.

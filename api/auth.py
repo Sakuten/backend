@@ -1,7 +1,7 @@
 from flask import g, current_app, request
 from cryptography.fernet import Fernet, InvalidToken
 from api.models import User, db
-from datetime import datetime, date
+from datetime import datetime
 from functools import wraps
 import json
 from api.time_management import get_current_datetime
@@ -131,11 +131,11 @@ def todays_user(secret_id='', user_id=''):
     if user.kind not in current_app.config['ONE_DAY_KIND']:
         return user
     if user.first_access is None:
-        user.first_access = date.today()
+        user.first_access = get_current_datetime().date()
         db.session.add(user)
         db.session.commit()
         return user
-    elif user.first_access == date.today():
+    elif user.first_access == get_current_datetime().date():
         return user
     else:
         raise UserDisabledError()
