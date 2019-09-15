@@ -5,6 +5,7 @@ from cards.id import encode_public_id
 from api.time_management import mod_time
 import base64
 from api.time_management import get_current_datetime
+from datetime import timedelta
 
 
 class UserSchema(Schema):
@@ -101,7 +102,7 @@ class LotterySchema(Schema):
 
     def calc_end_of_drawing(self, lottery):
         index = lottery.index
-        drawing_ext = current_app.config['DRAWING_TIME_EXTENSION']
+        drawing_ext = timedelta(minutes=10) # current_app.config['DRAWING_TIME_EXTENSION']
         time_ponit = current_app.config['TIMEPOINTS'][index][1]
         return str(mod_time(time_ponit, drawing_ext))
 
