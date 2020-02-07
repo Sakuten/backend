@@ -25,8 +25,8 @@ class BaseConfig(object):
     RECAPTCHA_THRESHOLD = 0.09  # more than 0.09
     TIMEZONE = timezone(timedelta(hours=+9), 'JST')
     # Don't forget to update START/END DATETIME every year
-    START_DATETIME = datetime(2019, 9, 15, 8, 40, 0, tzinfo=TIMEZONE)
-    END_DATETIME = datetime(2019, 9, 16, 16, 00, 0, tzinfo=TIMEZONE)
+    START_DATETIME = datetime(2020, 9, 20, 8, 40, 0, tzinfo=TIMEZONE)
+    END_DATETIME = datetime(2020, 9, 21, 16, 00, 0, tzinfo=TIMEZONE)
     DRAWING_TIME_EXTENSION = timedelta(minutes=30)
     TIMEPOINT_END_MARGIN = timedelta(minutes=1)
     TIMEPOINTS = [
@@ -45,8 +45,8 @@ class DevelopmentConfig(BaseConfig):
     ID_LIST_FILE = BaseConfig.ROOT_DIR / 'cards/test_users.json'
     # Don't forget to update START/END DATETIME every year
     # Update BaseConfig too
-    START_DATETIME = datetime(2018, 9, 17, 0, 0, 0, tzinfo=BaseConfig.TIMEZONE)
-    END_DATETIME = datetime(2019, 9, 16, 23, 59, 59,
+    START_DATETIME = datetime(2019, 9, 17, 0, 0, 0, tzinfo=BaseConfig.TIMEZONE)
+    END_DATETIME = datetime(2020, 9, 21, 23, 59, 59,
                             tzinfo=BaseConfig.TIMEZONE)
     TIMEPOINTS = [
         # applications are accepted in these durations and TIMEPOINT_END_MARGIN
