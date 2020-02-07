@@ -48,6 +48,9 @@ class Classroom(db.Model):
     grade = db.Column(db.Integer)
     index = db.Column(db.Integer)
     title = db.Column(db.String(300))
+    begin_time = db.Column(db.Time)
+    end_time = db.Column(db.Time)
+ 
 
     def __repr__(self):
         return "<Classroom %r%r>".format(self.grade, self.get_classroom_name)

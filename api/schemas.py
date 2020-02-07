@@ -66,6 +66,8 @@ class ClassroomSchema(Schema):
     index = fields.Int()
     title = fields.Method("classroom_title", dump_only=True)
     name = fields.Method("classroom_name", dump_only=True)
+    begin_time = fields.Time()
+    end_time = fields.Time()
 
     def classroom_name(self, classroom):
         return classroom.get_classroom_name()
