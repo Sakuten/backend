@@ -119,6 +119,10 @@ definitions:
         description: Display name of the lottery
         example: 5A.0
         type: string
+      application_num:
+        description: The number of applications to the lottery
+        example: 180
+        type: integer
       winners:
         type: array
         items:

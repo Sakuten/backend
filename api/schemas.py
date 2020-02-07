@@ -84,6 +84,8 @@ class LotterySchema(Schema):
     index = fields.Int()
     done = fields.Boolean()
     name = fields.Method("format_name", dump_only=True)
+    application_num = fields.Method("get_application_num",
+                                    dump_only=True)
     winners = fields.Method("get_winners", dump_only=True)
     end_of_drawing = fields.Method("calc_end_of_drawing")
 
@@ -92,6 +94,9 @@ class LotterySchema(Schema):
         name = lottery.classroom.get_classroom_name()
         index = lottery.index
         return f"{grade}{name}.{index}"
+
+    def get_application_num(self, lottery):
+        return len(lottery.application)
 
     def get_winners(self, lottery):
         winners = Application.query.filter_by(
