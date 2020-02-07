@@ -35,3 +35,12 @@ def test_application_not_member(client):
 
         dumpdata = application_schema.dump(member_app)[0]
         assert not dumpdata['is_member']
+
+
+def test_classroom_time(client):
+    with client.application.app_context():
+        target_classroom = Classroom.query.first()
+	
+        dumpdata = classroom_schema.dump(target_classroom)
+        assert 'begin_time' in dumpdata
+        assert 'end_time' in dumpdata
